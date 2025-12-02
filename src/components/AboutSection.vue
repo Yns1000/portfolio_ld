@@ -240,8 +240,13 @@ const getTypeLabel = (type) => {
   .stitch { top: -30px; left: -10px; }
   .volley { right: -10px; top: -30px; }
   .basket { bottom: -20px; left: -10px; }
-  .book { display: none; } /* On cache le livre sur petit écran */
-
+  .book {
+    display: block; /* On le réactive */
+    top: auto;      /* On annule la position du haut */
+    bottom: -20px;  /* On le met en bas */
+    right: -10px;   /* À droite */
+    z-index: 5 !important; /* DEVANT TOUT */
+  }
   .glass-card { padding: 1.5rem; }
 }
 
@@ -254,8 +259,39 @@ const getTypeLabel = (type) => {
 .highlight { color: var(--color-accent); }
 .intro { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-accent); }
 .text { color: var(--color-text-muted); line-height: 1.7; margin-bottom: 2rem; font-size: 1.05rem; }
-.info-badges { display: flex; gap: 10px; margin-bottom: 0; }
-.badge { background: var(--color-bg-card); border: 1px solid var(--color-border); padding: 8px 16px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; }
+.info-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0;
+  /* CORRECTION : Permet aux badges de passer à la ligne si l'écran est trop petit */
+  flex-wrap: wrap;
+}
+.badge {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  /* CORRECTION : Empêche le texte de se couper mochement */
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .info-badges {
+    gap: 8px; /* On réduit l'espace entre les badges */
+  }
+
+  .badge {
+    font-size: 0.8rem; /* Police un peu plus petite */
+    padding: 6px 12px; /* Badges moins larges */
+    flex: 1 1 auto; /* Les badges s'adaptent intelligemment à la largeur */
+    justify-content: center; /* Texte centré */
+  }
+}
 .block-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
 .cert-card { display: flex; align-items: center; gap: 15px; background: var(--color-bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--color-border); text-decoration: none; color: inherit; transition: all 0.3s ease; }
 .cert-card:hover { border-color: var(--color-accent); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }

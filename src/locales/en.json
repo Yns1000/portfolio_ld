@@ -1,13 +1,13 @@
 {
-  "greeting": "Hi!",
-  "intro": "I'm Laurine.",
+  "greeting": "Portfolio.",
+  "intro": "Laurine Dhilly",
   "bio": "I am a <strong>Master Student in LMI</strong> (Languages & International Management) at <span class='highlight'>Université d'Artois</span>.",
   "fluent_sentence": "Fluent in {en}, {es} and {fr}.",
   "lang_en": "English",
   "lang_es": "Spanish",
   "lang_fr": "French",
   "lang_nl": "Dutch",
-  "btn_projects": "Discover my projects",
+  "btn_projects": "My projects",
   "btn_about": "Who am I?",
 
   "section_projects_title": "Projects",

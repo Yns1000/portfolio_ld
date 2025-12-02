@@ -51,7 +51,7 @@ const setCategory = (cat) => activeCategory.value = cat
 
     <div class="container">
       <h2 class="big-title">
-        Projects<span class="highlight">.</span>
+        {{ t('section_projects_title') }}<span class="highlight">.</span>
       </h2>
 
       <div class="filter-container">

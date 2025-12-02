@@ -51,7 +51,7 @@
 
     <div class="visual-content">
       <div class="blob-bg"></div>
-      <img src="/Laurine.svg" alt="Laurine Avatar" class="avatar-img" />
+      <img src="/Laurine_logo.png" alt="Laurine Avatar" class="avatar-img" />
     </div>
   </section>
 </template>
