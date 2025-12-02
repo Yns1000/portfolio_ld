@@ -2,7 +2,69 @@
   "greeting": "Hoi!",
   "intro": "Ik ben Laurine.",
   "bio": "Ik ben masterstudent <strong>LMI</strong> (Talen & Internationaal Management) aan de <span class='highlight'>Université d'Artois</span>.",
-  "fluent": "Vloeiend in",
+  "fluent_sentence": "Vloeiend in {en}, {es} en {fr}.",
+  "lang_en": "Engels",
+  "lang_es": "Spaans",
+  "lang_fr": "Frans",
+  "lang_nl": "Nederlands",
   "btn_projects": "Ontdek mijn projecten",
-  "btn_about": "Wie ben ik?"
+  "btn_about": "Wie ben ik?",
+
+  "section_projects_title": "Projecten",
+  "filter_all": "Alles",
+  "filter_trans": "Vertaling",
+  "filter_manage": "Beheer",
+  "filter_marketing": "Marketing",
+  "link_details": "Casestudy",
+  "link_doc": "Document",
+  "proj_negotiation_desc": "Analyse van interculturele onderhandelingsstrategieën tussen Franse en Chinese bedrijven.",
+  "proj_seminar_desc": "Organisatie en beheer van een internationaal studentenseminar aan de universiteit.",
+  "proj_translation_desc": "Technische vertaling (EN > FR) voor de officiële documentatie van een lokale NGO.",
+
+  "section_about_title": "Over mij",
+  "about_intro": "Gepassioneerd door talen, sport en openheid naar de wereld.",
+  "about_text": "Momenteel in Master 1 LMI, combineer ik mijn studie met sterke verenigings- en professionele betrokkenheid. Ik hou van uitdagingen en werken in teamverband, of het nu op het volleybalveld is of bij projectmanagement.",
+  "about_age_label": "jaar",
+  "about_driver_license": "Rijbewijs B",
+
+  "cat_education": "Opleiding",
+  "cat_job": "Ervaring",
+  "cat_volunteering": "Vrijwilligerswerk",
+
+  "timeline_asso_title": "Voorzitter studentenvereniging LMI",
+  "timeline_asso_desc": "Université d'Artois — Projectmanagement, leiderschap en animatie van het studentenleven.",
+
+  "timeline_master_title": "Master LMI (Talen & Management)",
+  "timeline_master_desc": "Université d'Artois — Engels / Spaans / Nederlands.",
+
+  "timeline_afev_title": "Mentor AFEV",
+  "timeline_afev_desc": "Sociale diensten — Educatieve begeleiding en individuele steun voor kinderen in opvangcentra.",
+
+  "timeline_mcdo_title": "Allround medewerker",
+  "timeline_mcdo_desc": "McDonald's (Deeltijds) — Klanten onthalen, bereiding en teamwerk in een snel tempo.",
+
+  "timeline_licence_title": "Bachelor LEA (Internationale Zaken)",
+  "timeline_licence_desc": "Université d'Artois — Engels / Spaans.",
+
+  "timeline_bac_title": "Algemeen Baccalaureaat",
+  "timeline_bac_desc": "Lycée F. Darchicourt — Economie, Geopolitiek, Engels (Met lof).",
+
+  "cert_title": "Certificering",
+  "cert_name": "Virtual Exchange Participant",
+  "cert_school": "Erasmus - University of Limerick",
+
+  "interests_title": "Interesses",
+  "hobbies": ["Volleybal & Basketbal", "Reizen", "Literatuur", "Cinema & Theater", "Koken", "Mode", "Geschiedenis"],
+
+  "section_contact_title": "Contact",
+  "contact_intro": "Geïnteresseerd in mijn profiel? Aarzel niet om contact met mij op te nemen om kansen te bespreken!",
+  "contact_email_btn": "Stuur mij een e-mail",
+  "contact_linkedin_btn": "LinkedIn",
+  "footer_rights": "Alle rechten voorbehouden.",
+  "footer_made": "Sny",
+
+  "proj_erasmus_desc": "Virtueel samenwerkingsproject van 4 weken met een Ierse partner. Interculturele communicatie en eindpresentatie gecertificeerd door UNICollaboration.",
+  "proj_nego_title": "Nego_China",
+  "proj_seminar_title": "Seminar_2024",
+  "proj_erasmus_title": "Virtuele_Uitw"
 }

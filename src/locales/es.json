@@ -2,7 +2,69 @@
   "greeting": "¡Hola!",
   "intro": "Soy Laurine.",
   "bio": "Soy estudiante de <strong>Máster en LMI</strong> (Lenguas y Gestión Internacional) en la <span class='highlight'>Université d'Artois</span>.",
-  "fluent": "Hablo con fluidez",
+  "fluent_sentence": "Hablo con fluidez {en}, {es} y {fr}.",
+  "lang_en": "Inglés",
+  "lang_es": "Español",
+  "lang_fr": "Francés",
+  "lang_nl": "Holandés",
   "btn_projects": "Descubrir mis proyectos",
-  "btn_about": "¿Quién soy?"
+  "btn_about": "¿Quién soy?",
+
+  "section_projects_title": "Proyectos",
+  "filter_all": "Todos",
+  "filter_trans": "Traducción",
+  "filter_manage": "Gestión",
+  "filter_marketing": "Marketing",
+  "link_details": "Estudio de caso",
+  "link_doc": "Documento",
+  "proj_negotiation_desc": "Análisis de estrategias de negociación intercultural entre empresas francesas y chinas.",
+  "proj_seminar_desc": "Organización y gestión de un seminario estudiantil internacional en la universidad.",
+  "proj_translation_desc": "Traducción técnica (EN > FR) para la documentación oficial de una ONG local.",
+
+  "section_about_title": "Sobre mí",
+  "about_intro": "Apasionada por los idiomas, el deporte y la apertura al mundo.",
+  "about_text": "Actualmente en Máster 1 LMI, combino mis estudios con fuertes compromisos asociativos y profesionales. Me encanta asumir retos y trabajar en equipo, ya sea en una cancha de voleibol o en la gestión de proyectos.",
+  "about_age_label": "años",
+  "about_driver_license": "Permiso B",
+
+  "cat_education": "Formación",
+  "cat_job": "Experiencia",
+  "cat_volunteering": "Voluntariado",
+
+  "timeline_asso_title": "Presidenta de la asociación estudiantil LMI",
+  "timeline_asso_desc": "Université d'Artois — Gestión de proyectos, liderazgo y animación de la vida estudiantil.",
+
+  "timeline_master_title": "Máster LMI (Lenguas y Gestión)",
+  "timeline_master_desc": "Université d'Artois — Inglés / Español / Holandés.",
+
+  "timeline_afev_title": "Mentora AFEV",
+  "timeline_afev_desc": "Servicios sociales — Acompañamiento educativo y apoyo individual a niños en centros de acogida.",
+
+  "timeline_mcdo_title": "Empleada polivalente",
+  "timeline_mcdo_desc": "McDonald's (Tiempo parcial) — Atención al cliente, preparación y trabajo en equipo en un entorno dinámico.",
+
+  "timeline_licence_title": "Grado LEA (Negocios Internacionales)",
+  "timeline_licence_desc": "Université d'Artois — Inglés / Español.",
+
+  "timeline_bac_title": "Bachillerato General",
+  "timeline_bac_desc": "Lycée F. Darchicourt — Economía, Geopolítica, Inglés (Mención Muy Bien).",
+
+  "cert_title": "Certificación",
+  "cert_name": "Virtual Exchange Participant",
+  "cert_school": "Erasmus - University of Limerick",
+
+  "interests_title": "Intereses",
+  "hobbies": ["Voleibol y Baloncesto", "Viajes", "Literatura", "Cine y Teatro", "Cocina", "Moda", "Historia"],
+
+  "section_contact_title": "Contactar",
+  "contact_intro": "¿Interesado en mi perfil? ¡No dudes en contactarme para discutir oportunidades o simplemente charlar!",
+  "contact_email_btn": "Enviarme un email",
+  "contact_linkedin_btn": "LinkedIn",
+  "footer_rights": "Todos los derechos reservados.",
+  "footer_made": "Sny",
+
+  "proj_erasmus_desc": "Proyecto colaborativo virtual de 4 semanas con un socio irlandés. Comunicación intercultural y presentación final certificada por UNICollaboration.",
+  "proj_nego_title": "Nego_China",
+  "proj_seminar_title": "Seminario_2024",
+  "proj_erasmus_title": "Intercambio_V"
 }

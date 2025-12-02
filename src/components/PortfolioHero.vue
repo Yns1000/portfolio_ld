@@ -18,26 +18,30 @@
 
       <p class="bio" v-html="$t('bio')"></p>
 
-      <p class="languages">
-        {{ $t('fluent') }}
+      <i18n-t keypath="fluent_sentence" tag="p" class="languages">
 
-        <span class="lang-tag">
-          <img src="https://flagcdn.com/w40/gb.png" alt="UK" class="flag-icon" />
-          English
-        </span>,
+        <template #en>
+          <span class="lang-tag">
+            <img src="https://flagcdn.com/w40/gb.png" alt="UK" class="flag-icon" />
+            {{ $t('lang_en') }}
+          </span>
+        </template>
 
-        <span class="lang-tag">
-          <img src="https://flagcdn.com/w40/es.png" alt="Spain" class="flag-icon" />
-          Spanish
-        </span>,
+        <template #es>
+          <span class="lang-tag">
+            <img src="https://flagcdn.com/w40/es.png" alt="Spain" class="flag-icon" />
+            {{ $t('lang_es') }}
+          </span>
+        </template>
 
-        {{ locale === 'fr' ? 'et' : 'and' }}
+        <template #fr>
+          <span class="lang-tag">
+            <img src="https://flagcdn.com/w40/fr.png" alt="French" class="flag-icon" />
+            {{ $t('lang_fr') }}
+          </span>
+        </template>
 
-        <span class="lang-tag">
-          <img src="https://flagcdn.com/w40/fr.png" alt="France" class="flag-icon" />
-          French
-        </span>.
-      </p>
+      </i18n-t>
 
       <div class="buttons">
         <a href="#projects" class="btn btn-primary">{{ $t('btn_projects') }}</a>
