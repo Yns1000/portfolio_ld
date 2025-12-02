@@ -1,20 +1,27 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n' // <--- Import nécessaire
+import { useI18n } from 'vue-i18n'
+
+// Imports des composants de section
 import PortfolioHero from './components/PortfolioHero.vue'
+import ProjectsSection from './components/ProjectsSection.vue'
+import AboutSection from './components/AboutSection.vue'
+import ContactSection from './components/ContactSection.vue'
+
+// Imports des icônes
 import IconCommunity from './components/icons/IconCommunity.vue'
 import IconDocumentation from './components/icons/IconDocumentation.vue'
 import IconTooling from './components/icons/IconTooling.vue'
 
-// Récupération de l'instance i18n
 const { locale } = useI18n()
 const isDark = ref(true)
 
-// Fonction pour changer la langue
+// Changer la langue
 const changeLanguage = (lang) => {
   locale.value = lang
 }
 
+// Basculer le thème
 const toggleTheme = () => {
   isDark.value = !isDark.value
   if (isDark.value) {
@@ -36,8 +43,10 @@ onMounted(() => {
     <nav class="navbar">
       <div class="nav-icons">
         <a href="#" class="nav-item active"><IconCommunity /></a>
+
         <a href="#projects" class="nav-item"><IconTooling /></a>
-        <a href="#studies" class="nav-item"><IconDocumentation /></a>
+
+        <a href="#about" class="nav-item"><IconDocumentation /></a>
       </div>
 
       <div class="nav-settings">
@@ -55,7 +64,6 @@ onMounted(() => {
         >
           <div class="icon-wrapper" :class="{ 'dark-active': isDark }">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
-
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </div>
         </button>
@@ -65,6 +73,9 @@ onMounted(() => {
 
   <main>
     <PortfolioHero />
+    <ProjectsSection />
+    <AboutSection />
+    <ContactSection />
   </main>
 </template>
 
@@ -117,7 +128,7 @@ onMounted(() => {
 /* --- Bouton style Shadcn (Outline/Ghost) --- */
 .theme-toggle {
   background: transparent;
-  border: 1px solid var(--color-border); /* Utilise la variable border adaptative */
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   width: 40px;
   height: 40px;
@@ -151,9 +162,6 @@ onMounted(() => {
 }
 
 /* --- Animation des icônes --- */
-
-/* État initial (quand isDark = false, donc Mode CLAIR) */
-/* On montre la LUNE pour proposer de passer en sombre */
 .icon-sun {
   transform: rotate(90deg) scale(0);
   opacity: 0;
@@ -163,8 +171,6 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* État actif (quand isDark = true, donc Mode SOMBRE) */
-/* On montre le SOLEIL pour proposer de passer en clair */
 .dark-active .icon-sun {
   transform: rotate(0deg) scale(1);
   opacity: 1;
