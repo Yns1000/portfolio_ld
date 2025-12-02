@@ -1,17 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n' // <--- Import nécessaire
 import PortfolioHero from './components/PortfolioHero.vue'
 import IconCommunity from './components/icons/IconCommunity.vue'
 import IconDocumentation from './components/icons/IconDocumentation.vue'
 import IconTooling from './components/icons/IconTooling.vue'
 
-// État pour le thème (true = sombre par défaut)
+// Récupération de l'instance i18n
+const { locale } = useI18n()
 const isDark = ref(true)
+
+// Fonction pour changer la langue
+const changeLanguage = (lang) => {
+  locale.value = lang
+}
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
-  // Note: C'est ici qu'on ajouterait la logique pour changer les couleurs CSS si besoin
+  if (isDark.value) {
+    document.documentElement.removeAttribute('data-theme')
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light')
+  }
 }
+
+onMounted(() => {
+  if (!isDark.value) {
+    document.documentElement.setAttribute('data-theme', 'light')
+  }
+})
 </script>
 
 <template>
@@ -25,7 +42,10 @@ const toggleTheme = () => {
 
       <div class="nav-settings">
         <div class="lang-switch">
-          <span class="active">EN</span> | <span>FR</span> | <span>NL</span> | <span>ES</span>
+          <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">EN</span> |
+          <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">FR</span> |
+          <span @click="changeLanguage('nl')" :class="{ active: locale === 'nl' }">NL</span> |
+          <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">ES</span>
         </div>
 
         <button
@@ -97,7 +117,7 @@ const toggleTheme = () => {
 /* --- Bouton style Shadcn (Outline/Ghost) --- */
 .theme-toggle {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Bordure subtile */
+  border: 1px solid var(--color-border); /* Utilise la variable border adaptative */
   border-radius: 8px;
   width: 40px;
   height: 40px;
@@ -107,15 +127,15 @@ const toggleTheme = () => {
   justify-content: center;
   color: var(--color-text-main);
   transition: all 0.2s ease;
-  overflow: hidden; /* Nécessaire pour l'animation */
+  overflow: hidden;
 }
 
 .theme-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: var(--color-accent); /* Touche de couleur au survol */
+  background-color: var(--color-border);
+  border-color: var(--color-accent);
 }
 
-/* Wrapper pour positionner les icônes l'une sur l'autre */
+/* Wrapper pour positionner les icônes */
 .icon-wrapper {
   position: relative;
   width: 20px;
@@ -127,30 +147,30 @@ const toggleTheme = () => {
 
 .icon {
   position: absolute;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Transition fluide */
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /* --- Animation des icônes --- */
 
-/* État "Soleil" (Light mode) */
+/* État initial (quand isDark = false, donc Mode CLAIR) */
+/* On montre la LUNE pour proposer de passer en sombre */
 .icon-sun {
-  transform: rotate(0deg) scale(1);
-  opacity: 1;
-}
-
-.icon-moon {
   transform: rotate(90deg) scale(0);
   opacity: 0;
 }
-
-/* État "Lune" (Dark mode) activé */
-.dark-active .icon-sun {
-  transform: rotate(-90deg) scale(0);
-  opacity: 0;
-}
-
-.dark-active .icon-moon {
+.icon-moon {
   transform: rotate(0deg) scale(1);
   opacity: 1;
+}
+
+/* État actif (quand isDark = true, donc Mode SOMBRE) */
+/* On montre le SOLEIL pour proposer de passer en clair */
+.dark-active .icon-sun {
+  transform: rotate(0deg) scale(1);
+  opacity: 1;
+}
+.dark-active .icon-moon {
+  transform: rotate(-90deg) scale(0);
+  opacity: 0;
 }
 </style>

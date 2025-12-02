@@ -7,42 +7,47 @@
     <div class="dots-decoration">
       <span v-for="n in 25" :key="n" class="dot"></span>
     </div>
-
     <div class="geo-decoration">
       <div class="geo-square"></div>
       <div class="geo-l-shape"></div>
     </div>
 
     <div class="text-content">
-      <h2 class="greeting">Hi!</h2>
-      <h1 class="name">I'm Laurine.</h1>
+      <h2 class="greeting">{{ $t('greeting') }}</h2>
+      <h1 class="name">{{ $t('intro') }}</h1>
 
-      <p class="bio">
-        I am a <strong>Master Student in LMI</strong> (Langues & Management International)
-        at <span class="highlight">Université d'Artois</span>.
-      </p>
+      <p class="bio" v-html="$t('bio')"></p>
 
       <p class="languages">
-        Fluent in
-        <span class="lang-tag">🇬🇧 English</span>,
-        <span class="lang-tag">🇪🇸 Spanish</span>, and
-        <span class="lang-tag">🇳🇱 Dutch</span>.
+        {{ $t('fluent') }}
+
+        <span class="lang-tag">
+          <img src="https://flagcdn.com/w40/gb.png" alt="UK" class="flag-icon" />
+          English
+        </span>,
+
+        <span class="lang-tag">
+          <img src="https://flagcdn.com/w40/es.png" alt="Spain" class="flag-icon" />
+          Spanish
+        </span>,
+
+        {{ locale === 'fr' ? 'et' : 'and' }}
+
+        <span class="lang-tag">
+          <img src="https://flagcdn.com/w40/fr.png" alt="France" class="flag-icon" />
+          French
+        </span>.
       </p>
 
       <div class="buttons">
-        <a href="#projects" class="btn btn-primary">Discover my projects</a>
-        <a href="#about" class="btn btn-outline">Who am I?</a>
+        <a href="#projects" class="btn btn-primary">{{ $t('btn_projects') }}</a>
+        <a href="#about" class="btn btn-outline">{{ $t('btn_about') }}</a>
       </div>
     </div>
 
     <div class="visual-content">
       <div class="blob-bg"></div>
-
-      <img
-          src="/Laurine.svg"
-          alt="Laurine Avatar"
-          class="avatar-img"
-      />
+      <img src="/Laurine.svg" alt="Laurine Avatar" class="avatar-img" />
     </div>
   </section>
 </template>
@@ -70,17 +75,33 @@
 }
 
 .greeting {
-  font-size: 3rem;
+  /* S'adapte : minimum 2rem, idéal 5vw, max 3rem */
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   color: var(--color-text-main);
   line-height: 1.2;
 }
 
 .name {
-  font-size: 4rem;
+  /* LE CHANGEMENT EST ICI : */
+  /* On réduit la taille max de 5.5rem à 4.5rem pour éviter que le FR ne casse */
+  /* Et on utilise clamp pour que ça réduise proprement sur tablette */
+  font-size: clamp(3rem, 7vw, 4.5rem);
+
   font-weight: 800;
   color: var(--color-text-main);
   margin-bottom: 1.5rem;
+
+  /* Resserrer l'interligne pour que ça fasse "bloc" si jamais ça passe sur 2 lignes */
+  line-height: 1.1;
+
+  /* Empêcher les coupures de mots moches */
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .name {
+    white-space: normal;
+  }
 }
 
 .bio {
@@ -95,14 +116,31 @@
   color: var(--color-text-muted);
 }
 
+/* ... autres styles ... */
+
 .lang-tag {
   color: var(--color-accent);
   font-weight: 600;
   margin: 0 5px;
+  /* Permet d'aligner l'image et le texte verticalement */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* Espace entre le drapeau et le texte */
 }
 
-.highlight {
-  color: #fff;
+/* Style des petits drapeaux */
+.flag-icon {
+  width: 20px;
+  height: auto;
+  border-radius: 3px; /* Coins légèrement arrondis pour faire propre */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Légère ombre pour le relief */
+  object-fit: cover;
+}
+
+/* ... suite ... */
+
+:deep(.highlight) {
+  color: var(--color-text-highlight);
   font-weight: 600;
 }
 
@@ -239,7 +277,7 @@
   left: 10px;
   width: 50px;
   height: 50px;
-  border: 2px solid var(--color-bg-card);
+  border: 2px solid var(--color-text-highlight);
   z-index: 2;
   opacity: 0.6;
   transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);

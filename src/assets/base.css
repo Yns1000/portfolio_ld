@@ -1,48 +1,50 @@
 /* src/assets/base.css */
+
+/* --- THÈME SOMBRE (DÉFAUT) --- */
 :root {
-  /* --- Palette "Happy Hues" (Warm/Brown) --- */
-
-  /* Fond principal (Background) */
   --color-bg: #55423d;
-
-  /* Couleur pour les éléments sombres (inspiré de "Button Text" / "Stroke") */
   --color-bg-card: #271c19;
-
-  /* Titres (Headline) */
   --color-text-main: #fffffe;
-
-  /* Texte courant (Paragraph) */
   --color-text-muted: #fff3ec;
 
-  /* Boutons et accents (Button) */
   --color-accent: #ffc0ad;
-
-  /* Couleur du texte DANS le bouton (Button text) */
   --color-accent-text: #271c19;
-
-  /* Couleur au survol (Highlight - le rose) */
   --color-accent-hover: #e78fb3;
 
-  /* Forme derrière l'avatar (Stroke - très sombre pour la profondeur) */
-  --color-blob: #dda796;
+  /* NOUVELLE VARIABLE : Blanc en mode sombre */
+  --color-text-highlight: #ffffff;
+
+  --color-blob: #140d0b;
+  --color-border: rgba(255, 255, 255, 0.2);
 
   --font-main: 'Inter', sans-serif;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  font-weight: normal;
+/* --- THÈME CLAIR --- */
+:root[data-theme="light"] {
+  --color-bg: #fff3ec;
+  --color-bg-card: #ffffff;
+  --color-text-main: #271c19;
+  --color-text-muted: #55423d;
+
+  --color-accent: #ffc0ad;
+  --color-accent-text: #271c19;
+  --color-accent-hover: #e78fb3;
+
+  /* NOUVELLE VARIABLE : Violet (Tertiary) ou Marron en mode clair pour être lisible */
+  --color-text-highlight: #5b465e; /* Couleur "Tertiary" de votre palette */
+
+  --color-blob: #f2dbce;
+  --color-border: rgba(39, 28, 25, 0.1);
 }
 
+/* Reste du fichier inchangé... */
+*, *::before, *::after { box-sizing: border-box; margin: 0; position: relative; font-weight: normal; }
 body {
   min-height: 100vh;
   color: var(--color-text-main);
   background: var(--color-bg);
-  transition: color 0.5s, background-color 0.5s;
+  transition: color 0.5s ease, background-color 0.5s ease;
   line-height: 1.6;
   font-family: var(--font-main);
   font-size: 16px;
