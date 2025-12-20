@@ -2,23 +2,31 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-// Imports des composants de section
+// Imports des icônes modernes (Lucide)
+import {
+  Home,
+  Briefcase,
+  User,
+  Mail,
+  Sun,
+  Moon,
+  Languages
+} from 'lucide-vue-next'
+
+// Imports des composants
 import PortfolioHero from './components/PortfolioHero.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
 
-// Imports des icônes
-import IconCommunity from './components/icons/IconCommunity.vue'
-import IconDocumentation from './components/icons/IconDocumentation.vue'
-import IconTooling from './components/icons/IconTooling.vue'
-
 const { locale } = useI18n()
 const isDark = ref(true)
+const isLangMenuOpen = ref(false)
 
 // Changer la langue
 const changeLanguage = (lang) => {
   locale.value = lang
+  isLangMenuOpen.value = false
 }
 
 // Basculer le thème
@@ -32,6 +40,7 @@ const toggleTheme = () => {
 }
 
 onMounted(() => {
+  // Force le mode sombre par défaut si pas de préférence
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
@@ -39,35 +48,54 @@ onMounted(() => {
 </script>
 
 <template>
-  <header>
+  <header class="site-header glass-nav">
     <nav class="navbar">
-      <div class="nav-icons">
-        <a href="#" class="nav-item active"><IconCommunity /></a>
 
-        <a href="#projects" class="nav-item"><IconTooling /></a>
-
-        <a href="#about" class="nav-item"><IconDocumentation /></a>
+      <div class="nav-links">
+        <a href="#" class="nav-item" aria-label="Home">
+          <Home :size="20" />
+          <span class="nav-text">Home</span>
+        </a>
+        <a href="#projects" class="nav-item" aria-label="Projects">
+          <Briefcase :size="20" />
+          <span class="nav-text">Projets</span>
+        </a>
+        <a href="#about" class="nav-item" aria-label="About">
+          <User :size="20" />
+          <span class="nav-text">À propos</span>
+        </a>
+        <a href="#contact" class="nav-item" aria-label="Contact">
+          <Mail :size="20" />
+          <span class="nav-text">Contact</span>
+        </a>
       </div>
 
       <div class="nav-settings">
-        <div class="lang-switch">
-          <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">EN</span> |
-          <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">FR</span> |
-          <span @click="changeLanguage('nl')" :class="{ active: locale === 'nl' }">NL</span> |
-          <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">ES</span>
+
+        <div class="lang-dropdown-wrapper">
+          <button class="icon-btn" @click="isLangMenuOpen = !isLangMenuOpen">
+            <Languages :size="20" />
+            <span class="current-lang">{{ locale.toUpperCase() }}</span>
+          </button>
+
+          <div class="lang-menu glass-panel" v-if="isLangMenuOpen">
+            <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">🇬🇧 EN</span>
+            <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">🇫🇷 FR</span>
+            <span @click="changeLanguage('nl')" :class="{ active: locale === 'nl' }">🇳🇱 NL</span>
+            <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">🇪🇸 ES</span>
+          </div>
         </div>
 
         <button
-            class="theme-toggle"
+            class="theme-toggle icon-btn"
             @click="toggleTheme"
-            :aria-label="isDark ? 'Passer en mode clair' : 'Passer en mode sombre'"
+            :aria-label="isDark ? 'Mode clair' : 'Mode sombre'"
         >
-          <div class="icon-wrapper" :class="{ 'dark-active': isDark }">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-sun"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          </div>
+          <Sun v-if="!isDark" :size="20" class="icon-sun" />
+          <Moon v-else :size="20" class="icon-moon" />
         </button>
       </div>
+
     </nav>
   </header>
 
@@ -79,104 +107,174 @@ onMounted(() => {
   </main>
 </template>
 
+<style>
+/* --- RESET GLOBAL IMPORTANT --- */
+/* Pour s'assurer que le site prend tout l'écran sans marges blanches */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--color-bg);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#app {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 !important; /* On force la suppression du padding par défaut de Vue */
+  margin: 0 auto;
+}
+</style>
+
 <style scoped>
-/* Navigation Style */
+/* --- HEADER FLOTTANT --- */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1rem 2rem;
+  transition: all 0.3s ease;
+}
+
+/* Effet Glassmorphism */
+.glass-nav {
+  background: rgba(var(--color-bg-rgb), 0.7); /* Transparence sur le fond */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .navbar {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
-  width: 100%;
 }
 
-.nav-icons {
+/* --- NAVIGATION GAUCHE --- */
+.nav-links {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .nav-item {
   color: var(--color-text-muted);
-  transition: color 0.3s ease;
+  text-decoration: none;
   display: flex;
   align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover {
   color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
+/* Masquer le texte sur mobile pour gagner de la place */
+@media (max-width: 768px) {
+  .nav-text { display: none; }
+  .nav-links { gap: 1.5rem; padding: 10px 20px; }
+}
+
+/* --- PARAMÈTRES DROITE --- */
 .nav-settings {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-main);
+  gap: 1rem;
 }
 
-.lang-switch span {
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-}
-
-.lang-switch span:hover, .lang-switch span.active {
-  opacity: 1;
-  color: var(--color-text-main);
-}
-
-/* --- Bouton style Shadcn (Outline/Ghost) --- */
-.theme-toggle {
+.icon-btn {
   background: transparent;
-  border: 1px solid var(--color-border);
+  border: none;
+  color: var(--color-text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
   border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-accent);
+}
+
+.current-lang {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* --- MENU LANGUE --- */
+.lang-dropdown-wrapper {
+  position: relative;
+}
+
+.lang-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  /* Glass effect pour le menu */
+  backdrop-filter: blur(10px);
+}
+
+.lang-menu span {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-menu span:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-accent);
+}
+
+.lang-menu span.active {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+/* --- Toggle Thème Animé --- */
+.theme-toggle {
   width: 40px;
   height: 40px;
-  cursor: pointer;
   display: flex;
-  align-items: center;
   justify-content: center;
-  color: var(--color-text-main);
-  transition: all 0.2s ease;
-  overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
-.theme-toggle:hover {
-  background-color: var(--color-border);
-  border-color: var(--color-accent);
-}
+/* Animations simples */
+.icon-sun { color: #facc15; animation: spin 0.5s ease-out; }
+.icon-moon { color: #a8a29e; animation: fade 0.5s ease-out; }
 
-/* Wrapper pour positionner les icônes */
-.icon-wrapper {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon {
-  position: absolute;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-/* --- Animation des icônes --- */
-.icon-sun {
-  transform: rotate(90deg) scale(0);
-  opacity: 0;
-}
-.icon-moon {
-  transform: rotate(0deg) scale(1);
-  opacity: 1;
-}
-
-.dark-active .icon-sun {
-  transform: rotate(0deg) scale(1);
-  opacity: 1;
-}
-.dark-active .icon-moon {
-  transform: rotate(-90deg) scale(0);
-  opacity: 0;
-}
+@keyframes spin { from { transform: rotate(-90deg) scale(0.5); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+@keyframes fade { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 </style>

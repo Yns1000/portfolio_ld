@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+// Import des icônes pour remplacer les émojis
+import { Car, Trophy, GraduationCap, Heart } from 'lucide-vue-next'
 
 const { t, tm } = useI18n()
 
@@ -65,14 +67,23 @@ const getTypeLabel = (type) => {
 
             <div class="info-badges">
               <span class="badge">{{ age }} {{ t('about_age_label') }}</span>
-              <span class="badge icon-badge">🚗 {{ t('about_driver_license') }}</span>
+              <span class="badge icon-badge">
+                <Car :size="18" class="badge-icon" />
+                {{ t('about_driver_license') }}
+              </span>
             </div>
           </div>
 
           <div class="info-block glass-card">
-            <h3 class="block-title">🏆 {{ t('cert_title') }}</h3>
+            <div class="block-header">
+              <Trophy :size="22" class="block-icon" />
+              <h3 class="block-title">{{ t('cert_title') }}</h3>
+            </div>
+
             <a href="https://openbadgefactory.com/obv3/credentials/db277f0419ae76ed0993d88db0114f441ecefc59.html" target="_blank" class="cert-card">
-              <div class="cert-icon">🎓</div>
+              <div class="cert-icon-box">
+                <GraduationCap :size="26" />
+              </div>
               <div class="cert-info">
                 <span class="cert-name">{{ t('cert_name') }}</span>
                 <span class="cert-school">{{ t('cert_school') }}</span>
@@ -82,7 +93,11 @@ const getTypeLabel = (type) => {
           </div>
 
           <div class="info-block glass-card">
-            <h3 class="block-title">❤️ {{ t('interests_title') }}</h3>
+            <div class="block-header">
+              <Heart :size="22" class="block-icon" />
+              <h3 class="block-title">{{ t('interests_title') }}</h3>
+            </div>
+
             <div class="tags-cloud">
               <span v-for="(hobby, index) in tm('hobbies')" :key="index" class="hobby-tag">
                 {{ hobby }}
@@ -121,7 +136,7 @@ const getTypeLabel = (type) => {
   background-color: var(--color-bg);
   color: var(--color-text-main);
   position: relative;
-  overflow: visible; /* Important: On laisse les images dépasser ! */
+  overflow: visible;
 }
 
 .container {
@@ -130,7 +145,7 @@ const getTypeLabel = (type) => {
   padding: 0 2rem;
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 6rem; /* On augmente l'espace pour laisser passer les images au milieu */
+  gap: 6rem;
   align-items: start;
   position: relative;
 }
@@ -139,22 +154,21 @@ const getTypeLabel = (type) => {
 
 .content-wrapper {
   position: relative;
-  z-index: 2; /* Le texte est au niveau 2 */
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
 .glass-card {
-  background: rgba(var(--color-bg-card-rgb, 40, 30, 30), 0.5); /* Un peu plus opaque */
+  background: rgba(var(--color-bg-card-rgb, 40, 30, 30), 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  padding: 2.5rem; /* Plus d'espace intérieur */
+  padding: 2.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   position: relative;
-  /* Important : pour que les images en z-index 3 passent dessus */
   transform-style: preserve-3d;
 }
 
@@ -163,7 +177,7 @@ const getTypeLabel = (type) => {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* --- DÉCORATIONS CLAIREMENT VISIBLES --- */
+/* --- DÉCORATIONS --- */
 .decorations-container {
   position: absolute;
   top: 0;
@@ -171,56 +185,20 @@ const getTypeLabel = (type) => {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Pas de z-index global ici, on gère par item */
 }
 
 .deco-item {
   position: absolute;
-  opacity: 1; /* ON VOIT TOUT ! */
-  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3)); /* Grosse ombre pour le relief */
+  opacity: 1;
+  filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
   transition: all 0.3s ease;
 }
 
-/* -- STITCH : En haut à gauche, posé sur le bord -- */
-.stitch {
-  top: -60px;
-  left: -50px;
-  width: 140px;
-  transform: rotate(-10deg);
-  z-index: 3; /* IL PASSE DEVANT LA CARTE ! Effet 3D */
-}
+.stitch { top: -60px; left: -50px; width: 140px; transform: rotate(-10deg); z-index: 1; }
+.volley { top: -40px; right: -50px; width: 110px; border-radius: 50%; transform: rotate(15deg); z-index: 3; }
+.book { top: 45%; right: -60px; width: 100px; transform: rotate(15deg); border-radius: 5px; z-index: 3; }
+.basket { bottom: -40px; left: -40px; width: 130px; border-radius: 50%; transform: rotate(-15deg); z-index: 2; }
 
-/* -- VOLLEY : En haut à droite, flottant -- */
-.volley {
-  top: -40px;
-  right: -50px;
-  width: 110px;
-  border-radius: 50%;
-  transform: rotate(15deg);
-  z-index: 1; /* Derrière */
-}
-
-/* -- LIVRE : Au milieu à droite, sortant de la certification -- */
-.book {
-  top: 45%;
-  right: -60px;
-  width: 100px;
-  transform: rotate(15deg);
-  border-radius: 5px;
-  z-index: 3; /* DEVANT aussi */
-}
-
-/* -- BASKET : Tout en bas à gauche -- */
-.basket {
-  bottom: -40px;
-  left: -40px;
-  width: 130px;
-  border-radius: 50%;
-  transform: rotate(-15deg);
-  z-index: 2; /* DEVANT */
-}
-
-/* Animations de flottement */
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(var(--r)); }
   50% { transform: translateY(-15px) rotate(var(--r)); }
@@ -230,23 +208,12 @@ const getTypeLabel = (type) => {
 .float-medium { --r: 15deg; animation: float 5s ease-in-out infinite; }
 .float-fast { --r: -15deg; animation: float 6s ease-in-out infinite; }
 
-/* Responsive : On range un peu sur mobile */
 @media (max-width: 768px) {
-  .deco-item {
-    width: 70px !important;
-    z-index: 0 !important; /* Tout passe derrière sur mobile pour pas gêner */
-    opacity: 0.8;
-  }
+  .deco-item { width: 70px !important; z-index: 0 !important; opacity: 0.8; }
   .stitch { top: -30px; left: -10px; }
   .volley { right: -10px; top: -30px; }
   .basket { bottom: -20px; left: -10px; }
-  .book {
-    display: block; /* On le réactive */
-    top: auto;      /* On annule la position du haut */
-    bottom: -20px;  /* On le met en bas */
-    right: -10px;   /* À droite */
-    z-index: 5 !important; /* DEVANT TOUT */
-  }
+  .book { display: block; top: auto; bottom: -20px; right: -10px; z-index: 5 !important; }
   .glass-card { padding: 1.5rem; }
 }
 
@@ -254,18 +221,19 @@ const getTypeLabel = (type) => {
   .container { grid-template-columns: 1fr; gap: 4rem; }
 }
 
-/* --- LE RESTE DU CSS (Inchangé) --- */
+/* --- TYPOGRAPHIE & BADGES --- */
 .section-title { font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; }
 .highlight { color: var(--color-accent); }
 .intro { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-accent); }
 .text { color: var(--color-text-muted); line-height: 1.7; margin-bottom: 2rem; font-size: 1.05rem; }
+
 .info-badges {
   display: flex;
   gap: 10px;
   margin-bottom: 0;
-  /* CORRECTION : Permet aux badges de passer à la ligne si l'écran est trop petit */
   flex-wrap: wrap;
 }
+
 .badge {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
@@ -275,31 +243,67 @@ const getTypeLabel = (type) => {
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  /* CORRECTION : Empêche le texte de se couper mochement */
+  gap: 8px; /* Plus d'espace pour l'icône */
   white-space: nowrap;
+  color: var(--color-text-main);
+}
+.badge-icon {
+  color: var(--color-accent);
 }
 
 @media (max-width: 600px) {
-  .info-badges {
-    gap: 8px; /* On réduit l'espace entre les badges */
-  }
-
-  .badge {
-    font-size: 0.8rem; /* Police un peu plus petite */
-    padding: 6px 12px; /* Badges moins larges */
-    flex: 1 1 auto; /* Les badges s'adaptent intelligemment à la largeur */
-    justify-content: center; /* Texte centré */
-  }
+  .info-badges { gap: 8px; }
+  .badge { font-size: 0.8rem; padding: 6px 12px; flex: 1 1 auto; justify-content: center; }
 }
-.block-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
-.cert-card { display: flex; align-items: center; gap: 15px; background: var(--color-bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--color-border); text-decoration: none; color: inherit; transition: all 0.3s ease; }
+
+/* --- TITRES DE BLOC (Modifié pour icônes) --- */
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.block-icon {
+  color: var(--color-accent);
+}
+
+.block-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+  margin: 0; /* Important: reset margin */
+}
+
+/* --- CERTIFICATION --- */
+.cert-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: var(--color-bg-card);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
 .cert-card:hover { border-color: var(--color-accent); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-.cert-icon { font-size: 1.5rem; }
+
+.cert-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-main);
+}
 .cert-info { display: flex; flex-direction: column; flex: 1; }
 .cert-name { font-weight: 700; font-size: 1rem; }
 .cert-school { font-size: 0.85rem; color: var(--color-text-muted); }
 .cert-arrow { font-weight: bold; color: var(--color-accent); }
+
+/* --- TAGS --- */
 .tags-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
 .hobby-tag { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--color-border); font-size: 0.9rem; transition: 0.3s; }
 .hobby-tag:hover { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); }
