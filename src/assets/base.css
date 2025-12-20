@@ -2,18 +2,21 @@
 
 /* --- THÈME SOMBRE (DÉFAUT) --- */
 :root {
+  /* Couleurs Hexa (pour usage direct) */
   --color-bg: #55423d;
   --color-bg-card: #271c19;
+  --color-accent: #ffc0ad;
+
+  --color-bg-rgb: 85, 66, 61;        /* Correspond à #55423d */
+  --color-bg-card-rgb: 39, 28, 25;   /* Correspond à #271c19 */
+  --color-accent-rgb: 255, 192, 173; /* Correspond à #ffc0ad */
+
   --color-text-main: #fffffe;
   --color-text-muted: #fff3ec;
-
-  --color-accent: #ffc0ad;
   --color-accent-text: #271c19;
   --color-accent-hover: #e78fb3;
 
-  /* NOUVELLE VARIABLE : Blanc en mode sombre */
   --color-text-highlight: #ffffff;
-
   --color-blob: #140d0b;
   --color-border: rgba(255, 255, 255, 0.2);
 
@@ -24,21 +27,22 @@
 :root[data-theme="light"] {
   --color-bg: #fff3ec;
   --color-bg-card: #ffffff;
+  --color-accent: #ffc0ad;
+
+  --color-bg-rgb: 255, 243, 236;     /* Correspond à #fff3ec */
+  --color-bg-card-rgb: 255, 255, 255; /* Correspond à #ffffff */
+  --color-accent-rgb: 255, 192, 173;
+
   --color-text-main: #271c19;
   --color-text-muted: #55423d;
-
-  --color-accent: #ffc0ad;
   --color-accent-text: #271c19;
   --color-accent-hover: #e78fb3;
 
-  /* NOUVELLE VARIABLE : Violet (Tertiary) ou Marron en mode clair pour être lisible */
-  --color-text-highlight: #5b465e; /* Couleur "Tertiary" de votre palette */
-
+  --color-text-highlight: #5b465e;
   --color-blob: #f2dbce;
   --color-border: rgba(39, 28, 25, 0.1);
 }
 
-/* Reste du fichier inchangé... */
 *, *::before, *::after { box-sizing: border-box; margin: 0; position: relative; font-weight: normal; }
 body {
   min-height: 100vh;

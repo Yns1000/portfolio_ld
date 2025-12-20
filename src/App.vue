@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-// Imports des icônes modernes (Lucide)
 import {
   Home,
   Briefcase,
@@ -13,7 +12,6 @@ import {
   Languages
 } from 'lucide-vue-next'
 
-// Imports des composants
 import PortfolioHero from './components/PortfolioHero.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import AboutSection from './components/AboutSection.vue'
@@ -23,13 +21,11 @@ const { locale } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
 
-// Changer la langue
 const changeLanguage = (lang) => {
   locale.value = lang
   isLangMenuOpen.value = false
 }
 
-// Basculer le thème
 const toggleTheme = () => {
   isDark.value = !isDark.value
   if (isDark.value) {
@@ -40,7 +36,6 @@ const toggleTheme = () => {
 }
 
 onMounted(() => {
-  // Force le mode sombre par défaut si pas de préférence
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
@@ -108,8 +103,6 @@ onMounted(() => {
 </template>
 
 <style>
-/* --- RESET GLOBAL IMPORTANT --- */
-/* Pour s'assurer que le site prend tout l'écran sans marges blanches */
 body {
   margin: 0;
   padding: 0;
@@ -122,13 +115,12 @@ body {
 #app {
   width: 100%;
   max-width: 100%;
-  padding: 0 !important; /* On force la suppression du padding par défaut de Vue */
+  padding: 0 !important;
   margin: 0 auto;
 }
 </style>
 
 <style scoped>
-/* --- HEADER FLOTTANT --- */
 .site-header {
   position: fixed;
   top: 0;
@@ -139,9 +131,8 @@ body {
   transition: all 0.3s ease;
 }
 
-/* Effet Glassmorphism */
 .glass-nav {
-  background: rgba(var(--color-bg-rgb), 0.7); /* Transparence sur le fond */
+  background: rgba(var(--color-bg-rgb), 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -155,7 +146,6 @@ body {
   align-items: center;
 }
 
-/* --- NAVIGATION GAUCHE --- */
 .nav-links {
   display: flex;
   gap: 2rem;
@@ -182,13 +172,11 @@ body {
   transform: translateY(-1px);
 }
 
-/* Masquer le texte sur mobile pour gagner de la place */
 @media (max-width: 768px) {
   .nav-text { display: none; }
   .nav-links { gap: 1.5rem; padding: 10px 20px; }
 }
 
-/* --- PARAMÈTRES DROITE --- */
 .nav-settings {
   display: flex;
   align-items: center;
@@ -218,7 +206,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* --- MENU LANGUE --- */
 .lang-dropdown-wrapper {
   position: relative;
 }
@@ -236,7 +223,6 @@ body {
   gap: 4px;
   min-width: 120px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  /* Glass effect pour le menu */
   backdrop-filter: blur(10px);
 }
 
@@ -262,7 +248,6 @@ body {
   color: var(--color-accent-text);
 }
 
-/* --- Toggle Thème Animé --- */
 .theme-toggle {
   width: 40px;
   height: 40px;
@@ -271,7 +256,6 @@ body {
   border: 1px solid var(--color-border);
 }
 
-/* Animations simples */
 .icon-sun { color: #facc15; animation: spin 0.5s ease-out; }
 .icon-moon { color: #a8a29e; animation: fade 0.5s ease-out; }
 

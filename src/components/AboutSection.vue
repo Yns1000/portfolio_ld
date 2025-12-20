@@ -1,12 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-// Import des icônes pour remplacer les émojis
 import { Car, Trophy, GraduationCap, Heart } from 'lucide-vue-next'
 
 const { t, tm } = useI18n()
 
-// --- Calcul de l'âge dynamique ---
 const birthDate = new Date('2004-12-26')
 const age = computed(() => {
   const today = new Date()
@@ -18,7 +16,6 @@ const age = computed(() => {
   return age
 })
 
-// --- Données Timeline ---
 const timelineData = [
   { period: 'Sept. 2025 - ...', titleKey: 'timeline_asso_title', descKey: 'timeline_asso_desc', type: 'vol' },
   { period: 'Sept. 2025 - 2027', titleKey: 'timeline_master_title', descKey: 'timeline_master_desc', type: 'edu' },
@@ -177,7 +174,6 @@ const getTypeLabel = (type) => {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* --- DÉCORATIONS --- */
 .decorations-container {
   position: absolute;
   top: 0;
@@ -221,7 +217,6 @@ const getTypeLabel = (type) => {
   .container { grid-template-columns: 1fr; gap: 4rem; }
 }
 
-/* --- TYPOGRAPHIE & BADGES --- */
 .section-title { font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; }
 .highlight { color: var(--color-accent); }
 .intro { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-accent); }
@@ -243,7 +238,7 @@ const getTypeLabel = (type) => {
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;
-  gap: 8px; /* Plus d'espace pour l'icône */
+  gap: 8px;
   white-space: nowrap;
   color: var(--color-text-main);
 }
@@ -256,7 +251,6 @@ const getTypeLabel = (type) => {
   .badge { font-size: 0.8rem; padding: 6px 12px; flex: 1 1 auto; justify-content: center; }
 }
 
-/* --- TITRES DE BLOC (Modifié pour icônes) --- */
 .block-header {
   display: flex;
   align-items: center;
@@ -274,10 +268,9 @@ const getTypeLabel = (type) => {
   text-transform: uppercase;
   letter-spacing: 1px;
   opacity: 0.9;
-  margin: 0; /* Important: reset margin */
+  margin: 0;
 }
 
-/* --- CERTIFICATION --- */
 .cert-card {
   display: flex;
   align-items: center;
@@ -303,16 +296,14 @@ const getTypeLabel = (type) => {
 .cert-school { font-size: 0.85rem; color: var(--color-text-muted); }
 .cert-arrow { font-weight: bold; color: var(--color-accent); }
 
-/* --- TAGS --- */
 .tags-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
 .hobby-tag { padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--color-border); font-size: 0.9rem; transition: 0.3s; }
 .hobby-tag:hover { background: var(--color-accent); color: var(--color-accent-text); border-color: var(--color-accent); }
 
-/* Timeline CSS (Inchangé) */
 .timeline { position: relative; padding-left: 30px; border-left: 2px solid var(--color-border); }
 .timeline-item { position: relative; margin-bottom: 3.5rem; }
 .timeline-item:last-child { margin-bottom: 0; }
-.timeline-marker { position: absolute; left: -37px; top: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-bg); border: 3px solid; transition: all 0.3s ease; }
+.timeline-marker { position: absolute; left: -39px; top: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--color-bg); border: 3px solid; transition: all 0.3s ease; }
 .timeline-item:hover .timeline-marker { transform: scale(1.3); background: var(--color-text-main); }
 .meta-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 10px; }
 .date { font-size: 0.95rem; font-weight: 700; color: var(--color-text-muted); font-family: monospace; }

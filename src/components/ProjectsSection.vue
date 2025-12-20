@@ -145,7 +145,6 @@ const setCategory = (cat) => activeCategory.value = cat
 }
 .big-title .highlight { color: var(--color-accent); }
 
-/* --- STYLE DES FILTRES --- */
 .filter-container {
   display: flex;
   justify-content: center;
@@ -159,7 +158,6 @@ const setCategory = (cat) => activeCategory.value = cat
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 6px;
 
-  /* Forme "Pill" par défaut sur Desktop */
   border-radius: 50px;
 
   display: inline-flex;
@@ -194,33 +192,29 @@ const setCategory = (cat) => activeCategory.value = cat
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* --- UX MOBILE OPTIMISÉE ("Smart Wrap") --- */
 @media (max-width: 768px) {
   .filter-container {
-    padding: 0 10px; /* Petite marge de sécurité */
+    padding: 0 10px;
   }
 
   .filter-glass {
-    /* On change la forme pour que ça fasse plus "bloc de contrôle" propre */
     border-radius: 20px;
     padding: 10px;
-    width: 100%; /* Prend toute la largeur */
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px; /* Espacement propre */
+    gap: 8px;
   }
 
   .filter-glass button {
-    /* MAGIE UX : flex-grow: 1 permet aux boutons de remplir les trous */
     flex: 1 1 auto;
-    justify-content: center; /* Texte centré */
+    justify-content: center;
     text-align: center;
-    min-width: 110px; /* Évite qu'ils soient trop petits */
-    padding: 12px 10px; /* Zone de clic confortable */
+    min-width: 110px;
+    padding: 12px 10px;
   }
 }
 
-/* --- Grille et Transitions --- */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -232,15 +226,6 @@ const setCategory = (cat) => activeCategory.value = cat
   .projects-grid { grid-template-columns: 1fr; }
 }
 
-/* --- Animations de Liste --- */
-.list-move,
-.list-enter-active,
-.list-leave-active { transition: all 0.6s cubic-bezier(0.55, 0, 0.1, 1); }
-.list-enter-from,
-.list-leave-to { opacity: 0; transform: translateY(30px) scale(0.9); }
-.list-leave-active { position: absolute; width: 100%; max-width: 340px; z-index: -1; }
-
-/* --- Carte Glass Browser --- */
 .project-wrapper { display: flex; flex-direction: column; gap: 1rem; }
 .browser-card {
   border-radius: 16px;

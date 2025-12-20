@@ -1,12 +1,10 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
-// Import des icônes
 import { Mail, Linkedin } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const currentYear = new Date().getFullYear()
 
-// Tes informations de contact
 const email = "laurinedhilly26@gmail.com"
 const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
 </script>
@@ -59,7 +57,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   flex-direction: column;
 }
 
-/* --- Effet Lueur (Blob d'arrière-plan) --- */
 .glow-bg {
   position: absolute;
   top: 50%;
@@ -87,7 +84,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   z-index: 1;
 }
 
-/* --- Carte Glassmorphism --- */
 .contact-card {
   width: 100%;
   padding: 4rem 2rem;
@@ -95,7 +91,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   text-align: center;
   margin-bottom: 4rem;
 
-  /* Style Glass */
   background: rgba(40, 30, 30, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -136,7 +131,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   margin-right: auto;
 }
 
-/* --- Actions / Boutons --- */
 .actions {
   display: flex;
   justify-content: center;
@@ -157,7 +151,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   cursor: pointer;
 }
 
-/* Bouton Email - Style "Plein" */
 .btn-email {
   background-color: var(--color-accent);
   color: var(--color-accent-text);
@@ -172,7 +165,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* Bouton LinkedIn - Style "Outline" amélioré */
 .btn-linkedin {
   background-color: transparent;
   color: var(--color-text-main);
@@ -185,7 +177,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   transform: translateY(-3px);
 }
 
-/* --- Footer --- */
 .site-footer {
   width: 100%;
   text-align: center;
@@ -213,7 +204,6 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
   font-style: italic;
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .contact-card {
     padding: 2.5rem 1.5rem;
