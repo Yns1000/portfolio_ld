@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue' // Ajout de watch pour l'aperçu
 import i18n from '../../i18n'
 import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
@@ -43,15 +43,13 @@ interface TimelineItem { id: string; period: string; type: string; fr: any; en: 
 interface CertItem { id: string; link: string; fr: any; en: any; es: any; nl: any; }
 
 interface AboutContent {
-  // Hero Section
-  intro_hero: string; // clé 'greeting'
-  name_hero: string;  // clé 'intro'
-  bio_hero: string;   // clé 'bio'
-  btn_prj: string;    // clé 'btn_projects'
-  btn_abt: string;    // clé 'btn_about'
-  // About Section
-  intro: string;      // clé 'about_intro'
-  text: string;       // clé 'about_text'
+  intro_hero: string;
+  name_hero: string;
+  bio_hero: string;
+  btn_prj: string;
+  btn_abt: string;
+  intro: string;
+  text: string;
   hobbies: string[];
 }
 
@@ -62,12 +60,12 @@ interface AboutData {
   nl: AboutContent;
   timeline: TimelineItem[];
   certifications: CertItem[];
+  selected_palette: number; // Ajout du champ pour la palette
 }
 
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
 
-// --- ÉTATS GLOBAUX ---
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -86,26 +84,35 @@ const localAbout = reactive<AboutData>({
   es: createEmptyAboutContent(),
   nl: createEmptyAboutContent(),
   timeline: [],
-  certifications: []
+  certifications: [],
+  selected_palette: 1 // Valeur par défaut
 });
 const localProjects = ref<Project[]>([]);
+
+// --- APERÇU EN TEMPS RÉEL ---
+// Dès que la palette change dans l'admin, on l'applique immédiatement au document
+watch(() => localAbout.selected_palette, (newVal) => {
+  document.documentElement.setAttribute('data-palette', newVal.toString());
+});
 
 // --- LOGIQUE DE CHARGEMENT ---
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
+    const frMsg = i18n.global.getLocaleMessage('fr') as any;
 
-    // 1. Textes Section Accueil (Hero) + À Propos (Fixes)
+    // 0. Charger la palette sélectionnée depuis le JSON
+    localAbout.selected_palette = frMsg.theme_palette || 1;
+
+    // 1. Textes Section Accueil + À Propos
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
-        // Mapping Hero
         localAbout[l].intro_hero = msg.greeting || '';
         localAbout[l].name_hero = msg.intro || '';
         localAbout[l].bio_hero = msg.bio || '';
         localAbout[l].btn_prj = msg.btn_projects || '';
         localAbout[l].btn_abt = msg.btn_about || '';
-        // Mapping About
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
         localAbout[l].hobbies = Array.isArray(msg.hobbies) ? [...msg.hobbies] : [];
@@ -113,7 +120,6 @@ const initData = () => {
     });
 
     // 2. Timeline dynamique
-    const frMsg = i18n.global.getLocaleMessage('fr') as any;
     const frTimeline = frMsg.timeline_list || [];
     localAbout.timeline = frTimeline.map((item: any, i: number) => {
       const obj: any = { id: 'time-' + i, period: item.period || '', type: item.type || 'edu' };
@@ -210,29 +216,32 @@ const saveAll = async () => {
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
 
-      // 1. Sync Projets
+      // Sauvegarde du thème sélectionné
+      full.theme_palette = localAbout.selected_palette;
+
+      // Sync Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
       }));
 
-      // 2. Sync Accueil (Hero)
+      // Sync Accueil
       full.greeting = localAbout[l].intro_hero;
       full.intro = localAbout[l].name_hero;
       full.bio = localAbout[l].bio_hero;
       full.btn_projects = localAbout[l].btn_prj;
       full.btn_about = localAbout[l].btn_abt;
 
-      // 3. Sync À Propos
+      // Sync À Propos
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.hobbies = localAbout[l].hobbies;
 
-      // 4. Sync Timeline
+      // Sync Timeline
       full.timeline_list = localAbout.timeline.map(item => ({
         period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
       }));
 
-      // 5. Sync Certifications
+      // Sync Certifications
       full.cert_list = localAbout.certifications.map(cert => ({
         name: cert[l].name, school: cert[l].school, link: cert.link
       }));
