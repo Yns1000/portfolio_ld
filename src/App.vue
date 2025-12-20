@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -10,7 +10,7 @@ import {
   Sun,
   Moon,
   Languages,
-  Lock // Import de l'icône de connexion
+  Lock
 } from 'lucide-vue-next'
 
 import PortfolioHero from './components/PortfolioHero.vue'
@@ -19,7 +19,7 @@ import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AdminPortal from './components/admin/AdminPortal.vue'
 
-const { locale } = useI18n()
+const { locale, tm } = useI18n() // Ajout de tm pour récupérer les données brutes du JSON
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
 const activeSection = ref('home')
@@ -27,6 +27,13 @@ const isHovering = ref(false)
 const isAdminOpen = ref(false)
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
+
+// --- LOGIQUE DES PALETTES DYNAMIQUES ---
+// Cette fonction surveille le changement de palette dans le JSON et l'applique au HTML
+watchEffect(() => {
+  const paletteId = tm('theme_palette') || 1; // Récupère l'ID (1 à 5)
+  document.documentElement.setAttribute('data-palette', paletteId);
+});
 
 // Surveillance de l'ouverture de l'admin pour rétablir la souris système
 watch(isAdminOpen, (open) => {
@@ -61,14 +68,17 @@ const toggleTheme = () => {
 }
 
 onMounted(() => {
+  // Initialisation du thème clair/sombre
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
 
+  // Initialisation du curseur personnalisé
   if (window.matchMedia('(pointer: fine)').matches) {
     window.addEventListener('mousemove', updateCursor)
   }
 
+  // Détection de la section active pour la navigation
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -134,6 +144,7 @@ onUnmounted(() => {
             <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">🇪🇸 ES</span>
           </div>
         </div>
+
         <button class="theme-toggle icon-btn" @click="toggleTheme" @mouseenter="isHovering = true" @mouseleave="isHovering = false" :aria-label="isDark ? 'Mode clair' : 'Mode sombre'">
           <Sun v-if="!isDark" :size="20" class="icon-sun" />
           <Moon v-else :size="20" class="icon-moon" />
@@ -153,6 +164,7 @@ onUnmounted(() => {
 </template>
 
 <style>
+/* --- Styles globaux indispensables pour les palettes --- */
 html, body {
   margin: 0;
   padding: 0;
@@ -164,10 +176,10 @@ html, body {
 
 body {
   overflow-x: hidden;
-  transition: background-color 0.5s ease;
+  /* Transition fluide lors du changement de palette ou de thème */
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* MODIFICATION : On ne cache la souris que si on n'est PAS en mode admin */
 @media (min-width: 1024px) {
   html:not(.admin-mode),
   html:not(.admin-mode) body,
@@ -179,7 +191,6 @@ body {
   }
 }
 
-/* On force le curseur normal pour l'admin */
 .admin-mode, .admin-mode * {
   cursor: auto !important;
 }
@@ -188,11 +199,11 @@ body {
   width: 100%;
   max-width: 100%;
   padding: 0 !important;
-  background-color: var(--color-bg);
 }
 </style>
 
 <style scoped>
+/* --- Styles du curseur et du header --- */
 .custom-cursor {
   position: fixed;
   top: 0;
@@ -208,20 +219,6 @@ body {
   will-change: transform;
 }
 
-.admin-btn {
-  color: var(--color-text-muted);
-}
-
-.admin-btn:hover {
-  color: var(--color-accent) !important;
-}
-
-@media (max-width: 1023px) {
-  .custom-cursor {
-    display: none !important;
-  }
-}
-
 .site-header {
   position: fixed;
   top: 0;
@@ -235,7 +232,7 @@ body {
   background: rgba(var(--color-bg-rgb), 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .navbar {
@@ -283,11 +280,6 @@ body {
   box-shadow: 0 0 10px var(--color-accent);
 }
 
-@media (max-width: 768px) {
-  .nav-text { display: none; }
-  .nav-links { gap: 1.5rem; }
-}
-
 .nav-settings {
   display: flex;
   align-items: center;
@@ -304,6 +296,7 @@ body {
   padding: 8px;
   border-radius: 8px;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .icon-btn:hover {
@@ -324,7 +317,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 120px;
+  min-width: 140px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   backdrop-filter: blur(10px);
 }

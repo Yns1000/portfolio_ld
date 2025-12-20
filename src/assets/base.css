@@ -1,64 +1,85 @@
 /* src/assets/base.css */
 
-/* --- THÈME SOMBRE (DÉFAUT) --- */
-:root {
-  /* Couleurs Hexa (pour usage direct) */
+/* --- CONFIGURATION PAR DÉFAUT (PALETTE 1 : TERRE) --- */
+:root, [data-palette="1"] {
   --color-bg: #55423d;
   --color-bg-card: #271c19;
   --color-accent: #ffc0ad;
-
-  --color-bg-rgb: 85, 66, 61;        /* Correspond à #55423d */
-  --color-bg-card-rgb: 39, 28, 25;   /* Correspond à #271c19 */
-  --color-accent-rgb: 255, 192, 173; /* Correspond à #ffc0ad */
-
+  --color-bg-rgb: 85, 66, 61;
+  --color-bg-card-rgb: 39, 28, 25;
+  --color-accent-rgb: 255, 192, 173;
   --color-text-main: #fffffe;
   --color-text-muted: #fff3ec;
   --color-accent-text: #271c19;
   --color-accent-hover: #e78fb3;
-
-  --color-text-highlight: #ffffff;
-  --color-blob: #140d0b;
   --color-border: rgba(255, 255, 255, 0.2);
-
   --font-main: 'Inter', sans-serif;
 }
 
-/* --- THÈME CLAIR --- */
-:root[data-theme="light"] {
+[data-palette="1"][data-theme="light"] {
   --color-bg: #fff3ec;
   --color-bg-card: #ffffff;
-  --color-accent: #ffc0ad;
-
-  --color-bg-rgb: 255, 243, 236;     /* Correspond à #fff3ec */
-  --color-bg-card-rgb: 255, 255, 255; /* Correspond à #ffffff */
-  --color-accent-rgb: 255, 192, 173;
-
+  --color-bg-rgb: 255, 243, 236;
+  --color-bg-card-rgb: 255, 255, 255;
   --color-text-main: #271c19;
   --color-text-muted: #55423d;
-  --color-accent-text: #271c19;
-  --color-accent-hover: #e78fb3;
-
-  --color-text-highlight: #5b465e;
-  --color-blob: #f2dbce;
   --color-border: rgba(39, 28, 25, 0.1);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; position: relative; font-weight: normal; }
+/* --- PALETTE 2 : OCÉAN --- */
+[data-palette="2"] {
+  --color-bg: #0f172a; --color-bg-card: #1e293b; --color-accent: #38bdf8;
+  --color-bg-rgb: 15, 23, 42; --color-bg-card-rgb: 30, 41, 59; --color-accent-rgb: 56, 189, 248;
+  --color-text-main: #f8fafc; --color-text-muted: #94a3b8; --color-accent-text: #0f172a;
+}
+[data-palette="2"][data-theme="light"] {
+  --color-bg: #f1f5f9; --color-bg-card: #ffffff; --color-text-main: #0f172a; --color-text-muted: #475569;
+  --color-border: rgba(15, 23, 42, 0.1);
+}
+
+/* --- PALETTE 3 : FORÊT --- */
+[data-palette="3"] {
+  --color-bg: #064e3b; --color-bg-card: #065f46; --color-accent: #34d399;
+  --color-bg-rgb: 6, 78, 59; --color-bg-card-rgb: 6, 95, 70; --color-accent-rgb: 52, 211, 153;
+  --color-text-main: #ecfdf5; --color-text-muted: #a7f3d0; --color-accent-text: #064e3b;
+}
+[data-palette="3"][data-theme="light"] {
+  --color-bg: #f0fdf4; --color-bg-card: #ffffff; --color-text-main: #064e3b; --color-text-muted: #166534;
+  --color-border: rgba(6, 78, 59, 0.1);
+}
+
+/* --- PALETTE 4 : ROYAL (VIOLET) --- */
+[data-palette="4"] {
+  --color-bg: #2e1065; --color-bg-card: #4c1d95; --color-accent: #a78bfa;
+  --color-bg-rgb: 46, 16, 101; --color-bg-card-rgb: 76, 29, 149; --color-accent-rgb: 167, 139, 250;
+  --color-text-main: #f5f3ff; --color-text-muted: #ddd6fe; --color-accent-text: #2e1065;
+}
+[data-palette="4"][data-theme="light"] {
+  --color-bg: #f5f3ff; --color-bg-card: #ffffff; --color-text-main: #2e1065; --color-text-muted: #5b21b6;
+  --color-border: rgba(46, 16, 101, 0.1);
+}
+
+/* --- PALETTE 5 : MINUIT (ARDOISE & OR) --- */
+[data-palette="5"] {
+  --color-bg: #18181b; --color-bg-card: #27272a; --color-accent: #fbbf24;
+  --color-bg-rgb: 24, 24, 27; --color-bg-card-rgb: 39, 39, 42; --color-accent-rgb: 251, 191, 36;
+  --color-text-main: #fafafa; --color-text-muted: #a1a1aa; --color-accent-text: #18181b;
+}
+[data-palette="5"][data-theme="light"] {
+  --color-bg: #f4f4f5; --color-bg-card: #ffffff; --color-text-main: #18181b; --color-text-muted: #52525b;
+  --color-border: rgba(24, 24, 27, 0.1);
+}
+
+/* --- BASE & ANIMATIONS --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   min-height: 100vh;
   color: var(--color-text-main);
   background: var(--color-bg);
-  transition: color 0.5s ease, background-color 0.5s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
   line-height: 1.6;
   font-family: var(--font-main);
-  font-size: 16px;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 .reveal {
@@ -66,8 +87,4 @@ html {
   transform: translateY(30px);
   transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal.visible { opacity: 1; transform: translateY(0); }

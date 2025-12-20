@@ -89,6 +89,27 @@
 
     <aside class="editor-side">
       <div class="content-card">
+        <div class="card-head">
+          <Palette :size="18" class="icon-accent" />
+          <h3>Couleurs du site</h3>
+        </div>
+        <div class="card-body">
+          <p class="field-hint" style="margin-bottom: 12px;">Ambiance visuelle :</p>
+          <div class="palette-selector-grid">
+            <button
+                v-for="n in 5" :key="n"
+                @click="aboutData.selected_palette = n"
+                :class="['palette-option', 'pal-' + n, { active: aboutData.selected_palette == n }]"
+                :title="'Palette ' + n"
+            >
+              <Check v-if="aboutData.selected_palette == n" :size="16" />
+              <span v-else>{{ n }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card mt-24">
         <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
         <div class="card-body">
           <div class="input-box">
@@ -98,7 +119,7 @@
         </div>
       </div>
 
-      <div class="content-card" style="margin-top: 24px;">
+      <div class="content-card mt-24">
         <div class="card-head"><Heart :size="18" class="icon-accent" /> <h3>Passions</h3></div>
         <div class="card-body">
           <div class="tags-container">
@@ -119,7 +140,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Home, History, Trophy, User, Languages, Heart, Plus, Trash2, X } from 'lucide-vue-next'
+import {
+  Home, History, Trophy, User, Languages,
+  Heart, Plus, Trash2, X, Palette, Check
+} from 'lucide-vue-next'
 
 const props = defineProps<{ aboutData: any, lang: string }>()
 const emit = defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert'])
@@ -128,8 +152,29 @@ const newHobby = ref('')
 const addHobby = () => {
   const h = newHobby.value.trim()
   if (h && !props.aboutData[props.lang].hobbies.includes(h)) {
-    props.aboutData[props.lang].hobbies.push(h); newHobby.value = '';
+    props.aboutData[props.lang].hobbies.push(h);
+    newHobby.value = '';
   }
 }
 const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splice(idx, 1) }
 </script>
+
+<style scoped>
+.palette-selector-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.palette-option {
+  height: 40px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease; font-weight: bold;
+}
+.palette-option.active { border-color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+
+/* Couleurs des boutons de prévisualisation (Sombre / Accent) */
+.pal-1 { background: #55423d; color: #ffc0ad; }
+.pal-2 { background: #0f172a; color: #38bdf8; }
+.pal-3 { background: #064e3b; color: #34d399; }
+.pal-4 { background: #2e1065; color: #a78bfa; }
+.pal-5 { background: #18181b; color: #fbbf24; }
+
+.field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
+.mt-24 { margin-top: 24px; }
+</style>
