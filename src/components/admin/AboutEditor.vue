@@ -21,10 +21,7 @@
       </div>
 
       <div class="content-card mt-24">
-        <div class="card-head">
-          <User :size="18" class="icon-accent" />
-          <h3>Biographie détaillée ({{ lang.toUpperCase() }})</h3>
-        </div>
+        <div class="card-head"><User :size="18" class="icon-accent" /> <h3>Biographie détaillée ({{ lang.toUpperCase() }})</h3></div>
         <div class="card-body">
           <div class="input-box">
             <label>Texte À propos</label>
@@ -34,19 +31,16 @@
       </div>
 
       <div class="content-card mt-24">
-        <div class="card-head">
-          <History :size="18" class="icon-accent" />
+        <div class="card-head"><History :size="18" class="icon-accent" />
           <div class="flex-between">
             <h3>Parcours d'événements</h3>
-            <button @click="$emit('add-timeline')" class="btn-add-modern">
-              <Plus :size="16" /> <span>Ajouter une étape</span>
-            </button>
+            <button @click="$emit('add-timeline')" class="btn-add-modern"><Plus :size="16" /> <span>Ajouter une étape</span></button>
           </div>
         </div>
         <div class="card-body">
           <div v-for="(item, idx) in aboutData.timeline" :key="idx" class="list-item-card">
             <div class="item-header-row">
-              <div class="input-box period"><label>Période</label><input v-model="item.period" placeholder="ex: 2022 - 2025" /></div>
+              <div class="input-box period"><label>Période</label><input v-model="item.period" /></div>
               <div class="input-box type"><label>Type</label>
                 <select v-model="item.type">
                   <option value="edu">🎓 Formation</option>
@@ -63,24 +57,21 @@
       </div>
 
       <div class="content-card mt-24">
-        <div class="card-head">
-          <Trophy :size="18" class="icon-accent" />
+        <div class="card-head"><Trophy :size="18" class="icon-accent" />
           <div class="flex-between">
             <h3>Certifications & Badges</h3>
-            <button @click="$emit('add-cert')" class="btn-add-modern">
-              <Plus :size="16" /> <span>Ajouter un certificat</span>
-            </button>
+            <button @click="$emit('add-cert')" class="btn-add-modern"><Plus :size="16" /> <span>Ajouter un certificat</span></button>
           </div>
         </div>
         <div class="card-body">
           <div v-for="(cert, idx) in aboutData.certifications" :key="idx" class="list-item-card">
             <div class="item-header-row">
-              <div class="input-box" style="flex: 1;"><label>Nom du diplôme ({{ lang.toUpperCase() }})</label><input v-model="cert[lang].name" /></div>
-              <button @click="$emit('delete-cert', idx)" class="btn-delete-row" title="Supprimer"><Trash2 :size="16" /></button>
+              <div class="input-box" style="flex: 1;"><label>Nom ({{ lang.toUpperCase() }})</label><input v-model="cert[lang].name" /></div>
+              <button @click="$emit('delete-cert', idx)" class="btn-delete-row"><Trash2 :size="16" /></button>
             </div>
             <div class="item-header-row">
               <div class="input-box" style="flex: 1;"><label>Institution</label><input v-model="cert[lang].school" /></div>
-              <div class="input-box" style="flex: 1.5;"><label>Lien de vérification</label><input v-model="cert.link" placeholder="https://..." /></div>
+              <div class="input-box" style="flex: 1.5;"><label>Lien de vérification</label><input v-model="cert.link" /></div>
             </div>
           </div>
         </div>
@@ -89,21 +80,19 @@
 
     <aside class="editor-side">
       <div class="content-card">
-        <div class="card-head">
-          <Palette :size="18" class="icon-accent" />
-          <h3>Couleurs du site</h3>
-        </div>
+        <div class="card-head"><Palette :size="18" class="icon-accent" /> <h3>Thème du site</h3></div>
         <div class="card-body">
-          <p class="field-hint" style="margin-bottom: 12px;">Ambiance visuelle :</p>
-          <div class="palette-selector-grid">
+          <p class="field-hint" style="margin-bottom: 12px;">Appliquez une ambiance :</p>
+          <div class="theme-selector-list custom-scrollbar">
             <button
-                v-for="n in 9" :key="n"
-                @click="aboutData.selected_palette = n"
-                :class="['palette-option', 'pal-' + n, { active: aboutData.selected_palette == n }]"
-                :title="'Palette ' + n"
+                v-for="theme in themes" :key="theme.id"
+                @click="aboutData.selected_palette = theme.id"
+                :class="['theme-row-btn', { active: aboutData.selected_palette == theme.id }]"
             >
-              <Check v-if="aboutData.selected_palette == n" :size="16" />
-              <span v-else>{{ n }}</span>
+              <div :class="['theme-swatch', 'pal-' + theme.id]">
+                <Check v-if="aboutData.selected_palette == theme.id" :size="12" />
+              </div>
+              <span class="theme-label">{{ theme.name }}</span>
             </button>
           </div>
         </div>
@@ -114,7 +103,7 @@
         <div class="card-body">
           <div class="input-box">
             <label>Slogan (Intro)</label>
-            <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
+            <textarea v-model="aboutData[lang].intro" rows="3"></textarea>
           </div>
         </div>
       </div>
@@ -124,8 +113,7 @@
         <div class="card-body">
           <div class="tags-container">
             <span v-for="(hobby, idx) in aboutData[lang].hobbies" :key="hobby" class="hobby-tag-pill">
-              {{ hobby }}
-              <button @click="removeHobby(idx)" class="btn-remove-tag"><X :size="12" /></button>
+              {{ hobby }} <button @click="removeHobby(idx)" class="btn-remove-tag"><X :size="12" /></button>
             </span>
           </div>
           <div class="add-tag-box">
@@ -148,44 +136,86 @@ import {
 const props = defineProps<{ aboutData: any, lang: string }>()
 const emit = defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert'])
 
+// LISTE DES NOMS DES THÈMES
+const themes = [
+  { id: 1, name: 'Terre (Original)' },
+  { id: 2, name: 'Océan Profond' },
+  { id: 3, name: 'Forêt Émeraude' },
+  { id: 4, name: 'Lavande Royale' },
+  { id: 5, name: 'Ardoise & Or' },
+  { id: 6, name: 'Candy Pastel' },
+  { id: 7, name: 'Aube Dorée' },
+  { id: 8, name: 'Ohana (Stitch)' },
+  { id: 9, name: 'B612 (Petit Prince)' }
+]
+
 const newHobby = ref('')
 const addHobby = () => {
   const h = newHobby.value.trim()
   if (h && !props.aboutData[props.lang].hobbies.includes(h)) {
-    props.aboutData[props.lang].hobbies.push(h);
-    newHobby.value = '';
+    props.aboutData[props.lang].hobbies.push(h); newHobby.value = '';
   }
 }
 const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splice(idx, 1) }
 </script>
 
 <style scoped>
-/* GRID DES PALETTES */
-.palette-selector-grid {
+/* SÉLECTEUR DE THÈMES AMÉLIORÉ */
+.theme-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.theme-row-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.theme-row-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
+.theme-row-btn.active { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+
+.theme-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
-  gap: 8px;
+  place-items: center;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.palette-option {
-  height: 42px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1); font-weight: bold;
+.theme-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: color 0.2s;
 }
-.palette-option.active { border-color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+.theme-row-btn.active .theme-label { color: white; }
 
-/* APERÇU DES COULEURS (Sombre / Accent) */
-.pal-1 { background: #55423d; color: #ffc0ad; } /* Terre */
-.pal-2 { background: #0f172a; color: #38bdf8; } /* Océan */
-.pal-3 { background: #064e3b; color: #34d399; } /* Forêt */
-.pal-4 { background: #2e1065; color: #a78bfa; } /* Lavande */
-.pal-5 { background: #18181b; color: #fbbf24; } /* Ardoise/Or */
-.pal-6 { background: #AF4D98; color: #9DF7E5; } /* Candy */
-.pal-7 { background: #310D20; color: #F2D06B; } /* Aube Dorée */
-.pal-8 { background: #1a2a6c; color: #00d2ff; } /* Stitch */
-.pal-9 { background: #0f172a; color: #facc15; } /* Petit Prince */
+/* COULEURS DES SWATCHES (Sombre / Accent) */
+.pal-1 { background: #55423d; color: #ffc0ad; }
+.pal-2 { background: #0f172a; color: #38bdf8; }
+.pal-3 { background: #064e3b; color: #34d399; }
+.pal-4 { background: #2e1065; color: #a78bfa; }
+.pal-5 { background: #18181b; color: #fbbf24; }
+.pal-6 { background: #AF4D98; color: #F4E3BA; }
+.pal-7 { background: #310D20; color: #F2D06B; }
+.pal-8 { background: #1a2a6c; color: #00d2ff; }
+.pal-9 { background: #0f172a; color: #facc15; }
 
 .field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
-.hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }
 .mt-24 { margin-top: 24px; }
 </style>
