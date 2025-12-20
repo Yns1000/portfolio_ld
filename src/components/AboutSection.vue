@@ -16,14 +16,11 @@ const age = computed(() => {
   return age
 })
 
-const timelineData = [
-  { period: 'Sept. 2025 - ...', titleKey: 'timeline_asso_title', descKey: 'timeline_asso_desc', type: 'vol' },
-  { period: 'Sept. 2025 - 2027', titleKey: 'timeline_master_title', descKey: 'timeline_master_desc', type: 'edu' },
-  { period: 'Oct. 2024 - ...', titleKey: 'timeline_afev_title', descKey: 'timeline_afev_desc', type: 'vol' },
-  { period: 'Juil. 2022 - ...', titleKey: 'timeline_mcdo_title', descKey: 'timeline_mcdo_desc', type: 'job' },
-  { period: '2022 - 2025', titleKey: 'timeline_licence_title', descKey: 'timeline_licence_desc', type: 'edu' },
-  { period: '2019 - 2022', titleKey: 'timeline_bac_title', descKey: 'timeline_bac_desc', type: 'edu' }
-]
+// MODIFICATION : On récupère dynamiquement la liste depuis le JSON
+const timelineData = computed(() => {
+  const list = tm('timeline_list')
+  return Array.isArray(list) ? list : []
+})
 
 const getTypeColor = (type) => {
   if (type === 'edu') return 'var(--color-accent)'
@@ -45,7 +42,6 @@ const getTypeLabel = (type) => {
     <div class="container">
 
       <div class="left-column">
-
         <div class="decorations-container">
           <img src="/volley.png" alt="Volleyball" class="deco-item volley float-slow" />
           <img src="/book.jpg" alt="Shakespeare Book" class="deco-item book float-medium" />
@@ -54,7 +50,6 @@ const getTypeLabel = (type) => {
         </div>
 
         <div class="content-wrapper">
-
           <div class="profile-card glass-card" v-reveal>
             <h2 class="section-title">
               {{ t('section_about_title') }}<span class="highlight">.</span>
@@ -101,7 +96,6 @@ const getTypeLabel = (type) => {
               </span>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -116,8 +110,8 @@ const getTypeLabel = (type) => {
                   {{ t(getTypeLabel(item.type)) }}
                 </span>
               </div>
-              <h3 class="degree">{{ t(item.titleKey) }}</h3>
-              <p class="school">{{ t(item.descKey) }}</p>
+              <h3 class="degree">{{ item.title }}</h3>
+              <p class="school">{{ item.desc }}</p>
             </div>
           </div>
         </div>

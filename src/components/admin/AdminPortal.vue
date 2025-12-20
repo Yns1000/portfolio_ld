@@ -28,20 +28,20 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import i18n from '../../i18n' // <-- BIEN VÉRIFIER CE CHEMIN
+import i18n from '../../i18n'
 import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
 
 // TYPES
 interface Project { id: number; category: string; image: string; link: string; fr: any; en: any; es: any; nl: any; }
+interface TimelineItem { id: string; period: string; type: string; fr: any; en: any; es: any; nl: any; }
 interface AboutContent { intro: string; text: string; cert_name: string; cert_school: string; hobbies: string[]; }
-interface AboutData { fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent; }
+interface AboutData { fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent; timeline: TimelineItem[]; }
 
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
 
-// ÉTATS GLOBAUX
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -49,24 +49,23 @@ const loginError = ref('')
 const passwordValue = ref('')
 const toast = reactive({ show: false, message: '', type: 'success' as 'success' | 'error' })
 
-// DONNÉES RÉACTIVES
 const localAbout = reactive<AboutData>({
   fr: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
   en: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
   es: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
-  nl: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] }
+  nl: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
+  timeline: []
 });
 const localProjects = ref<Project[]>([]);
 
-// INITIALISATION SÉCURISÉE
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
 
+    // 1. Chargement des textes About
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
-        // Sync About Data
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
         localAbout[l].cert_name = msg.cert_name || '';
@@ -75,36 +74,39 @@ const initData = () => {
       }
     });
 
-    // Sync Projects Data
-    const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any)?.projects_list || [];
-    const frP = getProj('fr');
-    const enP = getProj('en');
-    const esP = getProj('es');
-    const nlP = getProj('nl');
+    // 2. Chargement manuel de la Timeline (basé sur tes clés JSON)
+    const timelineSlugs = ['asso', 'master', 'afev', 'mcdo', 'licence', 'bac'];
+    localAbout.timeline = timelineSlugs.map(slug => {
+      const item: any = { id: slug, period: '', type: 'edu' };
+      // Note: period et type sont actuellement en dur dans ton AboutSection,
+      // on initialise ici, il faudra les éditer une fois dans l'admin.
+      langs.forEach(l => {
+        const msg = i18n.global.getLocaleMessage(l) as any;
+        item[l] = {
+          title: msg[`timeline_${slug}_title`] || '',
+          desc: msg[`timeline_${slug}_desc`] || ''
+        };
+      });
+      return item;
+    });
 
-    localProjects.value = frP.map((p: any, i: number) => ({
+    // 3. Chargement des Projets
+    const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any)?.projects_list || [];
+    localProjects.value = getProj('fr').map((p: any, i: number) => ({
       id: p.id || Date.now() + i,
       category: p.category || 'manage',
       image: p.image || '',
       link: p.link || '',
       fr: { title: p.title || '', desc: p.desc || '' },
-      en: { title: enP[i]?.title || '', desc: enP[i]?.desc || '' },
-      es: { title: esP[i]?.title || '', desc: esP[i]?.desc || '' },
-      nl: { title: nlP[i]?.title || '', desc: nlP[i]?.desc || '' }
+      en: { title: getProj('en')[i]?.title || '', desc: getProj('en')[i]?.desc || '' },
+      es: { title: getProj('es')[i]?.title || '', desc: getProj('es')[i]?.desc || '' },
+      nl: { title: getProj('nl')[i]?.title || '', desc: getProj('nl')[i]?.desc || '' }
     }));
 
-    console.log("Admin Portal: Données chargées avec succès");
-  } catch (err) {
-    console.error("Admin Portal Crash au chargement:", err);
-  }
+  } catch (err) { console.error("Init Error:", err); }
 };
 
-onMounted(() => {
-  initData();
-  isMounted.value = true;
-});
-
-const closePortal = () => emit('close');
+onMounted(() => { initData(); isMounted.value = true; });
 
 const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg; toast.type = type; toast.show = true;
@@ -118,13 +120,8 @@ const handleLogin = async (pwd: string) => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: pwd, action: 'login' })
     });
-    if (res.ok) {
-      passwordValue.value = pwd;
-      isAuthenticated.value = true;
-      triggerToast('Accès autorisé');
-    } else {
-      loginError.value = "Clé invalide";
-    }
+    if (res.ok) { passwordValue.value = pwd; isAuthenticated.value = true; triggerToast('Accès autorisé'); }
+    else { loginError.value = "Clé invalide"; }
   } catch (e) { loginError.value = "Erreur serveur"; }
   finally { isLoggingIn.value = false; }
 }
@@ -133,9 +130,9 @@ const addNewProject = () => {
   localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
 }
 
-const deleteProject = (idx: number) => {
-  if (confirm("Supprimer ce projet ?")) localProjects.value.splice(idx, 1);
-}
+const deleteProject = (idx: number) => { if (confirm("Supprimer ce projet ?")) localProjects.value.splice(idx, 1); }
+
+const closePortal = () => emit('close');
 
 const saveAll = async () => {
   isSaving.value = true
@@ -145,14 +142,25 @@ const saveAll = async () => {
 
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
+
+      // Sauvegarde Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: (p as any)[l].title, desc: (p as any)[l].desc
       }));
+
+      // Sauvegarde About
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.cert_name = localAbout[l].cert_name;
       full.cert_school = localAbout[l].cert_school;
       full.hobbies = localAbout[l].hobbies;
+
+      // Sauvegarde Timeline (On ré-injecte dans les clés plates pour ne pas casser ton site actuel)
+      localAbout.timeline.forEach(item => {
+        full[`timeline_${item.id}_title`] = item[l].title;
+        full[`timeline_${item.id}_desc`] = item[l].desc;
+      });
+
       payloads[l] = full;
     });
 
@@ -160,10 +168,7 @@ const saveAll = async () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: passwordValue.value, content: payloads })
     });
-    if (res.ok) {
-      triggerToast('Publication réussie !');
-      setTimeout(() => window.location.reload(), 1000);
-    }
+    if (res.ok) { triggerToast('Publication réussie !'); setTimeout(() => window.location.reload(), 1000); }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
   finally { isSaving.value = false; }
 }

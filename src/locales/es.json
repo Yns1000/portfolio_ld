@@ -55,23 +55,44 @@
   "cat_job": "Experiencia",
   "cat_volunteering": "Voluntariado",
 
-  "timeline_asso_title": "Presidenta de la asociación estudiantil LMI",
-  "timeline_asso_desc": "Université d'Artois — Gestión de proyectos, liderazgo y animación de la vida estudiantil.",
-
-  "timeline_master_title": "Máster LMI (Lenguas y Gestión)",
-  "timeline_master_desc": "Université d'Artois — Inglés / Español / Holandés.",
-
-  "timeline_afev_title": "Mentora AFEV",
-  "timeline_afev_desc": "Servicios sociales — Acompañamiento educativo y apoyo individual a niños en centros de acogida.",
-
-  "timeline_mcdo_title": "Empleada polivalente",
-  "timeline_mcdo_desc": "McDonald's (Tiempo parcial) — Atención al cliente, preparación y trabajo en equipo en un entorno dinámico.",
-
-  "timeline_licence_title": "Grado LEA (Negocios Internacionales)",
-  "timeline_licence_desc": "Université d'Artois — Inglés / Español.",
-
-  "timeline_bac_title": "Bachillerato General",
-  "timeline_bac_desc": "Lycée F. Darchicourt — Economía, Geopolítica, Inglés (Mención Muy Bien).",
+  "timeline_list": [
+    {
+      "period": "Sept. 2025 - ...",
+      "type": "vol",
+      "title": "Presidenta de la asociación estudiantil LMI",
+      "desc": "Université d'Artois — Gestión de proyectos, liderazgo y animación de la vida estudiantil."
+    },
+    {
+      "period": "Sept. 2025 - 2027",
+      "type": "edu",
+      "title": "Máster LMI (Lenguas y Gestión)",
+      "desc": "Université d'Artois — Inglés / Español / Holandés."
+    },
+    {
+      "period": "Oct. 2024 - ...",
+      "type": "vol",
+      "title": "Mentora AFEV",
+      "desc": "Servicios sociales — Acompañamiento educativo y apoyo individual a niños en centros de acogida."
+    },
+    {
+      "period": "Juil. 2022 - ...",
+      "type": "job",
+      "title": "Empleada polivalente",
+      "desc": "McDonald's (Tiempo parcial) — Atención al cliente, preparación y trabajo en equipo en un entorno dinámico."
+    },
+    {
+      "period": "2022 - 2025",
+      "type": "edu",
+      "title": "Grado LEA (Negocios Internacionales)",
+      "desc": "Université d'Artois — Inglés / Español."
+    },
+    {
+      "period": "2019 - 2022",
+      "type": "edu",
+      "title": "Bachillerato General",
+      "desc": "Lycée F. Darchicourt — Economía, Geopolítica, Inglés (Mención Muy Bien)."
+    }
+  ],
 
   "cert_title": "Certificación",
   "cert_name": "Virtual Exchange Participant",

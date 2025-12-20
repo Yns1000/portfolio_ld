@@ -55,23 +55,44 @@
   "cat_job": "Experience",
   "cat_volunteering": "Volunteering",
 
-  "timeline_asso_title": "President of LMI Student Association",
-  "timeline_asso_desc": "Université d'Artois — Project management, leadership, and student life animation.",
-
-  "timeline_master_title": "Master LMI (Languages & Management)",
-  "timeline_master_desc": "Université d'Artois — English / Spanish / Dutch.",
-
-  "timeline_afev_title": "AFEV Mentor",
-  "timeline_afev_desc": "Social Services — Educational support and individual mentoring for children in care.",
-
-  "timeline_mcdo_title": "Crew Member",
-  "timeline_mcdo_desc": "McDonald's (Part-time) — Customer reception, preparation, and teamwork in a fast-paced environment.",
-
-  "timeline_licence_title": "Bachelor LEA (International Business)",
-  "timeline_licence_desc": "Université d'Artois — English / Spanish.",
-
-  "timeline_bac_title": "General Baccalaureate",
-  "timeline_bac_desc": "Lycée F. Darchicourt — Economics, Geopolitics, English (High Honors).",
+  "timeline_list": [
+    {
+      "period": "Sept. 2025 - ...",
+      "type": "vol",
+      "title": "President of LMI Student Association",
+      "desc": "Université d'Artois — Project management, leadership, and student life animation."
+    },
+    {
+      "period": "Sept. 2025 - 2027",
+      "type": "edu",
+      "title": "Master LMI (Languages & Management)",
+      "desc": "Université d'Artois — English / Spanish / Dutch."
+    },
+    {
+      "period": "Oct. 2024 - ...",
+      "type": "vol",
+      "title": "AFEV Mentor",
+      "desc": "Social Services — Educational support and individual mentoring for children in care."
+    },
+    {
+      "period": "July 2022 - ...",
+      "type": "job",
+      "title": "Crew Member",
+      "desc": "McDonald's (Part-time) — Customer reception, preparation, and teamwork in a fast-paced environment."
+    },
+    {
+      "period": "2022 - 2025",
+      "type": "edu",
+      "title": "Bachelor LEA (International Business)",
+      "desc": "Université d'Artois — English / Spanish."
+    },
+    {
+      "period": "2019 - 2022",
+      "type": "edu",
+      "title": "General Baccalaureate",
+      "desc": "Lycée F. Darchicourt — Economics, Geopolitics, English (High Honors)."
+    }
+  ],
 
   "cert_title": "Certification",
   "cert_name": "Virtual Exchange Participant",

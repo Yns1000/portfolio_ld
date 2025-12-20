@@ -55,23 +55,44 @@
   "cat_job": "Ervaring",
   "cat_volunteering": "Vrijwilligerswerk",
 
-  "timeline_asso_title": "Voorzitter studentenvereniging LMI",
-  "timeline_asso_desc": "Université d'Artois — Projectmanagement, leiderschap en animatie van het studentenleven.",
-
-  "timeline_master_title": "Master LMI (Talen & Management)",
-  "timeline_master_desc": "Université d'Artois — Engels / Spaans / Nederlands.",
-
-  "timeline_afev_title": "Mentor AFEV",
-  "timeline_afev_desc": "Sociale diensten — Educatieve begeleiding en individuele steun voor kinderen in opvangcentra.",
-
-  "timeline_mcdo_title": "Allround medewerker",
-  "timeline_mcdo_desc": "McDonald's (Deeltijds) — Klanten onthalen, bereiding en teamwerk in een snel tempo.",
-
-  "timeline_licence_title": "Bachelor LEA (Internationale Zaken)",
-  "timeline_licence_desc": "Université d'Artois — Engels / Spaans.",
-
-  "timeline_bac_title": "Algemeen Baccalaureaat",
-  "timeline_bac_desc": "Lycée F. Darchicourt — Economie, Geopolitiek, Engels (Met lof).",
+  "timeline_list": [
+    {
+      "period": "Sept. 2025 - ...",
+      "type": "vol",
+      "title": "Voorzitter studentenvereniging LMI",
+      "desc": "Université d'Artois — Projectmanagement, leiderschap en animatie van het studentenleven."
+    },
+    {
+      "period": "Sept. 2025 - 2027",
+      "type": "edu",
+      "title": "Master LMI (Talen & Management)",
+      "desc": "Université d'Artois — Engels / Spaans / Nederlands."
+    },
+    {
+      "period": "Oct. 2024 - ...",
+      "type": "vol",
+      "title": "Mentor AFEV",
+      "desc": "Sociale diensten — Educatieve begeleiding en individuele steun voor kinderen in opvangcentra."
+    },
+    {
+      "period": "Juil. 2022 - ...",
+      "type": "job",
+      "title": "Allround medewerker",
+      "desc": "McDonald's (Deeltijds) — Klanten onthalen, bereiding en teamwerk in een snel tempo."
+    },
+    {
+      "period": "2022 - 2025",
+      "type": "edu",
+      "title": "Bachelor LEA (Internationale Zaken)",
+      "desc": "Université d'Artois — Engels / Spaans."
+    },
+    {
+      "period": "2019 - 2022",
+      "type": "edu",
+      "title": "Algemeen Baccalaureaat",
+      "desc": "Lycée F. Darchicourt — Economie, Geopolitiek, Engels (Met lof)."
+    }
+  ],
 
   "cert_title": "Certificering",
   "cert_name": "Virtual Exchange Participant",
