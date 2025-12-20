@@ -53,7 +53,9 @@ onMounted(() => {
     document.documentElement.setAttribute('data-theme', 'light')
   }
 
-  window.addEventListener('mousemove', updateCursor)
+  if (window.matchMedia('(pointer: fine)').matches) {
+    window.addEventListener('mousemove', updateCursor)
+  }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -78,37 +80,20 @@ onUnmounted(() => {
 
   <header class="site-header glass-nav">
     <nav class="navbar">
-
       <div class="nav-links">
-        <a href="#home"
-           class="nav-item"
-           :class="{ active: activeSection === 'home' }"
-           @mouseenter="isHovering = true"
-           @mouseleave="isHovering = false">
+        <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Home :size="20" />
           <span class="nav-text">Home</span>
         </a>
-        <a href="#projects"
-           class="nav-item"
-           :class="{ active: activeSection === 'projects' }"
-           @mouseenter="isHovering = true"
-           @mouseleave="isHovering = false">
+        <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Briefcase :size="20" />
           <span class="nav-text">Projets</span>
         </a>
-        <a href="#about"
-           class="nav-item"
-           :class="{ active: activeSection === 'about' }"
-           @mouseenter="isHovering = true"
-           @mouseleave="isHovering = false">
+        <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <User :size="20" />
           <span class="nav-text">À propos</span>
         </a>
-        <a href="#contact"
-           class="nav-item"
-           :class="{ active: activeSection === 'contact' }"
-           @mouseenter="isHovering = true"
-           @mouseleave="isHovering = false">
+        <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Mail :size="20" />
           <span class="nav-text">Contact</span>
         </a>
@@ -116,14 +101,10 @@ onUnmounted(() => {
 
       <div class="nav-settings">
         <div class="lang-dropdown-wrapper">
-          <button class="icon-btn"
-                  @click="isLangMenuOpen = !isLangMenuOpen"
-                  @mouseenter="isHovering = true"
-                  @mouseleave="isHovering = false">
+          <button class="icon-btn" @click="isLangMenuOpen = !isLangMenuOpen" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Languages :size="20" />
             <span class="current-lang">{{ locale.toUpperCase() }}</span>
           </button>
-
           <div class="lang-menu glass-panel" v-if="isLangMenuOpen">
             <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">🇬🇧 EN</span>
             <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">🇫🇷 FR</span>
@@ -131,17 +112,11 @@ onUnmounted(() => {
             <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">🇪🇸 ES</span>
           </div>
         </div>
-
-        <button class="theme-toggle icon-btn"
-                @click="toggleTheme"
-                @mouseenter="isHovering = true"
-                @mouseleave="isHovering = false"
-                :aria-label="isDark ? 'Mode clair' : 'Mode sombre'">
+        <button class="theme-toggle icon-btn" @click="toggleTheme" @mouseenter="isHovering = true" @mouseleave="isHovering = false" :aria-label="isDark ? 'Mode clair' : 'Mode sombre'">
           <Sun v-if="!isDark" :size="20" class="icon-sun" />
           <Moon v-else :size="20" class="icon-moon" />
         </button>
       </div>
-
     </nav>
   </header>
 
@@ -154,12 +129,17 @@ onUnmounted(() => {
 </template>
 
 <style>
-body {
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden;
   background-color: var(--color-bg);
+  color: var(--color-text-main);
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
   transition: background-color 0.5s ease;
 }
 
@@ -173,8 +153,8 @@ body {
   width: 100%;
   max-width: 100%;
   padding: 0 !important;
+  background-color: var(--color-bg);
 }
-
 </style>
 
 <style scoped>
@@ -189,7 +169,14 @@ body {
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
-  transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;  will-change: transform;
+  transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
+  will-change: transform;
+}
+
+@media (max-width: 1023px) {
+  .custom-cursor {
+    display: none !important;
+  }
 }
 
 .site-header {
