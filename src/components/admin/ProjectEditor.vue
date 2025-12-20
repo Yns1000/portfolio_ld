@@ -31,8 +31,8 @@
               <option value="marketing">Marketing</option>
             </select>
           </div>
-          <div class="input-box"><label>Lien externe</label><input v-model="project.link" /></div>
-          <div class="input-box"><label>Image (URL)</label><input v-model="project.image" /></div>
+          <div class="input-box"><label>Lien externe</label><input v-model="project.link" placeholder="https://..." /></div>
+          <div class="input-box"><label>Image (URL)</label><input v-model="project.image" placeholder="Lien vers l'image" /></div>
         </div>
       </div>
     </aside>
@@ -41,5 +41,5 @@
 
 <script setup lang="ts">
 import { Languages, Settings } from 'lucide-vue-next'
-defineProps<{ project: any; lang: string }>()
+defineProps<{ project: any, lang: string }>()
 </script>
