@@ -12,19 +12,11 @@
       </div>
 
       <div class="sidebar-nav-tabs">
-        <button
-            @click="viewMode = 'projects'"
-            :class="['nav-tab-btn', { active: viewMode === 'projects' }]"
-        >
-          <Briefcase :size="18" />
-          <span>Projets</span>
+        <button @click="viewMode = 'projects'" :class="['nav-tab-btn', { active: viewMode === 'projects' }]">
+          <Briefcase :size="18" /> <span>Projets</span>
         </button>
-        <button
-            @click="viewMode = 'about'"
-            :class="['nav-tab-btn', { active: viewMode === 'about' }]"
-        >
-          <User :size="18" />
-          <span>À propos</span>
+        <button @click="viewMode = 'about'" :class="['nav-tab-btn', { active: viewMode === 'about' }]">
+          <User :size="18" /> <span>À propos</span>
         </button>
       </div>
 
@@ -37,21 +29,15 @@
             <Plus :size="14" />
           </button>
         </div>
-        <div
-            v-for="(proj, index) in projects"
-            :key="proj.id"
-            class="project-item"
-            :class="{ active: currentIdx === index }"
-            @click="currentIdx = index"
-        >
+
+        <div v-for="(proj, index) in projects" :key="proj.id"
+             class="project-item" :class="{ active: currentIdx === index }" @click="currentIdx = index">
           <div class="project-indicator"></div>
           <div class="project-details">
             <span class="project-title">{{ proj.fr.title || 'Nouveau projet' }}</span>
             <span class="project-cat">{{ proj.category || 'Portfolio' }}</span>
           </div>
-          <button @click.stop="confirmDelete(index)" class="btn-delete-item">
-            <Trash2 :size="14" />
-          </button>
+          <button @click.stop="confirmDelete(index)" class="btn-delete-item"><Trash2 :size="14" /></button>
         </div>
       </nav>
 
@@ -69,18 +55,13 @@
       <header class="stage-header">
         <div class="header-left">
           <div class="lang-selector">
-            <button
-                v-for="l in (['fr', 'en', 'es', 'nl'] as const)" :key="l"
-                :class="['lang-tab', { active: editLang === l }]"
-                @click="editLang = l"
-            >
+            <button v-for="l in (['fr', 'en', 'es', 'nl'] as const)" :key="l"
+                    :class="['lang-tab', { active: editLang === l }]" @click="editLang = l">
               {{ l.toUpperCase() }}
             </button>
           </div>
         </div>
-        <button @click="$emit('close')" class="btn-close-app" title="Fermer la console">
-          <X :size="20" />
-        </button>
+        <button @click="$emit('close')" class="btn-close-app"><X :size="20" /></button>
       </header>
 
       <div class="stage-content custom-scrollbar">
@@ -88,43 +69,27 @@
         <div v-if="viewMode === 'projects' && currentIdx !== null" class="editor-grid">
           <div class="editor-main">
             <div class="content-card">
-              <div class="card-head">
-                <Languages :size="18" class="icon-accent" />
-                <h3>Contenu du projet ({{ editLang.toUpperCase() }})</h3>
-              </div>
+              <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Contenu ({{ editLang.toUpperCase() }})</h3></div>
               <div class="card-body">
-                <div class="input-box">
-                  <label>Titre du projet</label>
-                  <input v-model="projects[currentIdx][editLang].title" placeholder="Ex: Nego Chine" />
-                </div>
-                <div class="input-box">
-                  <label>Description détaillée</label>
-                  <textarea v-model="projects[currentIdx][editLang].desc" rows="12" placeholder="Expliquez votre projet..."></textarea>
-                </div>
+                <div class="input-box"><label>Titre du projet</label><input v-model="projects[currentIdx][editLang].title" /></div>
+                <div class="input-box"><label>Description détaillée</label><textarea v-model="projects[currentIdx][editLang].desc" rows="12"></textarea></div>
               </div>
             </div>
           </div>
-
           <aside class="editor-side">
             <div class="content-card">
-              <div class="card-head"><Settings :size="18" class="icon-accent" /> <h3>Configuration</h3></div>
+              <div class="card-head"><Settings :size="18" class="icon-accent" /> <h3>Config</h3></div>
               <div class="card-body">
-                <div class="input-box">
-                  <label>Catégorie</label>
+                <div class="input-box"><label>Catégorie</label>
                   <select v-model="projects[currentIdx].category">
                     <option value="manage">Gestion de projet</option>
                     <option value="trans">Interculturel</option>
                     <option value="marketing">Marketing</option>
                   </select>
                 </div>
-                <div class="input-box"><label>Lien externe</label><input v-model="projects[currentIdx].link" placeholder="https://..." /></div>
-                <div class="input-box">
-                  <label>Image (URL)</label>
-                  <input v-model="projects[currentIdx].image" placeholder="Lien vers l'image" />
-                  <div class="img-preview-mini" v-if="projects[currentIdx].image">
-                    <img :src="projects[currentIdx].image" alt="Preview" />
-                  </div>
-                </div>
+                <div class="input-box"><label>Lien externe</label><input v-model="projects[currentIdx].link" /></div>
+                <div class="input-box"><label>Image (URL)</label><input v-model="projects[currentIdx].image" /></div>
+                <div class="img-preview-mini" v-if="projects[currentIdx].image"><img :src="projects[currentIdx].image" /></div>
               </div>
             </div>
           </aside>
@@ -134,33 +99,16 @@
           <div class="editor-main">
 
             <div class="content-card">
-              <div class="card-head"><Home :size="18" class="icon-accent" /> <h3>Section Accueil (Hero)</h3></div>
+              <div class="card-head"><Home :size="18" class="icon-accent" /> <h3>Section Accueil</h3></div>
               <div class="card-body">
                 <div class="input-row">
-                  <div class="input-box"><label>Badge Greeting</label><input v-model="aboutData[editLang].intro_hero" placeholder="Ex: Portfolio." /></div>
+                  <div class="input-box"><label>Badge Greeting</label><input v-model="aboutData[editLang].intro_hero" /></div>
                   <div class="input-box"><label>Nom / Titre</label><input v-model="aboutData[editLang].name_hero" /></div>
                 </div>
-                <div class="input-box">
-                  <label>Texte de Bio Hero</label>
-                  <textarea v-model="aboutData[editLang].bio_hero" rows="3"></textarea>
-                  <span class="hint">Supporte l'HTML (ex: &lt;strong&gt;)</span>
-                </div>
+                <div class="input-box"><label>Texte Hero</label><textarea v-model="aboutData[editLang].bio_hero" rows="3"></textarea></div>
                 <div class="input-row">
-                  <div class="input-box"><label>Label Bouton Projets</label><input v-model="aboutData[editLang].btn_prj" /></div>
-                  <div class="input-box"><label>Label Bouton À Propos</label><input v-model="aboutData[editLang].btn_abt" /></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="content-card mt-24">
-              <div class="card-head">
-                <User :size="18" class="icon-accent" />
-                <h3>Biographie détaillée ({{ editLang.toUpperCase() }})</h3>
-              </div>
-              <div class="card-body">
-                <div class="input-box">
-                  <label>Texte À propos</label>
-                  <textarea v-model="aboutData[editLang].text" rows="10" placeholder="Racontez votre parcours..."></textarea>
+                  <div class="input-box"><label>Bouton 1</label><input v-model="aboutData[editLang].btn_prj" /></div>
+                  <div class="input-box"><label>Bouton 2</label><input v-model="aboutData[editLang].btn_abt" /></div>
                 </div>
               </div>
             </div>
@@ -170,15 +118,13 @@
                 <History :size="18" class="icon-accent" />
                 <div class="flex-between">
                   <h3>Parcours d'événements</h3>
-                  <button @click="$emit('add-timeline')" class="btn-add-modern">
-                    <Plus :size="16" /> <span>Ajouter une étape</span>
-                  </button>
+                  <button @click="$emit('add-timeline')" class="btn-add-modern"><Plus :size="16" /> <span>Ajouter</span></button>
                 </div>
               </div>
-              <div class="card-body list-container">
+              <div class="card-body">
                 <div v-for="(item, idx) in aboutData.timeline" :key="idx" class="list-item-card">
                   <div class="item-grid-layout">
-                    <div class="input-box period"><label>Période</label><input v-model="item.period" placeholder="ex: 2022 - 2025" /></div>
+                    <div class="input-box period"><label>Période</label><input v-model="item.period" /></div>
                     <div class="input-box type"><label>Type</label>
                       <select v-model="item.type">
                         <option value="edu">🎓 Formation</option>
@@ -186,10 +132,10 @@
                         <option value="vol">🤝 Bénévolat</option>
                       </select>
                     </div>
-                    <div class="input-box title-field"><label>Intitulé ({{ editLang.toUpperCase() }})</label><input v-model="item[editLang].title" /></div>
-                    <button @click="$emit('delete-timeline', idx)" class="btn-delete-row" title="Supprimer"><Trash2 :size="16" /></button>
+                    <div class="input-box title-field"><label>Intitulé</label><input v-model="item[editLang].title" /></div>
+                    <button @click="$emit('delete-timeline', idx)" class="btn-delete-row"><Trash2 :size="16" /></button>
                   </div>
-                  <div class="input-box"><label>Lieu / Description</label><input v-model="item[editLang].desc" /></div>
+                  <div class="input-box"><label>Description / Lieu</label><input v-model="item[editLang].desc" /></div>
                 </div>
               </div>
             </div>
@@ -198,20 +144,18 @@
               <div class="card-head">
                 <Trophy :size="18" class="icon-accent" />
                 <div class="flex-between">
-                  <h3>Certifications & Badges</h3>
-                  <button @click="$emit('add-cert')" class="btn-add-modern">
-                    <Plus :size="16" /> <span>Ajouter un certificat</span>
-                  </button>
+                  <h3>Certifications</h3>
+                  <button @click="$emit('add-cert')" class="btn-add-modern"><Plus :size="16" /> <span>Ajouter</span></button>
                 </div>
               </div>
-              <div class="card-body list-container">
+              <div class="card-body">
                 <div v-for="(cert, idx) in aboutData.certifications" :key="idx" class="list-item-card">
                   <div class="item-grid-layout">
-                    <div class="input-box" style="flex: 2;"><label>Nom du diplôme ({{ editLang.toUpperCase() }})</label><input v-model="cert[editLang].name" /></div>
+                    <div class="input-box" style="flex: 2;"><label>Nom du diplôme</label><input v-model="cert[editLang].name" /></div>
                     <div class="input-box" style="flex: 1;"><label>Institution</label><input v-model="cert[editLang].school" /></div>
-                    <button @click="$emit('delete-cert', idx)" class="btn-delete-row" title="Supprimer"><Trash2 :size="16" /></button>
+                    <button @click="$emit('delete-cert', idx)" class="btn-delete-row"><Trash2 :size="16" /></button>
                   </div>
-                  <div class="input-box"><label>Lien de vérification</label><input v-model="cert.link" placeholder="https://..." /></div>
+                  <div class="input-box"><label>Lien de vérification</label><input v-model="cert.link" /></div>
                 </div>
               </div>
             </div>
@@ -219,12 +163,10 @@
 
           <aside class="editor-side">
             <div class="content-card">
-              <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
+              <div class="card-head"><User :size="18" class="icon-accent" /> <h3>Bio complète</h3></div>
               <div class="card-body">
-                <div class="input-box">
-                  <label>Slogan (Intro)</label>
-                  <textarea v-model="aboutData[editLang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
-                </div>
+                <div class="input-box"><label>Slogan</label><textarea v-model="aboutData[editLang].intro" rows="2"></textarea></div>
+                <div class="input-box"><label>Texte bio</label><textarea v-model="aboutData[editLang].text" rows="8"></textarea></div>
               </div>
             </div>
 
@@ -237,7 +179,7 @@
                   </span>
                 </div>
                 <div class="add-tag-box">
-                  <input v-model="newHobby" placeholder="Nouvelle passion..." @keyup.enter="addHobby" />
+                  <input v-model="newHobby" placeholder="Ajouter..." @keyup.enter="addHobby" />
                   <button @click="addHobby" class="btn-add-tag-inline"><Plus :size="16" /></button>
                 </div>
               </div>
@@ -249,7 +191,7 @@
           <div class="empty-glow"></div>
           <div class="empty-icon"><MousePointerClick :size="40" /></div>
           <h2>Console d'Administration</h2>
-          <p>Choisissez une section à gauche pour commencer l'édition de votre portfolio.</p>
+          <p>Prête à mettre à jour ton portfolio ? Sélectionne une section.</p>
         </div>
       </div>
     </main>
@@ -259,9 +201,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import {
-  LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Home,
-  Languages, Settings, MousePointerClick, History, Trophy,
-  User, Briefcase, Heart
+  LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Home, Trophy,
+  Languages, Settings, MousePointerClick, History, User, Briefcase, Heart
 } from 'lucide-vue-next'
 
 const props = defineProps<{ projects: any[], aboutData: any, isSaving: boolean }>();
@@ -271,153 +212,91 @@ const viewMode = ref<'projects' | 'about'>('projects')
 const currentIdx = ref<number | null>(null)
 const editLang = ref<'fr' | 'en' | 'es' | 'nl'>('fr')
 
-const confirmDelete = (index: number) => {
-  if(confirm("Supprimer ce projet définitivement ?")) {
-    emit('delete', index)
-  }
-}
+const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?")) emit('delete', idx); }
 
 const newHobby = ref('')
 const addHobby = () => {
   const h = newHobby.value.trim()
   if (h && !props.aboutData[editLang.value].hobbies.includes(h)) {
-    props.aboutData[editLang.value].hobbies.push(h)
-    newHobby.value = ''
+    props.aboutData[editLang.value].hobbies.push(h); newHobby.value = '';
   }
 }
 const removeHobby = (idx: number) => { props.aboutData[editLang.value].hobbies.splice(idx, 1) }
 </script>
 
 <style scoped>
-/* STRUCTURE GÉNÉRALE */
+/* =============================================
+   DESIGN SYSTEM : Dashboard v2
+   ============================================= */
 .dashboard-layout {
   width: 98vw; height: 96vh; max-width: 1700px;
   background: #080809; border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 28px; display: flex; overflow: hidden;
   box-shadow: 0 40px 100px rgba(0,0,0,0.8); color: #ececed;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* SIDEBAR */
 .sidebar { width: 320px; background: #0c0c0e; border-right: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; }
 .sidebar-header { padding: 32px 24px; }
 .app-brand { display: flex; align-items: center; gap: 14px; }
-.brand-square { width: 40px; height: 40px; background: #6366f1; border-radius: 12px; display: grid; place-items: center; color: white; box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-.brand-text { display: flex; flex-direction: column; }
-.main-title { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.5px; }
-.sub-title { font-size: 0.7rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+.brand-square { width: 42px; height: 42px; background: #6366f1; border-radius: 12px; display: grid; place-items: center; color: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+.main-title { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; display: block; }
+.sub-title { font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700; }
 
-.sidebar-nav-tabs { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
 .nav-tab-btn {
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-  background: transparent; border: none; color: #94a3b8; border-radius: 12px;
-  cursor: pointer; font-weight: 600; transition: 0.2s;
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin: 0 16px 4px;
+  background: transparent; border: none; color: #94a3b8; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s;
 }
 .nav-tab-btn:hover { background: rgba(255,255,255,0.03); color: white; }
-.nav-tab-btn.active { background: rgba(99, 102, 241, 0.12); color: #818cf8; }
+.nav-tab-btn.active { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
 
-.sidebar-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 24px; }
+.sidebar-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 20px 24px; }
 
-/* BOUTONS */
+/* BOUTONS MODERNES (Indigo Style) */
 .btn-add-modern {
   background: #6366f1; color: white; border: none;
   padding: 8px 16px; border-radius: 10px; cursor: pointer;
   display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.8rem; transition: 0.3s;
 }
-.btn-add-modern:hover { background: #818cf8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); }
-.btn-add-modern.sm { padding: 6px 10px; }
+.btn-add-modern:hover { background: #818cf8; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
+.btn-add-modern.sm { padding: 6px; border-radius: 8px; }
 
-/* ITEMS LISTE PROJETS */
-.project-list { flex: 1; padding: 0 16px 20px; overflow-y: auto; }
-.list-header { padding: 0 12px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+/* ÉDITEUR & CARTES */
+.stage-content { padding: 40px; overflow-y: auto; flex: 1; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.03), transparent); }
+.editor-grid { display: grid; grid-template-columns: 1fr 360px; gap: 32px; max-width: 1400px; margin: 0 auto; }
+.content-card { background: #0e0e11; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; }
+.card-head { padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.01); }
 
-.project-item {
-  padding: 14px 16px; border-radius: 16px; margin-bottom: 6px;
-  cursor: pointer; position: relative; display: flex; align-items: center;
-  transition: all 0.2s; border: 1px solid transparent;
+/* LISTES (Timeline/Certifs) */
+.list-item-card {
+  background: rgba(255,255,255,0.02); padding: 20px; border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 16px; margin-bottom: 12px; transition: 0.3s;
 }
-.project-item:hover { background: rgba(255,255,255,0.03); }
+.list-item-card:hover { border-color: rgba(99, 102, 241, 0.3); transform: translateX(5px); }
+.item-grid-layout { display: flex; gap: 16px; align-items: flex-end; }
+
+/* INPUTS */
+.input-box { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.input-box label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+.input-box input, .input-box select, .input-box textarea {
+  background: #050506; border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px; padding: 12px 16px; color: white; font-size: 0.9rem; transition: 0.2s;
+}
+.input-box input:focus, .input-box textarea:focus { border-color: #6366f1; background: black; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+/* UTILITAIRES */
+.flex-between { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.mt-24 { margin-top: 24px; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+/* (Garder les styles sidebar projects de ton code précédent pour ne pas casser la liste) */
+.project-list { flex: 1; padding: 0 16px 20px; overflow-y: auto; }
+.project-item { padding: 14px 16px; border-radius: 16px; margin-bottom: 6px; cursor: pointer; position: relative; display: flex; align-items: center; transition: 0.2s; }
 .project-item.active { background: #16161a; border-color: rgba(99, 102, 241, 0.3); }
 .project-indicator { width: 3px; height: 0; background: #6366f1; position: absolute; left: 0; border-radius: 0 4px 4px 0; transition: 0.3s; }
 .project-item.active .project-indicator { height: 20px; }
-
-.project-details { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-.project-title { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.project-cat { font-size: 0.65rem; color: #64748b; text-transform: uppercase; font-weight: 700; }
-.btn-delete-item { opacity: 0; padding: 6px; border-radius: 8px; color: #f87171; background: transparent; border: none; cursor: pointer; transition: 0.2s; }
-.project-item:hover .btn-delete-item { opacity: 1; }
-.btn-delete-item:hover { background: rgba(248, 113, 113, 0.1); }
-
-.sidebar-footer { padding: 24px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 12px; }
-.btn-save-main { background: #6366f1; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: 0.3s; }
-.logout-link { background: transparent; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
-
-/* MAIN STAGE */
-.main-stage { flex: 1; display: flex; flex-direction: column; background: #080809; }
-.stage-header { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(8,8,9,0.5); backdrop-filter: blur(10px); z-index: 10; }
-
-.lang-selector { display: flex; background: #111114; padding: 4px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
-.lang-tab { padding: 8px 18px; border: none; background: transparent; color: #64748b; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
-.lang-tab.active { background: white; color: black; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.btn-close-app { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: transparent; color: #64748b; display: grid; place-items: center; cursor: pointer; transition: 0.3s; }
-.btn-close-app:hover { color: white; background: rgba(255,255,255,0.05); }
-
-.stage-content { padding: 40px; overflow-y: auto; flex: 1; }
-.editor-grid { display: grid; grid-template-columns: 1fr 360px; gap: 32px; max-width: 1400px; margin: 0 auto; }
-
-/* CARTES ET INPUTS */
-.content-card { background: #0e0e11; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.card-head { padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; gap: 14px; background: linear-gradient(to right, rgba(255,255,255,0.02), transparent); }
-.card-head h3 { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; }
-.icon-accent { color: #818cf8; }
-
-.card-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-.input-box { display: flex; flex-direction: column; gap: 8px; }
-.input-box label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; }
-
-.input-box input, .input-box select, .input-box textarea {
-  background: #050506; border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px; padding: 12px 16px; color: white; font-size: 0.9rem; transition: 0.2s; width: 100%;
-}
-.input-box input:focus, .input-box textarea:focus { border-color: #6366f1; background: black; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
-
-/* GRID LAYOUTS POUR LES LISTES */
-.item-grid-layout { display: flex; gap: 16px; align-items: flex-end; width: 100%; }
-.period { width: 140px; }
-.type { width: 160px; }
-.title-field { flex: 1; }
-
-.list-item-card {
-  background: rgba(255,255,255,0.02); padding: 20px; border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 16px; transition: 0.3s;
-}
-.list-item-card:hover { border-color: rgba(99, 102, 241, 0.3); background: rgba(255,255,255,0.03); }
-
-.btn-delete-row {
-  height: 42px; width: 42px; border-radius: 10px; flex-shrink: 0;
-  border: 1px solid rgba(248, 113, 113, 0.2); background: transparent;
-  color: #f87171; cursor: pointer; display: grid; place-items: center; transition: 0.2s;
-}
-.btn-delete-row:hover { background: #f87171; color: white; }
-
-.img-preview-mini { margin-top: 12px; border-radius: 12px; overflow: hidden; height: 100px; border: 1px solid rgba(255,255,255,0.1); }
-.img-preview-mini img { width: 100%; height: 100%; object-fit: cover; }
-
-/* TAGS HOBBIES */
-.tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
-.hobby-tag-pill { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #a5b4fc; padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-.btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 0; line-height: 0; }
-
-.add-tag-box { display: flex; gap: 8px; margin-top: 12px; }
-.btn-add-tag-inline { width: 42px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; }
-
-/* SCROLLBAR */
-.custom-scrollbar::-webkit-scrollbar { width: 6px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-.mt-24 { margin-top: 24px; }
-.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.btn-save-main { background: #6366f1; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
