@@ -42,7 +42,19 @@ interface Project { id: number; category: string; image: string; link: string; f
 interface TimelineItem { id: string; period: string; type: string; fr: any; en: any; es: any; nl: any; }
 interface CertItem { id: string; link: string; fr: any; en: any; es: any; nl: any; }
 
-interface AboutContent { intro: string; text: string; hobbies: string[]; }
+interface AboutContent {
+  // Hero Section
+  intro_hero: string; // clé 'greeting'
+  name_hero: string;  // clé 'intro'
+  bio_hero: string;   // clé 'bio'
+  btn_prj: string;    // clé 'btn_projects'
+  btn_abt: string;    // clé 'btn_about'
+  // About Section
+  intro: string;      // clé 'about_intro'
+  text: string;       // clé 'about_text'
+  hobbies: string[];
+}
+
 interface AboutData {
   fr: AboutContent;
   en: AboutContent;
@@ -63,11 +75,16 @@ const loginError = ref('')
 const passwordValue = ref('')
 const toast = reactive({ show: false, message: '', type: 'success' as 'success' | 'error' })
 
+const createEmptyAboutContent = (): AboutContent => ({
+  intro_hero: '', name_hero: '', bio_hero: '', btn_prj: '', btn_abt: '',
+  intro: '', text: '', hobbies: []
+})
+
 const localAbout = reactive<AboutData>({
-  fr: { intro: '', text: '', hobbies: [] },
-  en: { intro: '', text: '', hobbies: [] },
-  es: { intro: '', text: '', hobbies: [] },
-  nl: { intro: '', text: '', hobbies: [] },
+  fr: createEmptyAboutContent(),
+  en: createEmptyAboutContent(),
+  es: createEmptyAboutContent(),
+  nl: createEmptyAboutContent(),
   timeline: [],
   certifications: []
 });
@@ -78,10 +95,17 @@ const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
 
-    // 1. Textes fixes (Intro, Bio, Hobbies)
+    // 1. Textes Section Accueil (Hero) + À Propos (Fixes)
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
+        // Mapping Hero
+        localAbout[l].intro_hero = msg.greeting || '';
+        localAbout[l].name_hero = msg.intro || '';
+        localAbout[l].bio_hero = msg.bio || '';
+        localAbout[l].btn_prj = msg.btn_projects || '';
+        localAbout[l].btn_abt = msg.btn_about || '';
+        // Mapping About
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
         localAbout[l].hobbies = Array.isArray(msg.hobbies) ? [...msg.hobbies] : [];
@@ -92,7 +116,7 @@ const initData = () => {
     const frMsg = i18n.global.getLocaleMessage('fr') as any;
     const frTimeline = frMsg.timeline_list || [];
     localAbout.timeline = frTimeline.map((item: any, i: number) => {
-      const obj: any = { id: Date.now().toString() + i, period: item.period || '', type: item.type || 'edu' };
+      const obj: any = { id: 'time-' + i, period: item.period || '', type: item.type || 'edu' };
       langs.forEach(l => {
         const langMsg = i18n.global.getLocaleMessage(l) as any;
         const langItem = langMsg.timeline_list?.[i] || {};
@@ -101,7 +125,7 @@ const initData = () => {
       return obj;
     });
 
-    // 3. Certifications dynamiques (Nouveau)
+    // 3. Certifications dynamiques
     const frCerts = frMsg.cert_list || [];
     localAbout.certifications = frCerts.map((cert: any, i: number) => {
       const obj: any = { id: 'cert-' + i, link: cert.link || '' };
@@ -146,7 +170,7 @@ const handleLogin = async (pwd: string) => {
     });
     if (res.ok) { passwordValue.value = pwd; isAuthenticated.value = true; triggerToast('Accès autorisé'); }
     else { loginError.value = "Clé invalide"; }
-  } catch (e) { loginError.value = "Erreur serveur"; }
+  } catch (e) { loginError.value = "Erreur réseau"; }
   finally { isLoggingIn.value = false; }
 }
 
@@ -186,22 +210,29 @@ const saveAll = async () => {
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
 
-      // Sync Projets
+      // 1. Sync Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
       }));
 
-      // Sync About Fixes
+      // 2. Sync Accueil (Hero)
+      full.greeting = localAbout[l].intro_hero;
+      full.intro = localAbout[l].name_hero;
+      full.bio = localAbout[l].bio_hero;
+      full.btn_projects = localAbout[l].btn_prj;
+      full.btn_about = localAbout[l].btn_abt;
+
+      // 3. Sync À Propos
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.hobbies = localAbout[l].hobbies;
 
-      // Sync Timeline
+      // 4. Sync Timeline
       full.timeline_list = localAbout.timeline.map(item => ({
         period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
       }));
 
-      // Sync Certifications
+      // 5. Sync Certifications
       full.cert_list = localAbout.certifications.map(cert => ({
         name: cert[l].name, school: cert[l].school, link: cert.link
       }));
@@ -213,7 +244,10 @@ const saveAll = async () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: passwordValue.value, content: payloads })
     });
-    if (res.ok) { triggerToast('Publication réussie !'); setTimeout(() => window.location.reload(), 1000); }
+    if (res.ok) {
+      triggerToast('Publication réussie !');
+      setTimeout(() => window.location.reload(), 1000);
+    }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
   finally { isSaving.value = false; }
 }
