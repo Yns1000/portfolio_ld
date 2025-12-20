@@ -275,132 +275,251 @@ const saveAll = async () => {
 </script>
 
 <style scoped>
-/* REFINEMENT CSS
-*/
+/* ===============================
+   DESIGN SYSTEM (CLEAN 2025)
+================================ */
 .admin-portal {
   --bg-dark: #070708;
-  --card-bg: #111114;
-  --sidebar-bg: #0c0c0e;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --accent-color: #6366f1;
-  --accent-glow: rgba(99, 102, 241, 0.25);
-  --text-main: #edeeef;
-  --text-muted: #8a94a6;
-  --radius-lg: 24px;
-  --radius-md: 12px;
+  --panel-bg: rgba(18,18,22,0.9);
+  --sidebar-bg: rgba(12,12,14,0.95);
+  --border-soft: rgba(255,255,255,0.06);
+  --accent: #6366f1;
+  --accent-soft: rgba(99,102,241,0.15);
+  --text-main: #f4f5f7;
+  --text-muted: #9ca3af;
 
-  position: fixed; inset: 0; z-index: 99999;
-  background: rgba(4, 4, 5, 0.95);
-  backdrop-filter: blur(20px);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-main); font-family: 'Inter', system-ui, sans-serif;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: radial-gradient(circle at 30% 20%, rgba(99,102,241,0.08), transparent 40%),
+  rgba(4,4,5,0.92);
+  backdrop-filter: blur(24px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-main);
 }
 
-/* DASHBOARD LAYOUT */
+/* ===============================
+   AUTH
+================================ */
+.auth-card {
+  background: var(--panel-bg);
+  border-radius: 28px;
+  padding: 48px 44px;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-glow {
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(circle at 40% 30%, var(--accent-soft), transparent 45%);
+  pointer-events: none;
+}
+
+.brand-logo {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 28px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1c1c22, #0e0e12);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+
+.auth-header h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* Inputs */
+.input-wrapper {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  border: 1px solid transparent;
+  transition: all 0.25s;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.input-wrapper input {
+  padding: 16px 16px 16px 48px;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #818cf8);
+  border-radius: 14px;
+  font-weight: 700;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--accent-soft);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  margin-top: 14px;
+}
+
+/* ===============================
+   DASHBOARD
+================================ */
 .dashboard-layout {
-  width: 96vw; height: 94vh; max-width: 1600px;
-  background: var(--bg-dark); border: 1px solid var(--border-color);
-  border-radius: 32px; display: flex; overflow: hidden;
-  box-shadow: 0 50px 100px rgba(0,0,0,0.6);
+  width: 96vw;
+  height: 92vh;
+  max-width: 1600px;
+  background: var(--bg-dark);
+  border-radius: 36px;
+  overflow: hidden;
+  display: flex;
+  box-shadow: 0 60px 140px rgba(0,0,0,0.7);
 }
 
-/* SIDEBAR REFINEMENT */
+/* Sidebar */
 .sidebar {
-  width: 300px; background: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
-  display: flex; flex-direction: column;
+  width: 300px;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar-header { padding: 32px 24px; display: flex; justify-content: space-between; align-items: center; }
-.app-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
-.brand-square { width: 32px; height: 32px; background: var(--accent-color); border-radius: 8px; display: grid; place-items: center; color: white; }
-
-.btn-add-project {
-  width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border-color);
-  background: rgba(255,255,255,0.03); color: white; cursor: pointer; transition: all 0.2s;
+.sidebar-header {
+  padding: 28px 24px;
 }
-.btn-add-project:hover { background: var(--accent-color); transform: rotate(90deg); border-color: var(--accent-color); }
 
-.project-list { flex: 1; padding: 0 16px; overflow-y: auto; }
+.app-brand {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.brand-square {
+  background: var(--accent);
+  border-radius: 10px;
+}
+
 .project-item {
-  padding: 14px 16px; border-radius: 16px; margin-bottom: 6px;
-  cursor: pointer; position: relative; display: flex; align-items: center;
-  transition: all 0.2s; border: 1px solid transparent;
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: transparent;
 }
-.project-item:hover { background: rgba(255,255,255,0.03); }
-.project-item.active { background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); }
 
-.project-indicator { width: 3px; height: 0; background: var(--accent-color); position: absolute; left: 0; border-radius: 0 4px 4px 0; transition: 0.3s; }
-.project-item.active .project-indicator { height: 20px; }
-
-.project-details { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.project-title { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.project-cat { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-.btn-delete-item { opacity: 0; padding: 6px; border-radius: 6px; color: #ff4757; background: transparent; border: none; cursor: pointer; }
-.project-item:hover .btn-delete-item { opacity: 1; }
-
-.sidebar-footer { padding: 24px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
-.btn-save-main {
-  background: var(--accent-color); color: white; border: none; padding: 14px;
-  border-radius: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s;
+.project-item:hover {
+  background: rgba(255,255,255,0.04);
 }
-.btn-save-main:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 10px 20px var(--accent-glow); }
-.logout-link { background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.logout-link:hover { color: #ff4757; }
 
-/* STAGE REFINEMENT */
-.main-stage { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent); }
-.stage-header { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-
-.lang-selector { display: flex; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 12px; border: 1px solid var(--border-color); }
-.lang-tab { padding: 8px 18px; border: none; background: transparent; color: var(--text-muted); border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
-.lang-tab.active { background: white; color: #000; }
-
-/* CORRECTION CROIX : Style "Ghost" minimaliste */
-.btn-close-app {
-  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color);
-  background: rgba(255,255,255,0.03); color: var(--text-muted);
-  display: grid; place-items: center; cursor: pointer; transition: all 0.2s;
+.project-item.active {
+  background: var(--accent-soft);
 }
-.btn-close-app:hover { background: rgba(255, 71, 87, 0.1); color: #ff4757; border-color: rgba(255, 71, 87, 0.2); transform: rotate(90deg); }
 
-.stage-content { padding: 40px; overflow-y: auto; }
-.editor-grid { display: grid; grid-template-columns: 1fr 320px; gap: 32px; max-width: 1200px; margin: 0 auto; }
-
-.content-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.card-head { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.01); }
-.card-head h3 { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
-.icon-accent { color: var(--accent-color); }
-
-.card-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-.input-box { display: flex; flex-direction: column; gap: 8px; }
-.input-box label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.input-box input, .input-box select, .input-box textarea {
-  background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px;
-  padding: 12px 16px; color: white; font-size: 0.95rem; transition: 0.2s;
+.project-indicator {
+  width: 3px;
+  border-radius: 3px;
 }
-.input-box input:focus, .input-box textarea:focus { border-color: var(--accent-color); outline: none; background: rgba(0,0,0,0.5); }
 
-.input-with-icon { position: relative; }
-.input-with-icon svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-.input-with-icon input { padding-left: 40px; width: 100%; }
+.sidebar-footer {
+  padding: 20px;
+}
 
-.preview-area { margin-top: 8px; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; border: 1px solid var(--border-color); background: #000; }
-.preview-area img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+/* ===============================
+   MAIN STAGE
+================================ */
+.stage-header {
+  padding: 26px 42px;
+}
 
-/* EMPTY STATE */
-.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-.empty-glow { position: absolute; width: 300px; height: 300px; background: var(--accent-color); filter: blur(150px); opacity: 0.1; }
-.empty-icon { width: 80px; height: 80px; background: rgba(99, 102, 241, 0.1); border-radius: 24px; display: grid; place-items: center; color: var(--accent-color); margin-bottom: 24px; }
-.empty-state h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; }
-.empty-state p { color: var(--text-muted); max-width: 320px; text-align: center; line-height: 1.6; }
+.lang-selector {
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 4px;
+}
 
-/* SCROLLBAR */
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.lang-tab {
+  padding: 8px 22px;
+  font-size: 0.75rem;
+  border-radius: 10px;
+}
 
-/* AUTH EXTRA */
-.btn-ghost-text { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; margin-top: 16px; }
-.btn-ghost-text:hover { color: white; }
+.lang-tab.active {
+  background: var(--accent);
+  color: white;
+}
+
+/* Editor */
+.editor-container {
+  grid-template-columns: 1fr 360px;
+}
+
+.content-card {
+  background: var(--panel-bg);
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px var(--border-soft);
+}
+
+.card-head {
+  font-weight: 700;
+}
+
+.input-box input,
+.input-box textarea,
+.input-box select {
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+}
+
+/* Preview */
+.preview-area {
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+.empty-state {
+  opacity: 0.9;
+}
+
+.empty-icon {
+  background: radial-gradient(circle at 30% 30%, var(--accent-soft), transparent 60%);
+}
+
+/* ===============================
+   TOASTS
+================================ */
+.modern-toast {
+  border-radius: 18px;
+  background: rgba(20,20,25,0.95);
+  backdrop-filter: blur(10px);
+}
+
+.toast-indicator {
+  border-radius: 4px;
+}
+
+/* ===============================
+   SCROLLBAR
+================================ */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+}
+
 </style>
