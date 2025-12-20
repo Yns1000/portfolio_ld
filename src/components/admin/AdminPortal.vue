@@ -18,6 +18,8 @@
           :is-saving="isSaving"
           @add="addNewProject"
           @delete="deleteProject"
+          @add-timeline="addTimelineItem"
+          @delete-timeline="deleteTimelineItem"
           @save="saveAll"
           @logout="isAuthenticated = false"
           @close="closePortal"
@@ -74,20 +76,26 @@ const initData = () => {
       }
     });
 
-    // 2. Chargement manuel de la Timeline (basé sur tes clés JSON)
-    const timelineSlugs = ['asso', 'master', 'afev', 'mcdo', 'licence', 'bac'];
-    localAbout.timeline = timelineSlugs.map(slug => {
-      const item: any = { id: slug, period: '', type: 'edu' };
-      // Note: period et type sont actuellement en dur dans ton AboutSection,
-      // on initialise ici, il faudra les éditer une fois dans l'admin.
+    // 2. Chargement de la Timeline (depuis la nouvelle structure timeline_list)
+    const frMsg = i18n.global.getLocaleMessage('fr') as any;
+    const frTimeline = frMsg.timeline_list || [];
+
+    localAbout.timeline = frTimeline.map((item: any, i: number) => {
+      const timelineObj: any = {
+        id: Date.now().toString() + i,
+        period: item.period || '',
+        type: item.type || 'edu'
+      };
+
       langs.forEach(l => {
-        const msg = i18n.global.getLocaleMessage(l) as any;
-        item[l] = {
-          title: msg[`timeline_${slug}_title`] || '',
-          desc: msg[`timeline_${slug}_desc`] || ''
+        const langMsg = i18n.global.getLocaleMessage(l) as any;
+        const langItem = langMsg.timeline_list?.[i] || {};
+        timelineObj[l] = {
+          title: langItem.title || '',
+          desc: langItem.desc || ''
         };
       });
-      return item;
+      return timelineObj;
     });
 
     // 3. Chargement des Projets
@@ -132,6 +140,18 @@ const addNewProject = () => {
 
 const deleteProject = (idx: number) => { if (confirm("Supprimer ce projet ?")) localProjects.value.splice(idx, 1); }
 
+const addTimelineItem = () => {
+  localAbout.timeline.unshift({
+    id: Date.now().toString(), period: '', type: 'edu',
+    fr: { title: '', desc: '' }, en: { title: '', desc: '' },
+    es: { title: '', desc: '' }, nl: { title: '', desc: '' }
+  });
+}
+
+const deleteTimelineItem = (idx: number) => {
+  if (confirm("Supprimer cet événement du parcours ?")) localAbout.timeline.splice(idx, 1);
+}
+
 const closePortal = () => emit('close');
 
 const saveAll = async () => {
@@ -155,11 +175,13 @@ const saveAll = async () => {
       full.cert_school = localAbout[l].cert_school;
       full.hobbies = localAbout[l].hobbies;
 
-      // Sauvegarde Timeline (On ré-injecte dans les clés plates pour ne pas casser ton site actuel)
-      localAbout.timeline.forEach(item => {
-        full[`timeline_${item.id}_title`] = item[l].title;
-        full[`timeline_${item.id}_desc`] = item[l].desc;
-      });
+      // Sauvegarde Timeline (Format Liste dynamique)
+      full.timeline_list = localAbout.timeline.map(item => ({
+        period: item.period,
+        type: item.type,
+        title: item[l].title,
+        desc: item[l].desc
+      }));
 
       payloads[l] = full;
     });
@@ -176,21 +198,11 @@ const saveAll = async () => {
 
 <style scoped>
 .admin-portal-wrapper {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
+  position: fixed; inset: 0; z-index: 99999;
   background: rgba(4, 4, 5, 0.95);
   backdrop-filter: blur(20px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
 }
-
-.portal-fade-enter-active, .portal-fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.portal-fade-enter-from, .portal-fade-leave-to {
-  opacity: 0;
-  transform: scale(1.05);
-}
+.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
 </style>
