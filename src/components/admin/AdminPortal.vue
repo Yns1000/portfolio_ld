@@ -147,3 +147,14 @@ const saveAll = async () => {
   finally { isSaving.value = false; }
 }
 </script>
+<style scoped>
+/* À ajouter dans AdminPortal.vue */
+.portal-fade-enter-active, .portal-fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.portal-fade-enter-from, .portal-fade-leave-to {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  transform: scale(1.05);
+}
+</style>
