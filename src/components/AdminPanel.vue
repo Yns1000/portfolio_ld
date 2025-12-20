@@ -1,109 +1,121 @@
 <template>
-  <div class="admin-wrapper">
+  <div class="admin-screen">
     <div v-if="!isAuthenticated" class="auth-container">
-      <div class="shad-card login-card">
-        <div class="card-header">
+      <div class="glass-card login-box">
+        <div class="auth-header">
+          <div class="lock-icon">🔒</div>
           <h2>Administration</h2>
-          <p>Entrez votre mot de passe pour gérer les projets.</p>
+          <p>Identifiez-vous pour modifier le portfolio</p>
         </div>
-        <div class="card-content">
-          <input
-              v-model="password"
-              type="password"
-              placeholder="Mot de passe"
-              class="shad-input"
-              @keyup.enter="handleLogin"
-          />
-          <div class="card-footer">
-            <button @click="$emit('close')" class="shad-btn btn-ghost">Annuler</button>
-            <button @click="handleLogin" class="shad-btn btn-primary">Connexion</button>
+
+        <div class="auth-form">
+          <div class="input-wrapper">
+            <input
+                v-model="password"
+                type="password"
+                placeholder="Mot de passe"
+                class="custom-input"
+                @keyup.enter="handleLogin"
+                :disabled="isLoggingIn"
+            />
+            <div v-if="loginError" class="error-msg">{{ loginError }}</div>
+          </div>
+
+          <div class="auth-actions">
+            <button @click="$emit('close')" class="btn-secondary">Annuler</button>
+            <button @click="handleLogin" class="btn-accent" :disabled="isLoggingIn">
+              {{ isLoggingIn ? 'Vérification...' : 'Connexion' }}
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-else class="dashboard-container shad-card">
+    <div v-else class="dashboard-container glass-card">
       <aside class="sidebar">
         <div class="sidebar-header">
           <h3>Projets</h3>
-          <button @click="addNewProject" class="shad-btn btn-outline btn-sm">+ Nouveau</button>
+          <button @click="addNewProject" class="btn-add" title="Ajouter un projet">+</button>
         </div>
-        <div class="project-list">
+
+        <div class="project-nav">
           <div
               v-for="(proj, index) in localProjects"
               :key="index"
-              class="project-item"
+              class="nav-item"
               :class="{ active: currentIdx === index }"
               @click="currentIdx = index"
           >
-            <span class="proj-title-nav">{{ proj.fr.title || 'Projet sans titre' }}</span>
-            <button @click.stop="deleteProject(index)" class="delete-icon">✕</button>
+            <span class="nav-title">{{ proj.fr.title || 'Nouveau projet' }}</span>
+            <button @click.stop="deleteProject(index)" class="btn-trash">✕</button>
           </div>
         </div>
-        <div class="sidebar-actions">
-          <button @click="saveAll" :disabled="isSaving" class="shad-btn btn-primary w-full">
-            {{ isSaving ? 'Enregistrement...' : '🚀 Publier les changements' }}
+
+        <div class="sidebar-footer">
+          <button @click="saveAll" :disabled="isSaving" class="btn-accent btn-full">
+            {{ isSaving ? 'Publication...' : '🚀 Publier le site' }}
           </button>
-          <button @click="isAuthenticated = false" class="shad-btn btn-ghost btn-sm w-full">Déconnexion</button>
+          <button @click="isAuthenticated = false" class="btn-logout">Déconnexion</button>
         </div>
       </aside>
 
       <main class="editor-main">
         <header class="editor-header">
-          <div v-if="currentIdx !== null" class="lang-tabs">
+          <div v-if="currentIdx !== null" class="lang-selector">
             <button
                 v-for="l in ['fr', 'en', 'es', 'nl']"
                 :key="l"
-                class="tab-btn"
+                class="lang-btn"
                 :class="{ active: editLang === l }"
                 @click="editLang = l"
             >
               {{ l.toUpperCase() }}
             </button>
           </div>
-          <button @click="$emit('close')" class="close-x">✕</button>
+          <button @click="$emit('close')" class="close-dashboard">✕</button>
         </header>
 
         <div v-if="currentIdx !== null" class="editor-body">
           <section class="form-section">
-            <h4 class="section-label">Contenu traduit ({{ editLang.toUpperCase() }})</h4>
-            <div class="field-group">
-              <label>Titre du projet</label>
-              <input v-model="localProjects[currentIdx][editLang].title" placeholder="Ex: Nego Chine" class="shad-input" />
+            <h4 class="section-title">Contenu ({{ editLang.toUpperCase() }})</h4>
+            <div class="field">
+              <label>Titre</label>
+              <input v-model="localProjects[currentIdx][editLang].title" placeholder="Titre du projet" class="custom-input" />
             </div>
-            <div class="field-group">
+            <div class="field">
               <label>Description</label>
-              <textarea v-model="localProjects[currentIdx][editLang].desc" rows="5" class="shad-input" placeholder="Décrivez le projet..."></textarea>
+              <textarea v-model="localProjects[currentIdx][editLang].desc" rows="5" class="custom-input"></textarea>
             </div>
           </section>
 
-          <hr class="shad-divider" />
+          <div class="divider"></div>
 
           <section class="form-section">
-            <h4 class="section-label">Paramètres généraux (Communs)</h4>
-            <div class="grid-2">
-              <div class="field-group">
+            <h4 class="section-title">Paramètres Généraux</h4>
+            <div class="grid-fields">
+              <div class="field">
                 <label>Catégorie</label>
-                <select v-model="localProjects[currentIdx].category" class="shad-input">
+                <select v-model="localProjects[currentIdx].category" class="custom-input">
                   <option value="manage">Gestion</option>
                   <option value="trans">Intercultural</option>
                   <option value="marketing">Marketing</option>
                 </select>
               </div>
-              <div class="field-group">
-                <label>Lien du projet (URL)</label>
-                <input v-model="localProjects[currentIdx].link" placeholder="https://..." class="shad-input" />
+              <div class="field">
+                <label>Lien URL</label>
+                <input v-model="localProjects[currentIdx].link" placeholder="https://..." class="custom-input" />
               </div>
             </div>
-            <div class="field-group mt-4">
-              <label>URL de l'image (Unsplash)</label>
-              <input v-model="localProjects[currentIdx].image" placeholder="https://images.unsplash.com/..." class="shad-input" />
+            <div class="field mt-4">
+              <label>Image URL (Unsplash)</label>
+              <input v-model="localProjects[currentIdx].image" class="custom-input" />
             </div>
           </section>
         </div>
 
-        <div v-else class="empty-editor">
-          <p>Sélectionnez un projet dans la liste pour commencer l'édition ou créez-en un nouveau.</p>
+        <div v-else class="empty-state">
+          <div class="empty-icon">📂</div>
+          <p>Sélectionnez un projet à gauche pour l'éditer</p>
         </div>
       </main>
     </div>
@@ -111,25 +123,26 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import i18n from '../i18n'
 
 const emit = defineEmits(['close'])
 
 const isAuthenticated = ref(false)
 const password = ref('')
+const isLoggingIn = ref(false)
 const isSaving = ref(false)
+const loginError = ref('')
 const editLang = ref('fr')
 const currentIdx = ref(null)
 
-// 1. Charger et fusionner les données des 4 langues pour faciliter l'édition
-const loadProjectsFromI18n = () => {
+// 1. Fusion des données i18n
+const loadProjects = () => {
   const fr = i18n.global.getLocaleMessage('fr').projects_list || []
   const en = i18n.global.getLocaleMessage('en').projects_list || []
   const es = i18n.global.getLocaleMessage('es').projects_list || []
   const nl = i18n.global.getLocaleMessage('nl').projects_list || []
 
-  // On crée un tableau d'objets où chaque objet contient les infos communes + les 4 langues
   return fr.map((p, i) => ({
     id: p.id || Date.now() + i,
     category: p.category,
@@ -142,71 +155,74 @@ const loadProjectsFromI18n = () => {
   }))
 }
 
-const localProjects = ref(loadProjectsFromI18n())
+const localProjects = ref(loadProjects())
 
-const handleLogin = () => {
-  if (password.value) isAuthenticated.value = true
+// 2. Connexion sécurisée
+const handleLogin = async () => {
+  if (!password.value) return
+  isLoggingIn.value = true
+  loginError.value = ''
+
+  try {
+    const res = await fetch('/api/manage-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: password.value, action: 'login' })
+    })
+
+    if (res.ok) {
+      isAuthenticated.value = true
+    } else {
+      loginError.value = "Mot de passe incorrect"
+      password.value = ""
+    }
+  } catch (e) {
+    loginError.value = "Erreur serveur"
+  } finally {
+    isLoggingIn.value = false
+  }
 }
 
 const addNewProject = () => {
   localProjects.value.push({
-    id: Date.now(),
-    category: 'manage',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3',
-    link: '#',
-    fr: { title: '', desc: '' },
-    en: { title: '', desc: '' },
-    es: { title: '', desc: '' },
-    nl: { title: '', desc: '' }
+    id: Date.now(), category: 'manage', image: '', link: '',
+    fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''}
   })
   currentIdx.value = localProjects.value.length - 1
 }
 
-const deleteProject = (index) => {
-  if (confirm('Supprimer ce projet définitivement ?')) {
-    localProjects.value.splice(index, 1)
-    if (currentIdx.value === index) currentIdx.value = null
+const deleteProject = (idx) => {
+  if (confirm('Supprimer ce projet ?')) {
+    localProjects.value.splice(idx, 1)
+    if (currentIdx.value === idx) currentIdx.value = null
   }
 }
 
 const saveAll = async () => {
   isSaving.value = true
   try {
+    const payloads = {}
     const langs = ['fr', 'en', 'es', 'nl']
-    const finalPayload = {}
 
-    // Reconstruire les fichiers JSON complets pour chaque langue
-    langs.forEach(lang => {
-      // On récupère TOUT le fichier actuel pour ne pas perdre les autres clés (bio, intro, etc.)
-      const currentFullFile = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(lang)))
-
-      // On remplace juste la liste des projets
-      currentFullFile.projects_list = localProjects.value.map(p => ({
-        id: p.id,
-        category: p.category,
-        image: p.image,
-        link: p.link,
-        title: p[lang].title,
-        desc: p[lang].desc
+    langs.forEach(l => {
+      const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)))
+      full.projects_list = localProjects.value.map(p => ({
+        id: p.id, category: p.category, image: p.image, link: p.link,
+        title: p[l].title, desc: p[l].desc
       }))
-
-      finalPayload[lang] = currentFullFile
+      payloads[l] = full
     })
 
     const res = await fetch('/api/manage-content', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: password.value, content: finalPayload })
+      body: JSON.stringify({ password: password.value, content: payloads })
     })
 
     if (res.ok) {
-      alert("✅ Le site a été mis à jour avec succès !")
+      alert("✅ Site mis à jour !")
       window.location.reload()
-    } else {
-      alert("❌ Erreur lors de la sauvegarde (Vérifiez le mot de passe).")
     }
-  } catch (error) {
-    alert("❌ Erreur réseau.")
   } finally {
     isSaving.value = false
   }
@@ -214,99 +230,80 @@ const saveAll = async () => {
 </script>
 
 <style scoped>
-/* SHADCN THEME & UTILS */
-.admin-wrapper {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
+/* BASE STYLES */
+.admin-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(15px);
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Inter', system-ui, sans-serif;
-  color: #09090b;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  padding: 20px;
 }
 
-.shad-card {
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.shad-input {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #e4e4e7;
-  background: transparent;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-.shad-input:focus { outline: none; border-color: #09090b; ring: 1px solid #09090b; }
+/* AUTH */
+.login-box { width: 100%; max-width: 400px; padding: 40px; text-align: center; }
+.lock-icon { font-size: 40px; margin-bottom: 20px; }
+.auth-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.auth-header p { color: #888; font-size: 14px; }
+.auth-form { margin-top: 30px; display: flex; flex-direction: column; gap: 20px; }
+.error-msg { color: #ff4d4d; font-size: 12px; margin-top: 5px; }
 
-.shad-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 0.2s, background 0.2s;
-  border: 1px solid transparent;
-}
-.btn-primary { background: #18181b; color: #ffffff; }
-.btn-primary:hover { opacity: 0.9; }
-.btn-outline { background: transparent; border: 1px solid #e4e4e7; color: #09090b; }
-.btn-outline:hover { background: #f4f4f5; }
-.btn-ghost { background: transparent; color: #71717a; border: none; }
-.btn-ghost:hover { background: #f4f4f5; color: #09090b; }
-.btn-sm { padding: 4px 8px; font-size: 12px; }
-.w-full { width: 100%; }
+/* DASHBOARD */
+.dashboard-container { width: 100%; max-width: 1200px; height: 85vh; display: flex; overflow: hidden; }
 
-/* LAYOUTS */
-.auth-container { width: 400px; }
-.card-header { padding: 24px; text-align: center; }
-.card-header h2 { font-size: 24px; font-weight: 600; }
-.card-header p { font-size: 14px; color: #71717a; margin-top: 4px; }
-.card-content { padding: 0 24px 24px 24px; display: flex; flex-direction: column; gap: 16px; }
-.card-footer { display: flex; justify-content: flex-end; gap: 8px; }
-
-.dashboard-container {
-  width: 95vw; max-width: 1100px; height: 85vh;
-  display: flex; overflow: hidden;
+.sidebar { width: 300px; border-right: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; }
+.sidebar-header { padding: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.project-nav { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
+.nav-item {
+  padding: 12px 15px; border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  transition: all 0.2s; border: 1px solid transparent; font-size: 14px;
 }
+.nav-item:hover { background: rgba(255, 255, 255, 0.05); }
+.nav-item.active { background: var(--color-accent); color: black; font-weight: 700; }
+.btn-trash { background: none; border: none; color: inherit; cursor: pointer; opacity: 0.6; }
 
-/* SIDEBAR */
-.sidebar {
-  width: 280px; border-right: 1px solid #e4e4e7;
-  display: flex; flex-direction: column; background: #fafafa;
-}
-.sidebar-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e4e4e7; }
-.project-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
-.project-item {
-  padding: 10px 12px; border-radius: 6px; cursor: pointer;
-  font-size: 14px; display: flex; justify-content: space-between; align-items: center;
-}
-.project-item:hover { background: #f4f4f5; }
-.project-item.active { background: #18181b; color: #ffffff; }
-.delete-icon { background: none; border: none; color: #ef4444; cursor: pointer; opacity: 0.5; font-size: 16px; }
-.delete-icon:hover { opacity: 1; }
-.sidebar-actions { padding: 16px; border-top: 1px solid #e4e4e7; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-footer { padding: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; gap: 10px; }
 
-/* EDITOR */
-.editor-main { flex: 1; display: flex; flex-direction: column; background: #fff; }
-.editor-header { padding: 12px 24px; border-bottom: 1px solid #e4e4e7; display: flex; justify-content: space-between; align-items: center; }
-.lang-tabs { display: flex; gap: 4px; }
-.tab-btn {
-  padding: 6px 12px; border-radius: 4px; border: none; background: transparent;
-  font-size: 12px; font-weight: 600; color: #71717a; cursor: pointer;
+.editor-main { flex: 1; display: flex; flex-direction: column; background: rgba(0, 0, 0, 0.2); }
+.editor-header { padding: 15px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
+.lang-selector { display: flex; gap: 5px; background: rgba(255, 255, 255, 0.05); padding: 5px; border-radius: 10px; }
+.lang-btn {
+  padding: 6px 15px; border: none; border-radius: 8px; background: none; color: #888; font-weight: 700; font-size: 12px; cursor: pointer;
 }
-.tab-btn.active { background: #18181b; color: #fff; }
-.close-x { font-size: 20px; color: #71717a; background: none; border: none; cursor: pointer; }
+.lang-btn.active { background: rgba(255, 255, 255, 0.1); color: white; }
 
-.editor-body { flex: 1; overflow-y: auto; padding: 32px; display: flex; flex-direction: column; gap: 32px; }
-.section-label { font-size: 12px; font-weight: 600; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
-.field-group { display: flex; flex-direction: column; gap: 6px; }
-.field-group label { font-size: 13px; font-weight: 500; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.mt-4 { margin-top: 16px; }
-.shad-divider { border: none; border-top: 1px solid #e4e4e7; }
-.empty-editor { flex: 1; display: flex; align-items: center; justify-content: center; color: #71717a; text-align: center; padding: 40px; }
+.editor-body { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; gap: 30px; }
+.section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--color-accent); margin-bottom: 20px; font-weight: 800; }
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label { font-size: 13px; font-weight: 600; color: #aaa; }
+.grid-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.divider { height: 1px; background: rgba(255, 255, 255, 0.08); margin: 10px 0; }
+
+/* INPUTS & BUTTONS */
+.custom-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px; padding: 12px 15px; color: white; outline: none; transition: all 0.3s;
+}
+.custom-input:focus { border-color: var(--color-accent); background: rgba(255, 255, 255, 0.08); }
+
+.btn-accent { background: var(--color-accent); color: black; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+.btn-accent:hover { transform: scale(1.02); }
+.btn-accent:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary { background: rgba(255, 255, 255, 0.05); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; }
+.btn-add { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); background: none; color: white; cursor: pointer; }
+.btn-logout { background: none; border: none; color: #666; font-size: 12px; cursor: pointer; }
+.btn-logout:hover { color: #ff4d4d; }
+
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #444; }
+.empty-icon { font-size: 50px; margin-bottom: 20px; opacity: 0.2; }
 </style>
