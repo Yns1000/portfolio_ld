@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <div class="content-card" style="margin-top: 24px;">
+      <div class="content-card mt-24">
         <div class="card-head">
           <User :size="18" class="icon-accent" />
           <h3>Biographie détaillée ({{ lang.toUpperCase() }})</h3>
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="content-card" style="margin-top: 24px;">
+      <div class="content-card mt-24">
         <div class="card-head">
           <History :size="18" class="icon-accent" />
           <div class="flex-between">
@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <div class="content-card" style="margin-top: 24px;">
+      <div class="content-card mt-24">
         <div class="card-head">
           <Trophy :size="18" class="icon-accent" />
           <div class="flex-between">
@@ -97,7 +97,7 @@
           <p class="field-hint" style="margin-bottom: 12px;">Ambiance visuelle :</p>
           <div class="palette-selector-grid">
             <button
-                v-for="n in 5" :key="n"
+                v-for="n in 9" :key="n"
                 @click="aboutData.selected_palette = n"
                 :class="['palette-option', 'pal-' + n, { active: aboutData.selected_palette == n }]"
                 :title="'Palette ' + n"
@@ -129,7 +129,7 @@
             </span>
           </div>
           <div class="add-tag-box">
-            <input v-model="newHobby" placeholder="Nouvelle passion..." @keyup.enter="addHobby" />
+            <input v-model="newHobby" placeholder="Ajouter..." @keyup.enter="addHobby" />
             <button @click="addHobby" class="btn-add-tag-inline"><Plus :size="16" /></button>
           </div>
         </div>
@@ -160,21 +160,32 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 </script>
 
 <style scoped>
-.palette-selector-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+/* GRID DES PALETTES */
+.palette-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+  gap: 8px;
+}
+
 .palette-option {
-  height: 40px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.1);
+  height: 42px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s ease; font-weight: bold;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1); font-weight: bold;
 }
 .palette-option.active { border-color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
 
-/* Couleurs des boutons de prévisualisation (Sombre / Accent) */
-.pal-1 { background: #55423d; color: #ffc0ad; }
-.pal-2 { background: #0f172a; color: #38bdf8; }
-.pal-3 { background: #064e3b; color: #34d399; }
-.pal-4 { background: #2e1065; color: #a78bfa; }
-.pal-5 { background: #18181b; color: #fbbf24; }
+/* APERÇU DES COULEURS (Sombre / Accent) */
+.pal-1 { background: #55423d; color: #ffc0ad; } /* Terre */
+.pal-2 { background: #0f172a; color: #38bdf8; } /* Océan */
+.pal-3 { background: #064e3b; color: #34d399; } /* Forêt */
+.pal-4 { background: #2e1065; color: #a78bfa; } /* Lavande */
+.pal-5 { background: #18181b; color: #fbbf24; } /* Ardoise/Or */
+.pal-6 { background: #AF4D98; color: #9DF7E5; } /* Candy */
+.pal-7 { background: #310D20; color: #F2D06B; } /* Aube Dorée */
+.pal-8 { background: #1a2a6c; color: #00d2ff; } /* Stitch */
+.pal-9 { background: #0f172a; color: #facc15; } /* Petit Prince */
 
 .field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
+.hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }
 .mt-24 { margin-top: 24px; }
 </style>
