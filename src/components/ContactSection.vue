@@ -10,7 +10,7 @@ const linkedinUrl = "https://www.linkedin.com/in/laurine-dhilly-928886385/"
 </script>
 
 <template>
-  <section id="contact" class="contact-section">
+  <section id="contact" class="contact-section" v-reveal>
     <div class="glow-bg"></div>
 
     <div class="container">

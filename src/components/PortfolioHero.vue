@@ -31,7 +31,7 @@ const handleMouseLeave = () => {
 </script>
 
 <template>
-  <section class="hero-wrapper">
+  <section id="home" class="hero-wrapper">
     <div class="glow-bg"></div>
     <div class="fade-bottom-mask"></div>
 

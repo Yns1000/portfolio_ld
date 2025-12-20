@@ -55,7 +55,7 @@ const getTypeLabel = (type) => {
 
         <div class="content-wrapper">
 
-          <div class="profile-card glass-card">
+          <div class="profile-card glass-card" v-reveal>
             <h2 class="section-title">
               {{ t('section_about_title') }}<span class="highlight">.</span>
             </h2>
@@ -71,7 +71,7 @@ const getTypeLabel = (type) => {
             </div>
           </div>
 
-          <div class="info-block glass-card">
+          <div class="info-block glass-card" v-reveal>
             <div class="block-header">
               <Trophy :size="22" class="block-icon" />
               <h3 class="block-title">{{ t('cert_title') }}</h3>
@@ -107,7 +107,7 @@ const getTypeLabel = (type) => {
 
       <div class="right-column">
         <div class="timeline">
-          <div v-for="(item, index) in timelineData" :key="index" class="timeline-item">
+          <div v-for="(item, index) in timelineData" :key="index" class="timeline-item" v-reveal>
             <div class="timeline-marker" :style="{ borderColor: getTypeColor(item.type) }"></div>
             <div class="timeline-content">
               <div class="meta-header">

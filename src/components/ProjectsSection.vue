@@ -66,7 +66,8 @@ const setCategory = (cat) => activeCategory.value = cat
       </div>
 
       <TransitionGroup name="list" tag="div" class="projects-grid">
-        <div v-for="project in filteredProjects" :key="project.id" class="project-wrapper">
+        <div v-for="project in filteredProjects" :key="project.id" class="project-wrapper" v-reveal
+             :style="{ transitionDelay: (index * 0.15) + 's' }">
 
           <div class="browser-card glass-effect">
             <div class="browser-header">

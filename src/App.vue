@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -20,6 +20,19 @@ import ContactSection from './components/ContactSection.vue'
 const { locale } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
+const activeSection = ref('home')
+const isHovering = ref(false)
+
+const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
+
+const updateCursor = (e) => {
+  const size = isHovering.value ? 40 : 20
+  cursorStyle.value = {
+    transform: `translate(${e.clientX - size / 2}px, ${e.clientY - size / 2}px)`,
+    width: `${size}px`,
+    height: `${size}px`
+  }
+}
 
 const changeLanguage = (lang) => {
   locale.value = lang
@@ -39,36 +52,74 @@ onMounted(() => {
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
+
+  window.addEventListener('mousemove', updateCursor)
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        activeSection.value = entry.target.id
+      }
+    })
+  }, { threshold: 0.3 })
+
+  document.querySelectorAll('section[id]').forEach(section => {
+    observer.observe(section)
+  })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', updateCursor)
 })
 </script>
 
 <template>
+  <div class="custom-cursor" :style="cursorStyle"></div>
+
   <header class="site-header glass-nav">
     <nav class="navbar">
 
       <div class="nav-links">
-        <a href="#" class="nav-item" aria-label="Home">
+        <a href="#home"
+           class="nav-item"
+           :class="{ active: activeSection === 'home' }"
+           @mouseenter="isHovering = true"
+           @mouseleave="isHovering = false">
           <Home :size="20" />
           <span class="nav-text">Home</span>
         </a>
-        <a href="#projects" class="nav-item" aria-label="Projects">
+        <a href="#projects"
+           class="nav-item"
+           :class="{ active: activeSection === 'projects' }"
+           @mouseenter="isHovering = true"
+           @mouseleave="isHovering = false">
           <Briefcase :size="20" />
           <span class="nav-text">Projets</span>
         </a>
-        <a href="#about" class="nav-item" aria-label="About">
+        <a href="#about"
+           class="nav-item"
+           :class="{ active: activeSection === 'about' }"
+           @mouseenter="isHovering = true"
+           @mouseleave="isHovering = false">
           <User :size="20" />
           <span class="nav-text">À propos</span>
         </a>
-        <a href="#contact" class="nav-item" aria-label="Contact">
+        <a href="#contact"
+           class="nav-item"
+           :class="{ active: activeSection === 'contact' }"
+           @mouseenter="isHovering = true"
+           @mouseleave="isHovering = false">
           <Mail :size="20" />
           <span class="nav-text">Contact</span>
         </a>
       </div>
 
       <div class="nav-settings">
-
         <div class="lang-dropdown-wrapper">
-          <button class="icon-btn" @click="isLangMenuOpen = !isLangMenuOpen">
+          <button class="icon-btn"
+                  @click="isLangMenuOpen = !isLangMenuOpen"
+                  @mouseenter="isHovering = true"
+                  @mouseleave="isHovering = false">
             <Languages :size="20" />
             <span class="current-lang">{{ locale.toUpperCase() }}</span>
           </button>
@@ -81,11 +132,11 @@ onMounted(() => {
           </div>
         </div>
 
-        <button
-            class="theme-toggle icon-btn"
-            @click="toggleTheme"
-            :aria-label="isDark ? 'Mode clair' : 'Mode sombre'"
-        >
+        <button class="theme-toggle icon-btn"
+                @click="toggleTheme"
+                @mouseenter="isHovering = true"
+                @mouseleave="isHovering = false"
+                :aria-label="isDark ? 'Mode clair' : 'Mode sombre'">
           <Sun v-if="!isDark" :size="20" class="icon-sun" />
           <Moon v-else :size="20" class="icon-moon" />
         </button>
@@ -109,18 +160,38 @@ body {
   width: 100%;
   overflow-x: hidden;
   background-color: var(--color-bg);
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.5s ease;
+}
+
+@media (min-width: 1024px) {
+  html, body, a, button, input, textarea {
+    cursor: none !important;
+  }
 }
 
 #app {
   width: 100%;
   max-width: 100%;
   padding: 0 !important;
-  margin: 0 auto;
 }
+
 </style>
 
 <style scoped>
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;  will-change: transform;
+}
+
 .site-header {
   position: fixed;
   top: 0;
@@ -128,7 +199,6 @@ body {
   width: 100%;
   z-index: 1000;
   padding: 1rem 2rem;
-  transition: all 0.3s ease;
 }
 
 .glass-nav {
@@ -163,18 +233,29 @@ body {
   gap: 8px;
   font-size: 0.95rem;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
 }
 
-.nav-item:hover {
+.nav-item:hover, .nav-item.active {
   color: var(--color-accent);
-  transform: translateY(-1px);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--color-accent);
 }
 
 @media (max-width: 768px) {
   .nav-text { display: none; }
-  .nav-links { gap: 1.5rem; padding: 10px 20px; }
+  .nav-links { gap: 1.5rem; }
 }
 
 .nav-settings {
@@ -187,13 +268,12 @@ body {
   background: transparent;
   border: none;
   color: var(--color-text-main);
-  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px;
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: all 0.2s;
 }
 
 .icon-btn:hover {
@@ -201,14 +281,7 @@ body {
   color: var(--color-accent);
 }
 
-.current-lang {
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.lang-dropdown-wrapper {
-  position: relative;
-}
+.lang-dropdown-wrapper { position: relative; }
 
 .lang-menu {
   position: absolute;
@@ -231,11 +304,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 500;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  transition: 0.2s;
 }
 
 .lang-menu span:hover {
@@ -251,7 +320,6 @@ body {
 .theme-toggle {
   width: 40px;
   height: 40px;
-  display: flex;
   justify-content: center;
   border: 1px solid var(--color-border);
 }
