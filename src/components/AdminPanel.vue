@@ -24,15 +24,14 @@
             <div class="input-group">
               <label>Code d'accès</label>
               <div class="input-with-icon">
-                <ShieldKeyhole :size="18" class="field-icon" />
-                <input
-                    v-model="password"
-                    type="password"
-                    placeholder="••••••••"
-                    class="custom-input"
-                    @keyup.enter="handleLogin"
-                    :disabled="isLoggingIn"
-                />
+                <KeyRound :size="18" class="field-icon" /> <input
+                  v-model="password"
+                  type="password"
+                  placeholder="••••••••"
+                  class="custom-input"
+                  @keyup.enter="handleLogin"
+                  :disabled="isLoggingIn"
+              />
               </div>
               <Transition name="slide-up">
                 <span v-if="loginError" class="error-msg">{{ loginError }}</span>
@@ -179,7 +178,7 @@
 import { ref, reactive } from 'vue'
 import i18n from '../i18n'
 import {
-  Lock, ShieldKeyhole, Loader2, Plus, Trash2, Save,
+  Lock, KeyRound, Loader2, Plus, Trash2, Save,
   LogOut, X, Globe, Settings2, Image, Layout,
   FolderKanban, CheckCircle, AlertCircle
 } from 'lucide-vue-next'
