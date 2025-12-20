@@ -158,12 +158,33 @@
                 <h3>Centres d'intérêt</h3>
               </div>
               <div class="card-body">
-                <p class="field-hint">Séparez les passions par une virgule</p>
-                <textarea
-                    :value="aboutData[editLang].hobbies.join(', ')"
-                    @input="e => aboutData[editLang].hobbies = (e.target as HTMLTextAreaElement).value.split(',').map(s => s.trim()).filter(s => s !== '')"
-                    rows="3"
-                ></textarea>
+                <div class="hobbies-editor">
+                  <div class="tags-container">
+                    <TransitionGroup name="tag-fade">
+                      <span
+                          v-for="(hobby, idx) in aboutData[editLang].hobbies"
+                          :key="hobby"
+                          class="hobby-pill"
+                      >
+                        {{ hobby }}
+                        <button @click="removeHobby(idx)" class="btn-remove-tag">
+                          <X :size="12" />
+                        </button>
+                      </span>
+                    </TransitionGroup>
+                  </div>
+
+                  <div class="add-hobby-control">
+                    <input
+                        v-model="newHobby"
+                        placeholder="Ajouter une passion..."
+                        @keyup.enter="addHobby"
+                    />
+                    <button class="btn-add-tag" @click="addHobby" :disabled="!newHobby.trim()">
+                      <Plus :size="18" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -208,75 +229,139 @@ import {
   Languages, Settings, MousePointerClick,
   User, Briefcase, GraduationCap, Heart
 } from 'lucide-vue-next'
-defineProps<{
+
+const props = defineProps<{
   projects: any[]
   aboutData: any
   isSaving: boolean
 }>();
-defineEmits(['add', 'delete', 'save', 'logout', 'close'])
-
+defineEmits(['add', 'delete', 'save', 'logout', 'close']);
 const viewMode = ref<'projects' | 'about'>('projects')
 const currentIdx = ref<number | null>(null)
 const editLang = ref<'fr' | 'en' | 'es' | 'nl'>('fr')
+
+// LOGIQUE POUR LES PASSIONS
+const newHobby = ref('')
+
+const addHobby = () => {
+  const val = newHobby.value.trim()
+  if (!val) return
+
+  // Éviter les doublons
+  if (!props.aboutData[editLang.value].hobbies.includes(val)) {
+    props.aboutData[editLang.value].hobbies.push(val)
+  }
+  newHobby.value = ''
+}
+
+const removeHobby = (index: number) => {
+  props.aboutData[editLang.value].hobbies.splice(index, 1)
+}
 </script>
 
 <style scoped>
-/* RE-USE EXISTING STYLES + NEW ONES */
-
-.sidebar-nav-tabs {
-  padding: 0 16px;
+/* NOUVEAUX STYLES POUR LES PASSIONS */
+.hobbies-editor {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 1rem;
+  gap: 16px;
 }
 
-.nav-tab-btn {
+.tags-container {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hobby-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #edeeef;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: scaleIn 0.2s ease-out;
+}
+
+.btn-remove-tag {
   background: transparent;
   border: none;
   color: #8a94a6;
-  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
+  display: flex;
+  padding: 2px;
+  border-radius: 50%;
   transition: 0.2s;
 }
 
+.btn-remove-tag:hover {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+}
+
+.add-hobby-control {
+  display: flex;
+  gap: 10px;
+}
+
+.add-hobby-control input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  outline: none;
+}
+
+.btn-add-tag {
+  width: 46px;
+  height: 46px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-add-tag:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-add-tag:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ANIMATIONS DES TAGS */
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --- RE-USE EXISTING STYLES --- */
+.sidebar-nav-tabs { padding: 0 16px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem; }
+.nav-tab-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: transparent; border: none; color: #8a94a6; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; text-align: left; }
 .nav-tab-btn:hover { background: rgba(255,255,255,0.05); color: white; }
 .nav-tab-btn.active { background: #6366f1; color: white; }
-
 .sidebar-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 0 16px 1.5rem; }
+.list-header { padding: 0 16px 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #8a94a6; text-transform: uppercase; letter-spacing: 0.05em; }
+.btn-plus-sm { background: #6366f1; border: none; border-radius: 6px; color: white; padding: 2px 6px; cursor: pointer; }
 
-.list-header {
-  padding: 0 16px 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.75rem;
-  color: #8a94a6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.btn-plus-sm {
-  background: #6366f1;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  padding: 2px 6px;
-  cursor: pointer;
-}
-
-.field-hint {
-  font-size: 0.8rem;
-  color: #8a94a6;
-  margin-bottom: 8px;
-}
-
-/* --- RESTE DU CSS PRÉCÉDENT --- */
 .dashboard-layout { width: 96vw; height: 94vh; max-width: 1600px; background: #070708; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; display: flex; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.6); }
 .sidebar { width: 300px; background: #0c0c0e; border-right: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; }
 .sidebar-header { padding: 32px 24px; display: flex; justify-content: space-between; align-items: center; }
@@ -295,13 +380,16 @@ const editLang = ref<'fr' | 'en' | 'es' | 'nl'>('fr')
 .project-item:hover .btn-delete-item { opacity: 1; }
 .sidebar-footer { padding: 24px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; gap: 12px; }
 .btn-save-main { background: #6366f1; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+.btn-save-main:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25); }
 .logout-link { background: transparent; border: none; color: #8a94a6; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.logout-link:hover { color: #ff4757; }
 .main-stage { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent); }
 .stage-header { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 .lang-selector { display: flex; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); }
 .lang-tab { padding: 8px 18px; border: none; background: transparent; color: #8a94a6; border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
 .lang-tab.active { background: white; color: #000; }
 .btn-close-app { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255,255,255,0.03); color: #8a94a6; display: grid; place-items: center; cursor: pointer; transition: all 0.2s; }
+.btn-close-app:hover { background: rgba(255, 71, 87, 0.1); color: #ff4757; transform: rotate(90deg); }
 .stage-content { padding: 40px; overflow-y: auto; }
 .editor-grid { display: grid; grid-template-columns: 1fr 320px; gap: 32px; max-width: 1200px; margin: 0 auto; }
 .content-card { background: #111114; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden; }
@@ -312,6 +400,7 @@ const editLang = ref<'fr' | 'en' | 'es' | 'nl'>('fr')
 .input-box { display: flex; flex-direction: column; gap: 8px; }
 .input-box label { font-size: 0.75rem; font-weight: 600; color: #8a94a6; text-transform: uppercase; letter-spacing: 0.05em; }
 .input-box input, .input-box select, .input-box textarea { background: rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 16px; color: white; font-size: 0.95rem; transition: 0.2s; }
+.input-box input:focus, .input-box textarea:focus { border-color: #6366f1; outline: none; background: rgba(0,0,0,0.5); }
 .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 .empty-glow { position: absolute; width: 300px; height: 300px; background: #6366f1; filter: blur(150px); opacity: 0.1; }
 .empty-icon { width: 80px; height: 80px; background: rgba(99, 102, 241, 0.1); border-radius: 24px; display: grid; place-items: center; color: #6366f1; margin-bottom: 24px; }
