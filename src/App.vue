@@ -17,7 +17,7 @@ import PortfolioHero from './components/PortfolioHero.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
-import AdminPanel from './components/AdminPanel.vue'
+import AdminPortal from './components/admin/AdminPortal.vue'
 
 const { locale } = useI18n()
 const isDark = ref(true)
@@ -149,7 +149,7 @@ onUnmounted(() => {
     <ContactSection />
   </main>
 
-  <AdminPanel v-if="isAdminOpen" @close="isAdminOpen = false" />
+  <AdminPortal v-if="isAdminOpen" @close="isAdminOpen = false" />
 
   <footer style="padding: 2rem; text-align: center; opacity: 0.5;">
     {{ $t('footer_rights') }}
