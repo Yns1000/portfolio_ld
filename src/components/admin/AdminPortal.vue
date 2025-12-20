@@ -20,6 +20,8 @@
           @delete="deleteProject"
           @add-timeline="addTimelineItem"
           @delete-timeline="deleteTimelineItem"
+          @add-cert="addCertItem"
+          @delete-cert="deleteCertItem"
           @save="saveAll"
           @logout="isAuthenticated = false"
           @close="closePortal"
@@ -35,15 +37,25 @@ import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
 
-// TYPES
+// --- TYPES ---
 interface Project { id: number; category: string; image: string; link: string; fr: any; en: any; es: any; nl: any; }
 interface TimelineItem { id: string; period: string; type: string; fr: any; en: any; es: any; nl: any; }
-interface AboutContent { intro: string; text: string; cert_name: string; cert_school: string; hobbies: string[]; }
-interface AboutData { fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent; timeline: TimelineItem[]; }
+interface CertItem { id: string; link: string; fr: any; en: any; es: any; nl: any; }
+
+interface AboutContent { intro: string; text: string; hobbies: string[]; }
+interface AboutData {
+  fr: AboutContent;
+  en: AboutContent;
+  es: AboutContent;
+  nl: AboutContent;
+  timeline: TimelineItem[];
+  certifications: CertItem[];
+}
 
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
 
+// --- ÉTATS GLOBAUX ---
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -52,53 +64,56 @@ const passwordValue = ref('')
 const toast = reactive({ show: false, message: '', type: 'success' as 'success' | 'error' })
 
 const localAbout = reactive<AboutData>({
-  fr: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
-  en: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
-  es: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
-  nl: { intro: '', text: '', cert_name: '', cert_school: '', hobbies: [] },
-  timeline: []
+  fr: { intro: '', text: '', hobbies: [] },
+  en: { intro: '', text: '', hobbies: [] },
+  es: { intro: '', text: '', hobbies: [] },
+  nl: { intro: '', text: '', hobbies: [] },
+  timeline: [],
+  certifications: []
 });
 const localProjects = ref<Project[]>([]);
 
+// --- LOGIQUE DE CHARGEMENT ---
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
 
-    // 1. Chargement des textes About
+    // 1. Textes fixes (Intro, Bio, Hobbies)
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
-        localAbout[l].cert_name = msg.cert_name || '';
-        localAbout[l].cert_school = msg.cert_school || '';
         localAbout[l].hobbies = Array.isArray(msg.hobbies) ? [...msg.hobbies] : [];
       }
     });
 
-    // 2. Chargement de la Timeline (depuis la nouvelle structure timeline_list)
+    // 2. Timeline dynamique
     const frMsg = i18n.global.getLocaleMessage('fr') as any;
     const frTimeline = frMsg.timeline_list || [];
-
     localAbout.timeline = frTimeline.map((item: any, i: number) => {
-      const timelineObj: any = {
-        id: Date.now().toString() + i,
-        period: item.period || '',
-        type: item.type || 'edu'
-      };
-
+      const obj: any = { id: Date.now().toString() + i, period: item.period || '', type: item.type || 'edu' };
       langs.forEach(l => {
         const langMsg = i18n.global.getLocaleMessage(l) as any;
         const langItem = langMsg.timeline_list?.[i] || {};
-        timelineObj[l] = {
-          title: langItem.title || '',
-          desc: langItem.desc || ''
-        };
+        obj[l] = { title: langItem.title || '', desc: langItem.desc || '' };
       });
-      return timelineObj;
+      return obj;
     });
 
-    // 3. Chargement des Projets
+    // 3. Certifications dynamiques (Nouveau)
+    const frCerts = frMsg.cert_list || [];
+    localAbout.certifications = frCerts.map((cert: any, i: number) => {
+      const obj: any = { id: 'cert-' + i, link: cert.link || '' };
+      langs.forEach(l => {
+        const langMsg = i18n.global.getLocaleMessage(l) as any;
+        const langCert = langMsg.cert_list?.[i] || {};
+        obj[l] = { name: langCert.name || '', school: langCert.school || '' };
+      });
+      return obj;
+    });
+
+    // 4. Projets
     const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any)?.projects_list || [];
     localProjects.value = getProj('fr').map((p: any, i: number) => ({
       id: p.id || Date.now() + i,
@@ -116,6 +131,7 @@ const initData = () => {
 
 onMounted(() => { initData(); isMounted.value = true; });
 
+// --- ACTIONS ---
 const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg; toast.type = type; toast.show = true;
   setTimeout(() => { toast.show = false }, 4000);
@@ -134,10 +150,12 @@ const handleLogin = async (pwd: string) => {
   finally { isLoggingIn.value = false; }
 }
 
+const closePortal = () => emit('close');
+
+// --- GESTION DES ITEMS ---
 const addNewProject = () => {
   localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
 }
-
 const deleteProject = (idx: number) => { if (confirm("Supprimer ce projet ?")) localProjects.value.splice(idx, 1); }
 
 const addTimelineItem = () => {
@@ -147,13 +165,18 @@ const addTimelineItem = () => {
     es: { title: '', desc: '' }, nl: { title: '', desc: '' }
   });
 }
+const deleteTimelineItem = (idx: number) => { if (confirm("Supprimer cet événement ?")) localAbout.timeline.splice(idx, 1); }
 
-const deleteTimelineItem = (idx: number) => {
-  if (confirm("Supprimer cet événement du parcours ?")) localAbout.timeline.splice(idx, 1);
+const addCertItem = () => {
+  localAbout.certifications.unshift({
+    id: Date.now().toString(), link: '',
+    fr: { name: '', school: '' }, en: { name: '', school: '' },
+    es: { name: '', school: '' }, nl: { name: '', school: '' }
+  });
 }
+const deleteCertItem = (idx: number) => { if (confirm("Supprimer cette certification ?")) localAbout.certifications.splice(idx, 1); }
 
-const closePortal = () => emit('close');
-
+// --- SAUVEGARDE FINALE ---
 const saveAll = async () => {
   isSaving.value = true
   try {
@@ -163,24 +186,24 @@ const saveAll = async () => {
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
 
-      // Sauvegarde Projets
+      // Sync Projets
       full.projects_list = localProjects.value.map(p => ({
-        id: p.id, category: p.category, image: p.image, link: p.link, title: (p as any)[l].title, desc: (p as any)[l].desc
+        id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
       }));
 
-      // Sauvegarde About
+      // Sync About Fixes
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
-      full.cert_name = localAbout[l].cert_name;
-      full.cert_school = localAbout[l].cert_school;
       full.hobbies = localAbout[l].hobbies;
 
-      // Sauvegarde Timeline (Format Liste dynamique)
+      // Sync Timeline
       full.timeline_list = localAbout.timeline.map(item => ({
-        period: item.period,
-        type: item.type,
-        title: item[l].title,
-        desc: item[l].desc
+        period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
+      }));
+
+      // Sync Certifications
+      full.cert_list = localAbout.certifications.map(cert => ({
+        name: cert[l].name, school: cert[l].school, link: cert.link
       }));
 
       payloads[l] = full;

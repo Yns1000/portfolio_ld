@@ -95,8 +95,13 @@
   ],
 
   "cert_title": "Certificering",
-  "cert_name": "Virtual Exchange Participant",
-  "cert_school": "Erasmus - University of Limerick",
+  "cert_list": [
+    {
+      "name": "Virtual Exchange Participant",
+      "school": "Erasmus - University of Limerick",
+      "link": "https://openbadgefactory.com/obv3/credentials/db277f0419ae76ed0993d88db0114f441ecefc59.html"
+    }
+  ],
 
   "interests_title": "Interesses",
   "hobbies": ["Volleybal & Basketbal", "Reizen", "Literatuur", "Cinema & Theater", "Koken", "Mode", "Geschiedenis"],
