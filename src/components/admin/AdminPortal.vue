@@ -14,6 +14,7 @@
       <AdminDashboard
           v-else
           :projects="localProjects"
+          :about-data="localAbout"
           :is-saving="isSaving"
           @add="addNewProject"
           @delete="deleteProject"
@@ -34,103 +35,115 @@ import AdminToast from './AdminToast.vue'
 
 // TYPES
 interface Project { id: number; category: string; image: string; link: string; fr: any; en: any; es: any; nl: any; }
+interface AboutContent { intro: string; text: string; cert_name: string; cert_school: string; hobbies: string[]; }
+interface AboutData { fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent; }
 
-const emit = defineEmits(['close'])
+defineEmits(['close']);
 
 // ÉTATS GLOBAUX
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
 const loginError = ref('')
-const passwordValue = ref('') // Stocké pour les requêtes de sauvegarde
+const passwordValue = ref('')
 
-// TOAST LOGIC
 const toast = reactive({ show: false, message: '', type: 'success' as 'success' | 'error' })
-const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
-  toast.message = msg
-  toast.type = type
-  toast.show = true
-  setTimeout(() => { toast.show = false }, 4000)
-}
 
-// DATA MANAGEMENT
-const loadProjects = (): Project[] => {
-  const getLangList = (lang: string) => (i18n.global.getLocaleMessage(lang) as any).projects_list || []
-  const fr = getLangList('fr'); const en = getLangList('en'); const es = getLangList('es'); const nl = getLangList('nl')
-  return fr.map((p: any, i: number) => ({
+// INITIALISATION DES DONNÉES
+const loadInitialData = () => {
+  const langs = ['fr', 'en', 'es', 'nl'] as const;
+
+  // Chargement du "About"
+  const about: any = {};
+  langs.forEach(l => {
+    const msg = i18n.global.getLocaleMessage(l) as any;
+    about[l] = {
+      intro: msg.about_intro || '',
+      text: msg.about_text || '',
+      cert_name: msg.cert_name || '',
+      cert_school: msg.cert_school || '',
+      hobbies: msg.hobbies || []
+    };
+  });
+
+  // Chargement des Projets
+  const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any).projects_list || [];
+  const frP = getProj('fr'); const enP = getProj('en'); const esP = getProj('es'); const nlP = getProj('nl');
+
+  const projects = frP.map((p: any, i: number) => ({
     id: p.id || Date.now() + i, category: p.category || 'manage', image: p.image || '', link: p.link || '',
     fr: { title: p.title || '', desc: p.desc || '' },
-    en: { title: en[i]?.title || '', desc: en[i]?.desc || '' },
-    es: { title: es[i]?.title || '', desc: es[i]?.desc || '' },
-    nl: { title: nl[i]?.title || '', desc: nl[i]?.desc || '' }
-  }))
-}
-const localProjects = ref<Project[]>(loadProjects())
+    en: { title: enP[i]?.title || '', desc: enP[i]?.desc || '' },
+    es: { title: esP[i]?.title || '', desc: esP[i]?.desc || '' },
+    nl: { title: nlP[i]?.title || '', desc: nlP[i]?.desc || '' }
+  }));
 
-// API ACTIONS
+  return { about, projects };
+}
+
+const data = loadInitialData();
+const localAbout = reactive<AboutData>(data.about);
+const localProjects = ref<Project[]>(data.projects);
+
+// ACTIONS
+const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
+  toast.message = msg; toast.type = type; toast.show = true;
+  setTimeout(() => { toast.show = false }, 4000);
+}
+
 const handleLogin = async (pwd: string) => {
-  isLoggingIn.value = true
-  loginError.value = ''
+  isLoggingIn.value = true; loginError.value = '';
   try {
     const res = await fetch('/api/manage-content', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: pwd, action: 'login' })
-    })
-    if (res.ok) {
-      passwordValue.value = pwd
-      isAuthenticated.value = true
-      triggerToast('Accès autorisé')
-    } else {
-      loginError.value = "Clé invalide"
-    }
-  } catch (e) { loginError.value = "Erreur serveur" }
-  finally { isLoggingIn.value = false }
+    });
+    if (res.ok) { passwordValue.value = pwd; isAuthenticated.value = true; triggerToast('Accès autorisé'); }
+    else { loginError.value = "Clé invalide"; }
+  } catch (e) { loginError.value = "Erreur serveur"; }
+  finally { isLoggingIn.value = false; }
 }
 
 const addNewProject = () => {
-  const newProj = { id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} }
-  localProjects.value.push(newProj)
-  triggerToast('Projet ajouté')
+  localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
+  triggerToast('Projet ajouté');
 }
 
 const deleteProject = (idx: number) => {
-  localProjects.value.splice(idx, 1)
-  triggerToast('Projet supprimé', 'error')
+  localProjects.value.splice(idx, 1);
+  triggerToast('Projet supprimé', 'error');
 }
 
 const saveAll = async () => {
   isSaving.value = true
   try {
     const payloads: any = {}
-    const langs = ['fr', 'en', 'es', 'nl']
+    const langs = ['fr', 'en', 'es', 'nl'] as const;
+
     langs.forEach(l => {
-      const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)))
+      const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
+
+      // Sync Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: (p as any)[l].title, desc: (p as any)[l].desc
-      }))
-      payloads[l] = full
-    })
+      }));
+
+      // Sync About
+      full.about_intro = localAbout[l].intro;
+      full.about_text = localAbout[l].text;
+      full.cert_name = localAbout[l].cert_name;
+      full.cert_school = localAbout[l].cert_school;
+      full.hobbies = localAbout[l].hobbies;
+
+      payloads[l] = full;
+    });
+
     const res = await fetch('/api/manage-content', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: passwordValue.value, content: payloads })
-    })
-    if (res.ok) {
-      triggerToast('Publication réussie !')
-      setTimeout(() => window.location.reload(), 1000)
-    }
-  } catch (e) { triggerToast('Erreur réseau', 'error') }
-  finally { isSaving.value = false }
+    });
+    if (res.ok) { triggerToast('Publication réussie !'); setTimeout(() => window.location.reload(), 1000); }
+  } catch (e) { triggerToast('Erreur réseau', 'error'); }
+  finally { isSaving.value = false; }
 }
 </script>
-
-<style scoped>
-.admin-portal-wrapper {
-  position: fixed; inset: 0; z-index: 99999;
-  background: rgba(4, 4, 5, 0.95);
-  backdrop-filter: blur(20px);
-  display: flex; align-items: center; justify-content: center;
-  color: #edeeef; font-family: 'Inter', sans-serif;
-}
-.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s ease; }
-.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
-</style>
