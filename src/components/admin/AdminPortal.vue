@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import i18n from '../i18n'
+import i18n from '../../i18n'
 import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
