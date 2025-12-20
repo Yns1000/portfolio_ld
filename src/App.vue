@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import {
@@ -9,21 +9,33 @@ import {
   Mail,
   Sun,
   Moon,
-  Languages
+  Languages,
+  Lock // Import de l'icône de connexion
 } from 'lucide-vue-next'
 
 import PortfolioHero from './components/PortfolioHero.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
+import AdminPanel from './components/AdminPanel.vue'
 
 const { locale } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
 const activeSection = ref('home')
 const isHovering = ref(false)
+const isAdminOpen = ref(false)
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
+
+// Surveillance de l'ouverture de l'admin pour rétablir la souris système
+watch(isAdminOpen, (open) => {
+  if (open) {
+    document.documentElement.classList.add('admin-mode')
+  } else {
+    document.documentElement.classList.remove('admin-mode')
+  }
+})
 
 const updateCursor = (e) => {
   const size = isHovering.value ? 40 : 20
@@ -76,7 +88,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="custom-cursor" :style="cursorStyle"></div>
+  <div v-if="!isAdminOpen" class="custom-cursor" :style="cursorStyle"></div>
 
   <header class="site-header glass-nav">
     <nav class="navbar">
@@ -100,6 +112,16 @@ onUnmounted(() => {
       </div>
 
       <div class="nav-settings">
+        <button
+            class="icon-btn admin-btn"
+            @click="isAdminOpen = true"
+            @mouseenter="isHovering = true"
+            @mouseleave="isHovering = false"
+            title="Administration"
+        >
+          <Lock :size="20" />
+        </button>
+
         <div class="lang-dropdown-wrapper">
           <button class="icon-btn" @click="isLangMenuOpen = !isLangMenuOpen" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Languages :size="20" />
@@ -126,6 +148,12 @@ onUnmounted(() => {
     <AboutSection />
     <ContactSection />
   </main>
+
+  <AdminPanel v-if="isAdminOpen" @close="isAdminOpen = false" />
+
+  <footer style="padding: 2rem; text-align: center; opacity: 0.5;">
+    {{ $t('footer_rights') }}
+  </footer>
 </template>
 
 <style>
@@ -143,10 +171,21 @@ body {
   transition: background-color 0.5s ease;
 }
 
+/* MODIFICATION : On ne cache la souris que si on n'est PAS en mode admin */
 @media (min-width: 1024px) {
-  html, body, a, button, input, textarea {
+  html:not(.admin-mode),
+  html:not(.admin-mode) body,
+  html:not(.admin-mode) a,
+  html:not(.admin-mode) button,
+  html:not(.admin-mode) input,
+  html:not(.admin-mode) textarea {
     cursor: none !important;
   }
+}
+
+/* On force le curseur normal pour l'admin */
+.admin-mode, .admin-mode * {
+  cursor: auto !important;
 }
 
 #app {
@@ -171,6 +210,14 @@ body {
   mix-blend-mode: difference;
   transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
   will-change: transform;
+}
+
+.admin-btn {
+  color: var(--color-text-muted);
+}
+
+.admin-btn:hover {
+  color: var(--color-accent) !important;
 }
 
 @media (max-width: 1023px) {

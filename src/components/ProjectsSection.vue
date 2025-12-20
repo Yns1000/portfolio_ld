@@ -3,39 +3,17 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ExternalLink, LayoutGrid, Briefcase, Globe } from 'lucide-vue-next'
 
-const { t } = useI18n()
+// On récupère t (traduction simple), tm (récupérer un tableau/objet) et rt (compiler le texte)
+const { t, tm, rt } = useI18n()
 const activeCategory = ref('all')
 
-const projects = [
-  {
-    id: 1,
-    titleKey: 'proj_erasmus_title',
-    category: 'trans',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    descKey: 'proj_erasmus_desc',
-    link: 'https://openbadgefactory.com/obv3/credentials/db277f0419ae76ed0993d88db0114f441ecefc59.html'
-  },
-  {
-    id: 2,
-    titleKey: 'proj_seminar_title',
-    category: 'manage',
-    image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    descKey: 'proj_seminar_desc',
-    link: '#'
-  },
-  {
-    id: 3,
-    titleKey: 'proj_nego_title',
-    category: 'manage',
-    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    descKey: 'proj_negotiation_desc',
-    link: '#'
-  },
-]
+// On récupère dynamiquement la liste des projets depuis le fichier de langue actuel
+const projects = computed(() => tm('projects_list') || [])
 
 const filteredProjects = computed(() => {
-  if (activeCategory.value === 'all') return projects
-  return projects.filter(p => p.category === activeCategory.value)
+  if (activeCategory.value === 'all') return projects.value
+  // On filtre sur p.category qui est maintenant dans le JSON
+  return projects.value.filter(p => p.category === activeCategory.value)
 })
 
 const setCategory = (cat) => activeCategory.value = cat
@@ -43,7 +21,6 @@ const setCategory = (cat) => activeCategory.value = cat
 
 <template>
   <section id="projects" class="projects-section">
-
     <div class="glow-bg animate-pulse"></div>
 
     <div class="container">
@@ -60,13 +37,16 @@ const setCategory = (cat) => activeCategory.value = cat
             <Briefcase :size="16" /> {{ t('filter_manage') }}
           </button>
           <button @click="setCategory('trans')" :class="{ active: activeCategory === 'trans' }">
-            <Globe :size="16" /> Intercultural
+            <Globe :size="16" /> {{ t('filter_trans') }}
           </button>
         </div>
       </div>
 
       <TransitionGroup name="list" tag="div" class="projects-grid">
-        <div v-for="project in filteredProjects" :key="project.id" class="project-wrapper" v-reveal
+        <div v-for="(project, index) in filteredProjects"
+             :key="project.id || index"
+             class="project-wrapper"
+             v-reveal
              :style="{ transitionDelay: (index * 0.15) + 's' }">
 
           <div class="browser-card glass-effect">
@@ -76,11 +56,11 @@ const setCategory = (cat) => activeCategory.value = cat
                 <span class="light yellow"></span>
                 <span class="light green"></span>
               </div>
-              <span class="browser-title">{{ t(project.titleKey) }}</span>
+              <span class="browser-title">{{ rt(project.title) }}</span>
             </div>
 
             <div class="browser-body">
-              <img :src="project.image" :alt="t(project.titleKey)" loading="lazy" />
+              <img :src="project.image" :alt="rt(project.title)" loading="lazy" />
               <div class="overlay">
                 <a :href="project.link" target="_blank" class="btn-overlay">
                   {{ t('link_details') }} <ExternalLink :size="16" />
@@ -90,18 +70,17 @@ const setCategory = (cat) => activeCategory.value = cat
           </div>
 
           <div class="project-details">
-            <h3 class="proj-name">{{ t(project.titleKey) }}</h3>
-            <p class="proj-desc">{{ t(project.descKey) }}</p>
+            <h3 class="proj-name">{{ rt(project.title) }}</h3>
+            <p class="proj-desc">{{ rt(project.desc) }}</p>
           </div>
-
         </div>
       </TransitionGroup>
-
     </div>
   </section>
 </template>
 
 <style scoped>
+/* Garde tes styles actuels, ils sont parfaits */
 .projects-section {
   position: relative;
   padding: 6rem 0;
@@ -158,9 +137,7 @@ const setCategory = (cat) => activeCategory.value = cat
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 6px;
-
   border-radius: 50px;
-
   display: inline-flex;
   gap: 5px;
   flex-wrap: wrap;
@@ -194,26 +171,9 @@ const setCategory = (cat) => activeCategory.value = cat
 }
 
 @media (max-width: 768px) {
-  .filter-container {
-    padding: 0 10px;
-  }
-
-  .filter-glass {
-    border-radius: 20px;
-    padding: 10px;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .filter-glass button {
-    flex: 1 1 auto;
-    justify-content: center;
-    text-align: center;
-    min-width: 110px;
-    padding: 12px 10px;
-  }
+  .filter-container { padding: 0 10px; }
+  .filter-glass { border-radius: 20px; padding: 10px; width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-glass button { flex: 1 1 auto; justify-content: center; text-align: center; min-width: 110px; padding: 12px 10px; }
 }
 
 .projects-grid {

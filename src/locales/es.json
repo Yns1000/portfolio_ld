@@ -17,9 +17,33 @@
   "filter_marketing": "Marketing",
   "link_details": "Estudio de caso",
   "link_doc": "Documento",
-  "proj_negotiation_desc": "Análisis de estrategias de negociación intercultural entre empresas francesas y chinas.",
-  "proj_seminar_desc": "Organización y gestión de un seminario estudiantil internacional en la universidad.",
-  "proj_translation_desc": "Traducción técnica (EN > FR) para la documentación oficial de una ONG local.",
+
+  "projects_list": [
+    {
+      "id": "1",
+      "category": "trans",
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "https://openbadgefactory.com/obv3/credentials/db277f0419ae76ed0993d88db0114f441ecefc59.html",
+      "title": "Intercambio_V",
+      "desc": "Proyecto colaborativo virtual de 4 semanas con un socio irlandés. Comunicación intercultural y presentación final certificada por UNICollaboration."
+    },
+    {
+      "id": "2",
+      "category": "manage",
+      "image": "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "#",
+      "title": "Seminario_2024",
+      "desc": "Organización y gestión de un seminario estudiantil internacional en la universidad."
+    },
+    {
+      "id": "3",
+      "category": "manage",
+      "image": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "#",
+      "title": "Nego_China",
+      "desc": "Análisis de estrategias de negociación intercultural entre empresas francesas y chinas."
+    }
+  ],
 
   "section_about_title": "Sobre mí",
   "about_intro": "Apasionada por los idiomas, el deporte y la apertura al mundo.",
@@ -61,10 +85,5 @@
   "contact_email_btn": "Enviarme un email",
   "contact_linkedin_btn": "LinkedIn",
   "footer_rights": "Todos los derechos reservados.",
-  "footer_made": "Sny",
-
-  "proj_erasmus_desc": "Proyecto colaborativo virtual de 4 semanas con un socio irlandés. Comunicación intercultural y presentación final certificada por UNICollaboration.",
-  "proj_nego_title": "Nego_China",
-  "proj_seminar_title": "Seminario_2024",
-  "proj_erasmus_title": "Intercambio_V"
+  "footer_made": "Sny"
 }

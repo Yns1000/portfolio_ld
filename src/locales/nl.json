@@ -17,9 +17,33 @@
   "filter_marketing": "Marketing",
   "link_details": "Casestudy",
   "link_doc": "Document",
-  "proj_negotiation_desc": "Analyse van interculturele onderhandelingsstrategieën tussen Franse en Chinese bedrijven.",
-  "proj_seminar_desc": "Organisatie en beheer van een internationaal studentenseminar aan de universiteit.",
-  "proj_translation_desc": "Technische vertaling (EN > FR) voor de officiële documentatie van een lokale NGO.",
+
+  "projects_list": [
+    {
+      "id": "1",
+      "category": "trans",
+      "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "https://openbadgefactory.com/obv3/credentials/db277f0419ae76ed0993d88db0114f441ecefc59.html",
+      "title": "Virtuele_Uitw",
+      "desc": "Virtueel samenwerkingsproject van 4 weken met een Ierse partner. Interculturele communicatie en eindpresentatie gecertificeerd door UNICollaboration."
+    },
+    {
+      "id": "2",
+      "category": "manage",
+      "image": "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "#",
+      "title": "Seminar_2024",
+      "desc": "Organisatie en beheer van een internationaal studentenseminar aan de universiteit."
+    },
+    {
+      "id": "3",
+      "category": "manage",
+      "image": "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "link": "#",
+      "title": "Nego_China",
+      "desc": "Analyse van interculturele onderhandelingsstrategieën tussen Franse en Chinese bedrijven."
+    }
+  ],
 
   "section_about_title": "Over mij",
   "about_intro": "Gepassioneerd door talen, sport en openheid naar de wereld.",
@@ -61,10 +85,5 @@
   "contact_email_btn": "Stuur mij een e-mail",
   "contact_linkedin_btn": "LinkedIn",
   "footer_rights": "Alle rechten voorbehouden.",
-  "footer_made": "Sny",
-
-  "proj_erasmus_desc": "Virtueel samenwerkingsproject van 4 weken met een Ierse partner. Interculturele communicatie en eindpresentatie gecertificeerd door UNICollaboration.",
-  "proj_nego_title": "Nego_China",
-  "proj_seminar_title": "Seminar_2024",
-  "proj_erasmus_title": "Virtuele_Uitw"
+  "footer_made": "Sny"
 }
