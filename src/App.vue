@@ -150,10 +150,6 @@ onUnmounted(() => {
   </main>
 
   <AdminPortal v-if="isAdminOpen" @close="isAdminOpen = false" />
-
-  <footer style="padding: 2rem; text-align: center; opacity: 0.5;">
-    {{ $t('footer_rights') }}
-  </footer>
 </template>
 
 <style>
