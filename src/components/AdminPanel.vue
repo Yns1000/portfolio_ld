@@ -1,190 +1,185 @@
 <template>
-  <Transition name="overlay">
+  <Transition name="portal-fade">
     <div class="admin-portal">
 
-      <Transition name="toast">
-        <div v-if="toast.show" :class="['modern-toast', toast.type]">
-          <div class="toast-icon">
-            <CheckCircle2 v-if="toast.type === 'success'" :size="20" />
-            <AlertCircle v-else :size="20" />
-          </div>
-          <div class="toast-content">
-            <span class="toast-msg">{{ toast.message }}</span>
-          </div>
-          <button @click="toast.show = false" class="toast-close">✕</button>
+      <TransitionGroup name="toast-list" tag="div" class="toast-container">
+        <div v-if="toast.show" :key="toast.message" :class="['modern-toast', toast.type]">
+          <div class="toast-indicator"></div>
+          <CheckCircle2 v-if="toast.type === 'success'" :size="18" />
+          <AlertCircle v-else :size="18" />
+          <span class="toast-msg">{{ toast.message }}</span>
+          <button @click="toast.show = false" class="toast-close">
+            <X :size="14" />
+          </button>
         </div>
-      </Transition>
+      </TransitionGroup>
 
       <div v-if="!isAuthenticated" class="auth-wrapper">
         <div class="auth-card" :class="{ 'shake-on-error': loginError }">
           <div class="auth-glow"></div>
-          <div class="auth-inner">
+          <div class="auth-content">
             <div class="auth-header">
-              <div class="brand-icon">
-                <Fingerprint :size="32" stroke-width="1.5" />
+              <div class="brand-logo">
+                <div class="logo-inner">
+                  <Fingerprint :size="32" />
+                </div>
               </div>
-              <h1>Portail Admin</h1>
-              <p>Entrez votre clé d'accès pour continuer</p>
+              <h1>Administration</h1>
+              <p>Veuillez vous identifier pour accéder à la console.</p>
             </div>
 
-            <div class="auth-body">
-              <div class="input-field" :class="{ 'has-error': loginError }">
-                <label>Code de sécurité</label>
-                <div class="input-control">
-                  <Lock :size="18" class="icon-left" />
+            <div class="auth-form">
+              <div class="field-group" :class="{ 'has-error': !!loginError }">
+                <div class="input-wrapper">
+                  <Lock class="field-icon" :size="18" />
                   <input
                       v-model="password"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="Clé de sécurité"
                       @keyup.enter="handleLogin"
                       :disabled="isLoggingIn"
                   />
                 </div>
-                <Transition name="slide-up">
-                  <span v-if="loginError" class="error-hint">{{ loginError }}</span>
-                </Transition>
+                <p v-if="loginError" class="error-text">{{ loginError }}</p>
               </div>
 
-              <button @click="handleLogin" class="btn-submit" :disabled="isLoggingIn">
+              <button @click="handleLogin" class="btn-primary login-btn" :disabled="isLoggingIn">
                 <Loader2 v-if="isLoggingIn" class="spin" :size="20" />
                 <template v-else>
-                  <span>Accéder au Dashboard</span>
+                  <span>Déverrouiller l'accès</span>
                   <ChevronRight :size="18" />
                 </template>
               </button>
 
-              <button @click="$emit('close')" class="btn-cancel">Quitter</button>
+              <button @click="$emit('close')" class="btn-ghost">Retour au site</button>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-else class="dashboard">
-        <aside class="dashboard-sidebar">
-          <div class="sidebar-top">
-            <div class="logo-area">
-              <LayoutDashboard :size="20" class="text-accent" />
+      <div v-else class="dashboard-layout">
+        <aside class="sidebar">
+          <div class="sidebar-header">
+            <div class="app-brand">
+              <div class="brand-square"><LayoutDashboard :size="16" /></div>
               <span>Console</span>
             </div>
-            <button @click="addNewProject" class="add-project-btn">
-              <Plus :size="18" />
-              <span>Nouveau</span>
+            <button @click="addNewProject" class="btn-icon-plus" title="Ajouter un projet">
+              <Plus :size="20" />
             </button>
           </div>
 
-          <div class="sidebar-nav custom-scrollbar">
+          <nav class="project-list custom-scrollbar">
             <div
                 v-for="(proj, index) in localProjects"
-                :key="index"
-                class="nav-project-item"
+                :key="proj.id"
+                class="project-item"
                 :class="{ active: currentIdx === index }"
                 @click="currentIdx = index"
             >
-              <div class="item-status"></div>
-              <div class="item-info">
-                <span class="item-name">{{ proj.fr.title || 'Projet sans titre' }}</span>
-                <span class="item-meta">{{ proj.category || 'Non classé' }}</span>
+              <div class="project-indicator"></div>
+              <div class="project-details">
+                <span class="project-title">{{ proj.fr.title || 'Sans titre' }}</span>
+                <span class="project-cat">{{ proj.category || 'Portfolio' }}</span>
               </div>
-              <button @click.stop="deleteProject(index)" class="item-delete">
+              <button @click.stop="deleteProject(index)" class="btn-delete-item">
                 <Trash2 :size="14" />
               </button>
             </div>
-          </div>
+          </nav>
 
-          <div class="sidebar-bottom">
-            <button @click="saveAll" :disabled="isSaving" class="publish-btn">
-              <CloudUpload v-if="!isSaving" :size="20" />
-              <Loader2 v-else class="spin" :size="20" />
-              <span>{{ isSaving ? 'Publication...' : 'Mettre à jour' }}</span>
+          <div class="sidebar-footer">
+            <button @click="saveAll" :disabled="isSaving" class="btn-primary btn-save">
+              <CloudUpload v-if="!isSaving" :size="18" />
+              <Loader2 v-else class="spin" :size="18" />
+              <span>{{ isSaving ? 'Publication...' : 'Enregistrer' }}</span>
             </button>
-            <button @click="isAuthenticated = false" class="logout-link">
+            <button @click="isAuthenticated = false" class="logout-btn">
               <LogOut :size="14" />
               <span>Déconnexion</span>
             </button>
           </div>
         </aside>
 
-        <main class="dashboard-main">
-          <header class="main-header">
-            <div v-if="currentIdx !== null" class="tab-group">
+        <main class="main-stage">
+          <header class="stage-header">
+            <div class="lang-selector" v-if="currentIdx !== null">
               <button
-                  v-for="l in ['fr', 'en', 'es', 'nl']" :key="l"
-                  class="tab-item" :class="{ active: editLang === l }"
+                  v-for="l in (['fr', 'en', 'es', 'nl'] as const)" :key="l"
+                  :class="['lang-tab', { active: editLang === l }]"
                   @click="editLang = l"
               >
                 {{ l.toUpperCase() }}
               </button>
             </div>
-            <div class="header-actions">
-              <button @click="$emit('close')" class="action-close" title="Fermer">
-                <X :size="20" />
-              </button>
-            </div>
+            <button @click="$emit('close')" class="btn-close-portal">
+              <X :size="20" />
+            </button>
           </header>
 
-          <div v-if="currentIdx !== null" class="main-content custom-scrollbar">
-            <div class="editor-grid">
-              <div class="editor-section">
-                <div class="section-title">
-                  <Languages :size="18" />
-                  <span>Textes du projet ({{ editLang.toUpperCase() }})</span>
-                </div>
-
-                <div class="input-stack">
-                  <div class="field-box">
-                    <label>Nom du projet</label>
-                    <input v-model="localProjects[currentIdx][editLang].title" placeholder="Ex: Nego Chine" />
+          <div v-if="currentIdx !== null && localProjects[currentIdx]" class="stage-content custom-scrollbar">
+            <div class="editor-container">
+              <div class="editor-main">
+                <div class="content-card">
+                  <div class="card-head">
+                    <Languages :size="18" />
+                    <h3>Contenu Localisé ({{ editLang.toUpperCase() }})</h3>
                   </div>
-                  <div class="field-box">
-                    <label>Description détaillée</label>
-                    <textarea v-model="localProjects[currentIdx][editLang].desc" rows="8"></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <div class="editor-section">
-                <div class="section-title">
-                  <Settings :size="18" />
-                  <span>Paramètres Généraux</span>
-                </div>
-
-                <div class="input-stack">
-                  <div class="field-box">
-                    <label>Catégorie</label>
-                    <select v-model="localProjects[currentIdx].category">
-                      <option value="manage">Gestion de projet</option>
-                      <option value="trans">Interculturel</option>
-                      <option value="marketing">Marketing</option>
-                    </select>
-                  </div>
-                  <div class="field-box">
-                    <label>Lien URL (Détails)</label>
-                    <input v-model="localProjects[currentIdx].link" placeholder="https://..." />
-                  </div>
-                  <div class="field-box">
-                    <label>URL de l'image (Couverture)</label>
-                    <div class="input-icon-wrapper">
-                      <ImageIcon :size="16" />
-                      <input v-model="localProjects[currentIdx].image" placeholder="Lien Unsplash" />
+                  <div class="card-body">
+                    <div class="input-box">
+                      <label>Titre du projet</label>
+                      <input v-model="localProjects[currentIdx][editLang].title" placeholder="Ex: Nego Chine" />
+                    </div>
+                    <div class="input-box">
+                      <label>Description détaillée</label>
+                      <textarea v-model="localProjects[currentIdx][editLang].desc" rows="10" placeholder="Racontez l'histoire du projet..."></textarea>
                     </div>
                   </div>
-
-                  <div class="image-preview" v-if="localProjects[currentIdx].image">
-                    <img :src="localProjects[currentIdx].image" alt="Preview" />
-                  </div>
                 </div>
               </div>
+
+              <aside class="editor-side">
+                <div class="content-card">
+                  <div class="card-head">
+                    <Settings :size="18" />
+                    <h3>Paramètres</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="input-box">
+                      <label>Catégorie</label>
+                      <select v-model="localProjects[currentIdx].category">
+                        <option value="manage">Gestion de projet</option>
+                        <option value="trans">Interculturel</option>
+                        <option value="marketing">Marketing</option>
+                      </select>
+                    </div>
+                    <div class="input-box">
+                      <label>Lien externe</label>
+                      <input v-model="localProjects[currentIdx].link" placeholder="https://..." />
+                    </div>
+                    <div class="input-box">
+                      <label>Image de couverture</label>
+                      <div class="input-with-icon">
+                        <ImageIcon :size="14" />
+                        <input v-model="localProjects[currentIdx].image" placeholder="URL de l'image" />
+                      </div>
+                    </div>
+                    <div class="preview-area" v-if="localProjects[currentIdx].image">
+                      <img :src="localProjects[currentIdx].image" alt="Preview" />
+                    </div>
+                  </div>
+                </div>
+              </aside>
             </div>
           </div>
 
-          <div v-else class="welcome-screen">
-            <div class="welcome-box">
-              <div class="icon-pulse">
-                <MousePointerClick :size="48" />
-              </div>
-              <h2>Dashboard de Laurine</h2>
-              <p>Sélectionnez un projet à gauche pour commencer l'édition.</p>
+          <div v-else class="empty-state">
+            <div class="empty-glow"></div>
+            <div class="empty-icon">
+              <MousePointerClick :size="40" />
             </div>
+            <h2>Prêt pour l'édition ?</h2>
+            <p>Sélectionnez un projet existant ou créez-en un nouveau pour commencer.</p>
           </div>
         </main>
       </div>
@@ -192,7 +187,7 @@
   </Transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive } from 'vue'
 import i18n from '../i18n'
 import {
@@ -202,46 +197,74 @@ import {
   MousePointerClick
 } from 'lucide-vue-next'
 
+// TYPES DEFINITIONS
+interface ProjectLangContent {
+  title: string;
+  desc: string;
+}
+
+interface Project {
+  id: number;
+  category: string;
+  image: string;
+  link: string;
+  fr: ProjectLangContent;
+  en: ProjectLangContent;
+  es: ProjectLangContent;
+  nl: ProjectLangContent;
+}
+
+type LangCode = 'fr' | 'en' | 'es' | 'nl';
+
+// EMITS
 const emit = defineEmits(['close'])
 
+// STATE
 const isAuthenticated = ref(false)
 const password = ref('')
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
 const loginError = ref('')
-const editLang = ref('fr')
-const currentIdx = ref(null)
+const editLang = ref<LangCode>('fr')
+const currentIdx = ref<number | null>(null)
 
-// Système de Toast
-const toast = reactive({ show: false, message: '', type: 'success' })
-const triggerToast = (msg, type = 'success') => {
+const toast = reactive({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error'
+})
+
+const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg
   toast.type = type
   toast.show = true
-  setTimeout(() => toast.show = false, 4000)
+  setTimeout(() => { toast.show = false }, 4000)
 }
 
-// Initialisation
-const loadProjects = () => {
-  const fr = i18n.global.getLocaleMessage('fr').projects_list || []
-  const en = i18n.global.getLocaleMessage('en').projects_list || []
-  const es = i18n.global.getLocaleMessage('es').projects_list || []
-  const nl = i18n.global.getLocaleMessage('nl').projects_list || []
+// INITIAL LOAD
+const loadProjects = (): Project[] => {
+  const getLangList = (lang: string) => (i18n.global.getLocaleMessage(lang) as any).projects_list || []
 
-  return fr.map((p, i) => ({
+  const fr = getLangList('fr')
+  const en = getLangList('en')
+  const es = getLangList('es')
+  const nl = getLangList('nl')
+
+  return fr.map((p: any, i: number) => ({
     id: p.id || Date.now() + i,
-    category: p.category,
-    image: p.image,
-    link: p.link,
-    fr: { title: p.title, desc: p.desc },
+    category: p.category || 'manage',
+    image: p.image || '',
+    link: p.link || '',
+    fr: { title: p.title || '', desc: p.desc || '' },
     en: { title: en[i]?.title || '', desc: en[i]?.desc || '' },
     es: { title: es[i]?.title || '', desc: es[i]?.desc || '' },
     nl: { title: nl[i]?.title || '', desc: nl[i]?.desc || '' }
   }))
 }
 
-const localProjects = ref(loadProjects())
+const localProjects = ref<Project[]>(loadProjects())
 
+// ACTIONS
 const handleLogin = async () => {
   if (!password.value) return
   isLoggingIn.value = true
@@ -256,29 +279,36 @@ const handleLogin = async () => {
 
     if (res.ok) {
       isAuthenticated.value = true
-      triggerToast('Accès autorisé.', 'success')
+      triggerToast('Accès autorisé')
     } else {
-      loginError.value = "Code invalide"
+      loginError.value = "Code de sécurité invalide"
       password.value = ""
     }
   } catch (e) {
-    loginError.value = "Erreur serveur"
+    loginError.value = "Erreur de connexion au serveur"
   } finally {
     isLoggingIn.value = false
   }
 }
 
 const addNewProject = () => {
-  localProjects.value.push({
-    id: Date.now(), category: 'manage', image: '', link: '',
-    fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''}
-  })
+  const newProj: Project = {
+    id: Date.now(),
+    category: 'manage',
+    image: '',
+    link: '',
+    fr: { title: '', desc: '' },
+    en: { title: '', desc: '' },
+    es: { title: '', desc: '' },
+    nl: { title: '', desc: '' }
+  }
+  localProjects.value.push(newProj)
   currentIdx.value = localProjects.value.length - 1
-  triggerToast('Projet ajouté')
+  triggerToast('Nouveau projet créé')
 }
 
-const deleteProject = (idx) => {
-  if (confirm('Supprimer ce projet ?')) {
+const deleteProject = (idx: number) => {
+  if (confirm('Supprimer définitivement ce projet ?')) {
     localProjects.value.splice(idx, 1)
     if (currentIdx.value === idx) currentIdx.value = null
     triggerToast('Projet supprimé', 'error')
@@ -286,18 +316,24 @@ const deleteProject = (idx) => {
 }
 
 const saveAll = async () => {
+  if (isSaving.value) return
   isSaving.value = true
+
   try {
-    const payloads = {}
-    const langs = ['fr', 'en', 'es', 'nl']
+    const payloads: Record<string, any> = {}
+    const langs: LangCode[] = ['fr', 'en', 'es', 'nl']
 
     langs.forEach(l => {
-      const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)))
-      full.projects_list = localProjects.value.map(p => ({
-        id: p.id, category: p.category, image: p.image, link: p.link,
-        title: p[l].title, desc: p[l].desc
+      const fullContent = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)))
+      fullContent.projects_list = localProjects.value.map(p => ({
+        id: p.id,
+        category: p.category,
+        image: p.image,
+        link: p.link,
+        title: p[l].title,
+        desc: p[l].desc
       }))
-      payloads[l] = full
+      payloads[l] = fullContent
     })
 
     const res = await fetch('/api/manage-content', {
@@ -307,10 +343,10 @@ const saveAll = async () => {
     })
 
     if (res.ok) {
-      triggerToast('Publication réussie !')
-      setTimeout(() => window.location.reload(), 1500)
+      triggerToast('Modifications publiées avec succès !')
+      setTimeout(() => window.location.reload(), 1000)
     } else {
-      triggerToast('Erreur publication', 'error')
+      triggerToast('Erreur lors de la publication', 'error')
     }
   } catch (e) {
     triggerToast('Erreur réseau', 'error')
@@ -321,279 +357,285 @@ const saveAll = async () => {
 </script>
 
 <style scoped>
+/* VARIABLE SYSTEM
+*/
 .admin-portal {
+  --bg-dark: #070708;
+  --card-bg: #111114;
+  --sidebar-bg: #0c0c0e;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --accent-color: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.2);
+  --text-main: #edeeef;
+  --text-muted: #949ead;
+  --radius-lg: 24px;
+  --radius-md: 12px;
+
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(10,10,12,0.85);
-  backdrop-filter: blur(24px);
+  background: rgba(4, 4, 5, 0.9);
+  backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: Inter, system-ui, sans-serif;
-  color: #f4f4f5;
-
-  --bg: #0b0b0e;
-  --panel: #111114;
-  --panel-soft: #151518;
-  --border: #1f1f24;
-  --muted: #8b8b94;
-  --accent: var(--color-accent, #4f46e5);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* ================= TOAST ================= */
-.modern-toast {
-  position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  padding: 14px 18px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 20px 50px rgba(0,0,0,.45);
-}
+/* ANIMATIONS
+*/
+.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
 
-/* ================= AUTH ================= */
-.auth-wrapper {
-  width: 100%;
-  max-width: 420px;
-}
+/* AUTHENTICATION UI
+*/
+.auth-wrapper { width: 100%; max-width: 440px; padding: 20px; }
 
 .auth-card {
-  background: linear-gradient(180deg, #121215, #0b0b0e);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 42px;
-}
-
-.auth-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.brand-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 18px;
-  background: var(--panel-soft);
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  color: var(--accent);
-}
-
-.auth-header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.auth-header p {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 6px;
-}
-
-.input-control input {
-  width: 100%;
-  background: var(--panel-soft);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px 14px 48px;
-  color: white;
-}
-
-.btn-submit {
-  margin-top: 28px;
-  width: 100%;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 16px;
-  padding: 14px;
-  font-weight: 600;
-}
-
-.btn-cancel {
-  margin-top: 14px;
-  background: none;
-  border: none;
-  color: var(--muted);
-}
-
-/* ================= DASHBOARD ================= */
-.dashboard {
-  width: 94vw;
-  max-width: 1500px;
-  height: 88vh;
-  background: var(--bg);
-  border-radius: 32px;
-  border: 1px solid var(--border);
-  display: flex;
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
   overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
 }
 
-/* ===== SIDEBAR ===== */
-.dashboard-sidebar {
-  width: 280px;
-  background: #0e0e12;
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
+.auth-glow {
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-.sidebar-top {
-  padding: 22px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.brand-logo {
+  width: 64px; height: 64px; margin: 0 auto 24px;
+  background: linear-gradient(135deg, #1f1f23, #111114);
+  border-radius: 18px;
+  padding: 2px;
+  border: 1px solid var(--border-color);
 }
 
-.logo-area {
-  font-weight: 700;
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.logo-inner {
+  width: 100%; height: 100%;
+  background: var(--card-bg);
+  border-radius: 16px;
+  display: grid; place-items: center;
+  color: var(--accent-color);
 }
 
-.add-project-btn {
-  background: var(--panel-soft);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 8px 14px;
-  display: flex;
-  gap: 6px;
-  align-items: center;
+.auth-header { text-align: center; margin-bottom: 32px; }
+.auth-header h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.auth-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+.input-wrapper {
+  position: relative;
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s;
 }
 
-.sidebar-nav {
-  flex: 1;
-  padding: 12px;
+.input-wrapper:focus-within {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
-.nav-project-item {
-  padding: 12px 14px;
-  border-radius: 14px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  cursor: pointer;
+.field-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+.input-wrapper input {
+  width: 100%; padding: 16px 16px 16px 48px;
+  background: transparent; border: none; color: white; outline: none;
 }
 
-.nav-project-item.active {
-  background: var(--panel-soft);
-  border: 1px solid var(--border);
+.btn-primary {
+  width: 100%;
+  background: var(--accent-color);
+  color: white; border: none;
+  padding: 16px; border-radius: var(--radius-md);
+  font-weight: 600; display: flex; align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer; transition: all 0.3s;
 }
 
-.item-meta {
-  font-size: 12px;
-  color: var(--muted);
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-glow); }
+
+/* DASHBOARD LAYOUT
+*/
+.dashboard-layout {
+  width: 96vw; height: 92vh; max-width: 1600px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 32px;
+  display: flex; overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0,0,0,0.6);
 }
 
-.sidebar-bottom {
-  padding: 18px;
-  border-top: 1px solid var(--border);
+/* SIDEBAR */
+.sidebar {
+  width: 320px; background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex; flex-direction: column;
 }
 
-/* ===== MAIN ===== */
-.dashboard-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.sidebar-header {
+  padding: 32px 24px; display: flex; justify-content: space-between; align-items: center;
 }
 
-.main-header {
-  padding: 22px 32px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
+.app-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.1rem; }
+.brand-square {
+  width: 32px; height: 32px; background: var(--accent-color);
+  border-radius: 8px; display: grid; place-items: center; color: white;
 }
 
-.tab-group {
-  background: var(--panel-soft);
-  border-radius: 14px;
-  padding: 4px;
-  display: flex;
+.btn-icon-plus {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+  color: white; cursor: pointer; transition: all 0.2s;
 }
 
-.tab-item {
-  padding: 6px 14px;
-  border-radius: 10px;
-  color: var(--muted);
+.btn-icon-plus:hover { background: var(--accent-color); border-color: var(--accent-color); }
+
+.project-list { flex: 1; padding: 0 16px; overflow-y: auto; }
+
+.project-item {
+  padding: 16px; border-radius: 16px; margin-bottom: 8px;
+  cursor: pointer; position: relative; display: flex; align-items: center;
+  transition: all 0.2s; border: 1px solid transparent;
 }
 
-.tab-item.active {
-  background: var(--bg);
-  color: white;
+.project-item:hover { background: rgba(255,255,255,0.03); }
+
+.project-item.active {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.2);
 }
 
-/* ===== CONTENT ===== */
-.main-content {
-  padding: 36px;
-  overflow-y: auto;
+.project-indicator {
+  width: 4px; height: 0; background: var(--accent-color);
+  position: absolute; left: 0; border-radius: 0 4px 4px 0;
+  transition: height 0.3s;
+}
+.project-item.active .project-indicator { height: 24px; }
+
+.project-details { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.project-title { font-weight: 600; font-size: 0.95rem; }
+.project-cat { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.btn-delete-item {
+  opacity: 0; padding: 8px; border-radius: 8px; color: #ff4757;
+  background: transparent; border: none; cursor: pointer; transition: 0.2s;
+}
+.project-item:hover .btn-delete-item { opacity: 1; }
+.btn-delete-item:hover { background: rgba(255, 71, 87, 0.1); }
+
+.sidebar-footer { padding: 24px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
+
+.logout-btn {
+  background: transparent; border: none; color: var(--text-muted);
+  font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+  gap: 8px; cursor: pointer; padding: 8px;
+}
+.logout-btn:hover { color: #ff4757; }
+
+/* MAIN STAGE */
+.main-stage { flex: 1; display: flex; flex-direction: column; position: relative; }
+
+.stage-header {
+  padding: 24px 40px; border-bottom: 1px solid var(--border-color);
+  display: flex; justify-content: space-between; align-items: center;
 }
 
-.editor-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 36px;
+.lang-selector {
+  display: flex; background: rgba(255,255,255,0.03);
+  padding: 4px; border-radius: 12px; border: 1px solid var(--border-color);
 }
 
-.editor-section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
+.lang-tab {
+  padding: 8px 20px; border: none; background: transparent;
+  color: var(--text-muted); border-radius: 8px; font-weight: 600;
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  margin-bottom: 22px;
+.lang-tab.active { background: white; color: black; }
+
+.stage-content { flex: 1; padding: 40px; overflow-y: auto; }
+
+.editor-container {
+  display: grid; grid-template-columns: 1fr 340px; gap: 32px;
+  max-width: 1100px; margin: 0 auto;
 }
 
-.field-box label {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 6px;
+.content-card {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 20px; overflow: hidden;
 }
 
-.field-box input,
-.field-box textarea,
-.field-box select {
-  background: #0e0e12;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px;
-  color: white;
+.card-head {
+  padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: center; gap: 12px;
+}
+.card-head h3 { font-size: 1rem; font-weight: 600; }
+
+.card-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+.input-box { display: flex; flex-direction: column; gap: 8px; }
+.input-box label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+
+.input-box input, .input-box select, .input-box textarea {
+  background: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
+  border-radius: 12px; padding: 12px 16px; color: white; outline: none;
+  transition: all 0.2s;
 }
 
-/* ===== EMPTY ===== */
-.welcome-screen {
-  flex: 1;
-  display: grid;
-  place-items: center;
+.input-box input:focus, .input-box textarea:focus { border-color: var(--accent-color); }
+
+.input-with-icon { position: relative; }
+.input-with-icon svg { position: absolute; left: 12px; top: 14px; color: var(--text-muted); }
+.input-with-icon input { padding-left: 36px; width: 100%; }
+
+.preview-area {
+  margin-top: 10px; border-radius: 12px; overflow: hidden;
+  aspect-ratio: 16/10; border: 1px solid var(--border-color);
+}
+.preview-area img { width: 100%; height: 100%; object-fit: cover; }
+
+/* EMPTY STATE */
+.empty-state {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 40px;
 }
 
-.welcome-box {
-  text-align: center;
-  max-width: 420px;
+.empty-icon {
+  width: 80px; height: 80px; background: var(--accent-glow);
+  border-radius: 24px; display: grid; place-items: center;
+  color: var(--accent-color); margin-bottom: 24px;
 }
 
-.welcome-box h2 {
-  margin-top: 16px;
-  font-size: 1.6rem;
+.empty-state h2 { font-size: 1.5rem; margin-bottom: 12px; }
+.empty-state p { max-width: 400px; color: var(--text-muted); line-height: 1.6; }
+
+/* TOASTS */
+.toast-container {
+  position: fixed; top: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 100000; display: flex; flex-direction: column; gap: 10px;
 }
 
-.welcome-box p {
-  margin-top: 8px;
-  color: var(--muted);
+.modern-toast {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  padding: 12px 20px; border-radius: 16px; display: flex; align-items: center;
+  gap: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  min-width: 300px; position: relative; overflow: hidden;
 }
 
+.toast-indicator {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent-color);
+}
+
+.toast.error .toast-indicator { background: #ff4757; }
+
+/* SCROLLBAR */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 </style>
