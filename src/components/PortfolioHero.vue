@@ -122,7 +122,7 @@ const handleMouseLeave = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   z-index: 10;
 }
 
@@ -253,6 +253,7 @@ const handleMouseLeave = () => {
 }
 
 .hero-logo {
+  margin-top: 1rem;
   width: 90%;
   max-width: 320px;
   height: auto;
