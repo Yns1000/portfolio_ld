@@ -87,19 +87,20 @@
       <div class="content-card">
         <div class="card-head">
           <Palette :size="18" class="icon-accent" />
-          <h3>Couleurs du site</h3>
+          <h3>Ambiance du site</h3>
         </div>
         <div class="card-body">
-          <p class="field-hint" style="margin-bottom: 12px;">Ambiance visuelle :</p>
-          <div class="palette-selector-grid">
+          <p class="field-hint" style="margin-bottom: 12px;">Choisissez un thème :</p>
+          <div class="theme-selector-list custom-scrollbar">
             <button
-                v-for="n in 9" :key="n"
-                @click="aboutData.selected_palette = n"
-                :class="['palette-option', 'pal-' + n, { active: aboutData.selected_palette == n }]"
-                :title="'Palette ' + n"
+                v-for="theme in themes" :key="theme.id"
+                @click="aboutData.selected_palette = theme.id"
+                :class="['theme-row-btn', { active: aboutData.selected_palette == theme.id }]"
             >
-              <Check v-if="aboutData.selected_palette == n" :size="16" />
-              <span v-else>{{ n }}</span>
+              <div :class="['theme-swatch', 'pal-' + theme.id]">
+                <Check v-if="aboutData.selected_palette == theme.id" :size="12" />
+              </div>
+              <span class="theme-label">{{ theme.name }}</span>
             </button>
           </div>
         </div>
@@ -144,7 +145,18 @@ import {
 } from 'lucide-vue-next'
 
 const props = defineProps<{ aboutData: any, lang: string }>()
-const emit = defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert'])
+defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert']);
+const themes = [
+  { id: 1, name: 'Terre (Original)' },
+  { id: 2, name: 'Océan Profond' },
+  { id: 3, name: 'Forêt Émeraude' },
+  { id: 4, name: 'Lavande Royale' },
+  { id: 5, name: 'Ardoise & Or' },
+  { id: 6, name: 'Candy Pastel' },
+  { id: 7, name: 'Aube Dorée' },
+  { id: 8, name: 'Ohana (Stitch)' },
+  { id: 9, name: 'B612 (Petit Prince)' }
+]
 
 const newHobby = ref('')
 const addHobby = () => {
@@ -158,20 +170,50 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 </script>
 
 <style scoped>
-/* GRID DES PALETTES */
-.palette-selector-grid {
+/* SÉLECTEUR DE THÈMES NOMMÉS */
+.theme-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.theme-row-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.theme-row-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
+.theme-row-btn:active { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+
+.theme-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  flex-shrink: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
-  gap: 8px;
+  place-items: center;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.palette-option {
-  height: 42px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.1);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1); font-weight: bold;
+.theme-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  transition: color 0.2s;
 }
-.palette-option.active { border-color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-
+.theme-row-btn.active .theme-label { color: white; }
 /* APERÇU DES COULEURS (Sombre / Accent) */
 .pal-1 { background: #55423d; color: #ffc0ad; } /* Terre */
 .pal-2 { background: #0f172a; color: #38bdf8; } /* Océan */
@@ -195,4 +237,18 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
   align-items: flex-end;
 }
 
+.btn-add-tag-inline {
+  width: 45px;
+  height: 45px;
+  background: #6366f1;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 </style>
