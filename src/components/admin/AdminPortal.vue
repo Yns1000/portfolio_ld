@@ -3,8 +3,18 @@
     <div v-if="isMounted" class="admin-portal-wrapper">
       <AdminToast :config="toast" @close="toast.show = false" />
 
+      <div v-if="isMobile" class="mobile-blocker">
+        <div class="blocker-content">
+          <Monitor :size="48" class="icon-accent mb-20" />
+          <h2>Console réservée aux ordinateurs</h2>
+          <p>L'administration du portfolio est optimisée pour les écrans larges.</p>
+          <p class="hint">Veuillez vous connecter depuis un PC ou un Mac pour gérer votre contenu.</p>
+          <button @click="closePortal" class="btn-close-mobile mt-24">Retour au site</button>
+        </div>
+      </div>
+
       <AdminAuth
-          v-if="!isAuthenticated"
+          v-else-if="!isAuthenticated"
           :is-logging-in="isLoggingIn"
           :error-msg="loginError"
           @login="handleLogin"
@@ -37,6 +47,7 @@ import i18n from '../../i18n'
 import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
+import { Monitor } from 'lucide-vue-next' // Ajout de l'icône Monitor
 
 // --- DÉFINITION DES TYPES ---
 interface Project {
@@ -53,13 +64,13 @@ interface CertItem {
 }
 
 interface AboutContent {
-  intro_hero: string; // greeting
-  name_hero: string;  // intro
-  bio_hero: string;   // bio
-  btn_prj: string;    // btn_projects
-  btn_abt: string;    // btn_about
-  intro: string;      // about_intro
-  text: string;       // about_text
+  intro_hero: string;
+  name_hero: string;
+  bio_hero: string;
+  btn_prj: string;
+  btn_abt: string;
+  intro: string;
+  text: string;
   hobbies: string[];
 }
 
@@ -76,6 +87,7 @@ interface AboutData {
 // --- ÉTATS RÉACTIFS ---
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
+const isMobile = ref(false); // État pour la détection mobile
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -98,6 +110,11 @@ const localAbout = reactive<AboutData>({
   selected_palette: 1
 });
 const localProjects = ref<Project[]>([]);
+
+// --- DÉTECTION APPAREIL ---
+const checkDevice = () => {
+  isMobile.value = window.innerWidth < 1024;
+};
 
 // --- APERÇU DES COULEURS EN TEMPS RÉEL ---
 watch(() => localAbout.selected_palette, (newVal) => {
@@ -132,16 +149,14 @@ const handleLogout = () => {
   triggerToast('Session terminée');
 };
 
-// --- CHARGEMENT DES DONNÉES DEPUIS LES JSON ---
+// --- CHARGEMENT DES DONNÉES ---
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
     const frMsg = i18n.global.getLocaleMessage('fr') as any;
 
-    // Charger la palette
     localAbout.selected_palette = frMsg.theme_palette || 1;
 
-    // Textes fixes par langue
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
@@ -156,7 +171,6 @@ const initData = () => {
       }
     });
 
-    // Timeline
     const frTimeline = frMsg.timeline_list || [];
     localAbout.timeline = frTimeline.map((item: any, i: number) => {
       const obj: any = { id: 'time-' + i, period: item.period || '', type: item.type || 'edu' };
@@ -167,7 +181,6 @@ const initData = () => {
       return obj;
     });
 
-    // Certifs
     const frCerts = frMsg.cert_list || [];
     localAbout.certifications = frCerts.map((cert: any, i: number) => {
       const obj: any = { id: 'cert-' + i, link: cert.link || '' };
@@ -178,7 +191,6 @@ const initData = () => {
       return obj;
     });
 
-    // Projets
     const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any)?.projects_list || [];
     localProjects.value = getProj('fr').map((p: any, i: number) => ({
       id: p.id || Date.now() + i,
@@ -195,6 +207,8 @@ const initData = () => {
 };
 
 onMounted(async () => {
+  checkDevice();
+  window.addEventListener('resize', checkDevice);
   initData();
   await checkSession();
   isMounted.value = true;
@@ -241,7 +255,7 @@ const handleChangePassword = async (newPwd: string) => {
 
 const closePortal = () => emit('close');
 
-// --- GESTION DES LISTES DYNAMIQUES ---
+// --- GESTION DES ITEMS ---
 const addNewProject = () => {
   localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
 }
@@ -265,7 +279,7 @@ const addCertItem = () => {
 }
 const deleteCertItem = (idx: number) => { if (confirm("Supprimer ce certificat ?")) localAbout.certifications.splice(idx, 1); }
 
-// --- SAUVEGARDE GLOBALE ---
+// --- SAUVEGARDE FINALE ---
 const saveAll = async () => {
   isSaving.value = true
   try {
@@ -274,37 +288,24 @@ const saveAll = async () => {
 
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
-
-      // Sync thèmes
       full.theme_palette = localAbout.selected_palette;
-
-      // Sync Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
       }));
-
-      // Sync Hero
       full.greeting = localAbout[l].intro_hero;
       full.intro = localAbout[l].name_hero;
       full.bio = localAbout[l].bio_hero;
       full.btn_projects = localAbout[l].btn_prj;
       full.btn_about = localAbout[l].btn_abt;
-
-      // Sync À Propos
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.hobbies = localAbout[l].hobbies;
-
-      // Sync Timeline
       full.timeline_list = localAbout.timeline.map(item => ({
         period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
       }));
-
-      // Sync Certifications
       full.cert_list = localAbout.certifications.map(cert => ({
         name: cert[l].name, school: cert[l].school, link: cert.link
       }));
-
       payloads[l] = full;
     });
 
@@ -314,11 +315,9 @@ const saveAll = async () => {
     });
 
     if (res.ok) {
-      triggerToast('Site mis à jour avec succès !');
+      triggerToast('Site mis à jour !');
       setTimeout(() => window.location.reload(), 1000);
-    } else {
-      triggerToast('Erreur de sauvegarde', 'error');
-    }
+    } else { triggerToast('Erreur de sauvegarde', 'error'); }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
   finally { isSaving.value = false; }
 }
@@ -332,10 +331,25 @@ const saveAll = async () => {
   display: flex; align-items: center; justify-content: center;
 }
 
-.portal-fade-enter-active, .portal-fade-leave-active {
-  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+/* STYLE DU MESSAGE BLOQUANT MOBILE */
+.mobile-blocker {
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
 }
-.portal-fade-enter-from, .portal-fade-leave-to {
-  opacity: 0; transform: scale(1.05);
-}
+.mobile-blocker h2 { font-size: 1.5rem; margin-bottom: 16px; color: #fff; }
+.mobile-blocker p { color: #94a3b8; line-height: 1.6; }
+.mobile-blocker .hint { margin-top: 12px; font-size: 0.9rem; color: #6366f1; font-weight: 600; }
+.btn-close-mobile { background: #6366f1; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+
+.icon-accent { color: #6366f1; }
+.mb-20 { margin-bottom: 20px; }
+.mt-24 { margin-top: 24px; }
+
+.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
 </style>
