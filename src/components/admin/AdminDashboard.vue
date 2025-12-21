@@ -87,7 +87,14 @@
 
         <div v-else class="empty-state">
           <div class="empty-glow"></div>
-          <div class="empty-icon"><MousePointerClick :size="40" /></div>
+          <div class="tulip-wrapper">
+            <svg class="tulip-flower" viewBox="0 0 50 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M25 75V45" stroke="#4ADE80" stroke-width="3" stroke-linecap="round"/>
+              <path d="M25 65C25 65 35 60 38 55" stroke="#4ADE80" stroke-width="3" stroke-linecap="round"/>
+              <path d="M25 45C15 45 5 35 5 22C5 10 15 5 25 15C35 5 45 10 45 22C45 35 35 45 25 45Z" fill="#F472B6"/>
+              <path d="M25 40C20 40 13 33 13 22C13 15 18 10 25 18C32 10 37 15 37 22C37 33 30 40 25 40Z" fill="#EC4899"/>
+            </svg>
+          </div>
           <h2>Salam aleykoum Laurine</h2>
           <p>Choisis une section à gauche pour commencer.</p>
         </div>
@@ -186,22 +193,16 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-
-  /* Empêche le scroll de se propager au portfolio quand on arrive en haut/bas */
   overscroll-behavior: contain;
-
-  /* Pour la fluidité sur mobile/tablette */
   -webkit-overflow-scrolling: touch;
-
   scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
 }
 
-/* Force le dashboard à prendre toute la place et capturer les gestes */
 .dashboard-layout {
   pointer-events: auto;
-  touch-action: auto; /* Permet le scroll naturel au doigt/trackpad */
+  touch-action: auto;
 }
 .editor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; max-width: 1300px; margin: 0 auto; }
 
@@ -250,41 +251,36 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .btn-add-tag-inline { width: 42px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; }
 
 .empty-state {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 400px;
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; min-height: 400px;
 }
 .empty-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%); filter: blur(40px); }
 .empty-icon { width: 80px; height: 80px; background: #16161a; border-radius: 24px; display: grid; place-items: center; color: #6366f1; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); }
 
+/* STYLES DE LA TULIPE */
+.tulip-wrapper {
+  width: 100px; height: 130px; margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(236, 72, 153, 0.4));
+  animation: tulip-dance 4s ease-in-out infinite;
+  transform-origin: bottom center;
+  z-index: 5;
+}
+.tulip-flower { width: 100%; height: 100%; }
+
+@keyframes tulip-dance {
+  0%, 100% { transform: rotate(-5deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.05); }
+}
+
 .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.2);
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.5);
-}
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.2); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .input-box select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 14px;
-  padding-right: 48px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  background-repeat: no-repeat; background-position: right 16px center; background-size: 14px; padding-right: 48px; appearance: none; -webkit-appearance: none; -moz-appearance: none;
 }
-
 </style>
