@@ -174,7 +174,6 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 </script>
 
 <style scoped>
-/* SÉLECTEUR DE THÈMES NOMMÉS */
 .theme-selector-list {
   display: flex;
   flex-direction: column;
@@ -218,16 +217,6 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
   transition: color 0.2s;
 }
 .theme-row-btn.active .theme-label { color: white; }
-/* APERÇU DES COULEURS (Sombre / Accent) */
-.pal-1 { background: #55423d; color: #ffc0ad; } /* Terre */
-.pal-2 { background: #0f172a; color: #38bdf8; } /* Océan */
-.pal-3 { background: #064e3b; color: #34d399; } /* Forêt */
-.pal-4 { background: #2e1065; color: #a78bfa; } /* Lavande */
-.pal-5 { background: #18181b; color: #fbbf24; } /* Ardoise/Or */
-.pal-6 { background: #AF4D98; color: #9DF7E5; } /* Candy */
-.pal-7 { background: #310D20; color: #F2D06B; } /* Aube Dorée */
-.pal-8 { background: #1a2a6c; color: #00d2ff; } /* Stitch */
-.pal-9 { background: #0f172a; color: #facc15; } /* Petit Prince */
 
 .field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
 .hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }

@@ -3,16 +3,13 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ExternalLink, LayoutGrid, Briefcase, Globe } from 'lucide-vue-next'
 
-// On récupère t (traduction simple), tm (récupérer un tableau/objet) et rt (compiler le texte)
 const { t, tm, rt } = useI18n()
 const activeCategory = ref('all')
 
-// On récupère dynamiquement la liste des projets depuis le fichier de langue actuel
 const projects = computed(() => tm('projects_list') || [])
 
 const filteredProjects = computed(() => {
   if (activeCategory.value === 'all') return projects.value
-  // On filtre sur p.category qui est maintenant dans le JSON
   return projects.value.filter(p => p.category === activeCategory.value)
 })
 
@@ -80,7 +77,6 @@ const setCategory = (cat) => activeCategory.value = cat
 </template>
 
 <style scoped>
-/* Garde tes styles actuels, ils sont parfaits */
 .projects-section {
   position: relative;
   padding: 6rem 0;

@@ -16,7 +16,6 @@ const age = computed(() => {
   return age
 })
 
-// MODIFICATION : On récupère dynamiquement la liste depuis le JSON
 const timelineData = computed(() => {
   const list = tm('timeline_list')
   return Array.isArray(list) ? list : []
@@ -301,7 +300,7 @@ const getTypeLabel = (type) => {
 .timeline-item:hover .timeline-marker { transform: scale(1.3); background: var(--color-text-main); }
 .meta-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 10px; }
 .date { font-size: 0.95rem; font-weight: 700; color: var(--color-text-muted); font-family: monospace; }
-.type-pill { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; color: var(--color-accent-text); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.type-pill { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; color: var(--color-accent-text); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 .degree { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main); }
 .school { font-size: 1.05rem; color: var(--color-text-muted); line-height: 1.5; }
 </style>

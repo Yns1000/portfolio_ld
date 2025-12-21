@@ -100,7 +100,6 @@ const handleMouseLeave = () => {
 </template>
 
 <style scoped>
-/* --- Layout & Structure --- */
 .hero-wrapper {
   position: relative;
   width: 100%;
@@ -381,7 +380,6 @@ const handleMouseLeave = () => {
 
 .icon-accent { color: var(--color-accent); }
 
-/* --- ADAPTATION MODE CLAIR --- */
 :root[data-theme="light"] .greeting-badge {
   background: rgba(0, 0, 0, 0.04);
   border-color: rgba(0, 0, 0, 0.1);

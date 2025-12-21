@@ -101,8 +101,7 @@ import { LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Briefca
 import ProjectEditor from './ProjectEditor.vue'
 import AboutEditor from './AboutEditor.vue'
 import SecurityEditor from './SecurityEditor.vue'
-
-const props = defineProps<{ projects: any[], aboutData: any, isSaving: boolean }>();
+defineProps<{ projects: any[], aboutData: any, isSaving: boolean }>();
 const emit = defineEmits(['add', 'delete', 'save', 'logout', 'close', 'add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'change-password']);
 
 const viewMode = ref<'projects' | 'about' | 'security'>('projects')
@@ -113,9 +112,6 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 </script>
 
 <style>
-/* IMPORTANT : On utilise un style global (non-scoped) pour que
-   les sous-composants ProjectEditor et AboutEditor héritent du design.
-*/
 .dashboard-layout {
   width: 98vw; height: 96vh; max-width: 1700px;
   background: #080809; border: 1px solid rgba(255, 255, 255, 0.08);
@@ -140,7 +136,6 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 
 .sidebar-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); margin: 0 24px 24px; }
 
-/* BOUTONS MODERNES */
 .btn-add-modern {
   background: #6366f1; color: white; border: none;
   padding: 8px 16px; border-radius: 10px; cursor: pointer;
@@ -185,51 +180,16 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .btn-close-app { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: transparent; color: #64748b; display: grid; place-items: center; cursor: pointer; transition: 0.3s; }
 
 .stage-content { padding: 40px; overflow-y: auto; flex: 1; }
-.editor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; max-width: 1300px; margin: 0 auto; }
 
-.content-card { background: #0e0e11; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; overflow: hidden; }
-.card-head { padding: 20px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.01); }
 .card-head h3 { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; }
-.icon-accent { color: #818cf8; }
 
-.card-body { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
-.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-.input-box { display: flex; flex-direction: column; gap: 8px; }
-.input-box label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+.input-box label { font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
 
 .input-box input, .input-box select, .input-box textarea {
   background: #050506; border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px; padding: 12px 16px; color: white; font-size: 0.9rem; transition: 0.2s; width: 100%;
 }
 .input-box input:focus, .input-box textarea:focus { border-color: #6366f1; background: black; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-.hint { font-size: 0.75rem; color: #64748b; font-style: italic; margin-top: 4px; }
-
-.list-item-card {
-  background: #131317; padding: 24px; border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.04); display: flex;
-  flex-direction: column; gap: 16px; margin-bottom: 16px;
-  transition: all 0.3s ease;
-}
-.list-item-card:hover { border-color: rgba(99, 102, 241, 0.3); transform: translateX(4px); }
-
-.item-header-row { display: flex; gap: 16px; align-items: flex-end; }
-.period { flex: 1; }
-.type { width: 180px; }
-
-.btn-delete-row {
-  height: 45px; width: 45px; border-radius: 12px;
-  border: 1px solid rgba(248, 113, 113, 0.2); background: transparent;
-  color: #f87171; cursor: pointer; display: grid; place-items: center;
-  transition: 0.2s;
-}
-.btn-delete-row:hover { background: #f87171; color: white; }
-
-.tags-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
-.hobby-tag-pill { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #a5b4fc; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.btn-remove-tag { background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 0; line-height: 0; }
-.add-tag-box { display: flex; gap: 8px; }
-.btn-add-tag-inline { width: 42px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; }
 
 .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 .empty-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%); filter: blur(40px); }

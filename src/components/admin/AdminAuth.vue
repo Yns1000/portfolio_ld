@@ -106,7 +106,6 @@ const handleLoginSubmit = () => {
   z-index: 1;
 }
 
-/* LOGO STYLE */
 .brand-logo {
   width: 64px;
   height: 64px;
@@ -127,7 +126,6 @@ const handleLoginSubmit = () => {
   color: #6366f1;
 }
 
-/* HEADER */
 .auth-header {
   text-align: center;
   margin-bottom: 36px;
@@ -146,7 +144,6 @@ const handleLoginSubmit = () => {
   font-size: 0.95rem;
 }
 
-/* FORM & INPUT */
 .field-group {
   margin-bottom: 24px;
 }
@@ -196,7 +193,6 @@ const handleLoginSubmit = () => {
   font-weight: 500;
 }
 
-/* BUTTONS */
 .btn-primary {
   width: 100%;
   background: #6366f1;
@@ -240,7 +236,6 @@ const handleLoginSubmit = () => {
   color: white;
 }
 
-/* ANIMATIONS */
 .spin {
   animation: spin 1s linear infinite;
 }
@@ -261,11 +256,4 @@ const handleLoginSubmit = () => {
   40%, 60% { transform: translate3d(4px, 0, 0); }
 }
 
-.slide-up-enter-active {
-  transition: all 0.3s ease-out;
-}
-.slide-up-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
 </style>

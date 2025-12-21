@@ -19,7 +19,6 @@ import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AdminPortal from './components/admin/AdminPortal.vue'
 
-// Extraction de 't' pour les traductions simples
 const { t, locale, tm } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
@@ -30,13 +29,11 @@ const isInitialLoad = ref(true)
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
 
-// --- LOGIQUE DE NAVIGATION PRÉCISE ---
 const scrollToSection = (sectionId) => {
   activeSection.value = sectionId;
   isLangMenuOpen.value = false;
 };
 
-// --- LOGIQUE DES PALETTES AVEC ANTI-FLASH ---
 watchEffect(() => {
   const paletteId = tm('theme_palette') || 1;
 
@@ -185,7 +182,6 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* --- STYLES GLOBAUX --- */
 html, body {
   margin: 0; padding: 0; width: 100%;
   background-color: var(--color-bg);
@@ -206,9 +202,6 @@ body { overflow-x: hidden; }
 </style>
 
 <style scoped>
-/* =============================================
-   1. CURSEUR PERSONNALISÉ (Désactivé en Admin)
-   ============================================= */
 .custom-cursor {
   position: fixed;
   top: 0; left: 0;
@@ -222,9 +215,6 @@ body { overflow-x: hidden; }
   will-change: transform;
 }
 
-/* =============================================
-   2. HEADER & NAVIGATION (Glassmorphism)
-   ============================================= */
 .site-header {
   position: fixed;
   top: 0; left: 0;
@@ -254,9 +244,6 @@ body { overflow-x: hidden; }
   align-items: center;
 }
 
-/* =============================================
-   3. LIENS DE NAVIGATION (La Pillule)
-   ============================================= */
 .nav-links {
   display: flex;
   gap: 2rem;
@@ -306,9 +293,6 @@ body { overflow-x: hidden; }
   box-shadow: 0 0 10px var(--color-accent);
 }
 
-/* =============================================
-   4. RÉGLAGES (Admin, Langues, Thème)
-   ============================================= */
 .nav-settings {
   display: flex;
   align-items: center;
@@ -381,10 +365,6 @@ body { overflow-x: hidden; }
   background: var(--color-accent);
   color: var(--color-accent-text);
 }
-
-/* =============================================
-   5. RESPONSIVE & OPTIMISATION MOBILE
-   ============================================= */
 
 @media (max-width: 900px) {
   .site-header { padding: 1rem; }

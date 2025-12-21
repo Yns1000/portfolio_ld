@@ -9,16 +9,14 @@ const i18n = createI18n({
     locale: 'fr',
     fallbackLocale: 'en',
     globalInjection: true,
-    messages: { en, fr, es, nl } // Données par défaut
+    messages: { en, fr, es, nl }
 })
 
-// Fonction pour charger les changements faits par ton amie
 export async function fetchLiveTranslations() {
     try {
         const response = await fetch('/api/manage-content')
         const liveData = await response.json()
 
-        // On met à jour chaque langue si des données existent dans Redis
         Object.keys(liveData).forEach(lang => {
             i18n.global.setLocaleMessage(lang, {
                 ...i18n.global.getLocaleMessage(lang),

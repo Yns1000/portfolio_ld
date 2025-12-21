@@ -22,7 +22,6 @@ app.directive('reveal', {
 
 app.use(i18n)
 
-// Chargement des données live avant le mount
 fetchLiveTranslations().then(() => {
     app.mount('#app')
 })

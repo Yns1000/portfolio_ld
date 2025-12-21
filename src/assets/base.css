@@ -1,23 +1,14 @@
-/* src/assets/base.css */
-
-/* --- 1. OPTIMISATIONS DE CHARGEMENT & FLUIDITÉ --- */
-
-/* Empêche l'affichage du texte brut avant le chargement de Vue */
 [v-cloak] { display: none; }
 
-/* Classe pour supprimer le "flash" de couleur au démarrage (utilisée dans App.vue) */
 .no-transition * {
   transition: none !important;
 }
 
-/* Transition globale pour un changement de thème fluide */
 html {
   transition: background-color 0.3s ease-in-out;
 }
 
-/* --- 2. CONFIGURATION DES 9 PALETTES (SOMBRE & CLAIR) --- */
 
-/* PALETTE 1 : TERRE (DÉFAUT) */
 :root, [data-palette="1"] {
   --color-bg: #55423d; --color-bg-card: #271c19; --color-accent: #ffc0ad;
   --color-bg-rgb: 85, 66, 61; --color-bg-card-rgb: 39, 28, 25; --color-accent-rgb: 255, 192, 173;
@@ -30,7 +21,6 @@ html {
   --color-text-main: #271c19; --color-text-muted: #55423d; --color-border: rgba(39, 28, 25, 0.1);
 }
 
-/* PALETTE 2 : OCÉAN PROFOND */
 [data-palette="2"] {
   --color-bg: #0f172a; --color-bg-card: #1e293b; --color-accent: #38bdf8;
   --color-bg-rgb: 15, 23, 42; --color-bg-card-rgb: 30, 41, 59; --color-accent-rgb: 56, 189, 248;
@@ -42,7 +32,6 @@ html {
   --color-text-main: #0f172a; --color-text-muted: #475569; --color-border: rgba(15, 23, 42, 0.1);
 }
 
-/* PALETTE 3 : FORÊT ÉMERAUDE */
 [data-palette="3"] {
   --color-bg: #064e3b; --color-bg-card: #065f46; --color-accent: #34d399;
   --color-bg-rgb: 6, 78, 59; --color-bg-card-rgb: 6, 95, 70; --color-accent-rgb: 52, 211, 153;
@@ -54,7 +43,6 @@ html {
   --color-text-main: #064e3b; --color-text-muted: #166534; --color-border: rgba(6, 78, 59, 0.1);
 }
 
-/* PALETTE 4 : LAVANDE ROYALE */
 [data-palette="4"] {
   --color-bg: #2e1065; --color-bg-card: #4c1d95; --color-accent: #a78bfa;
   --color-bg-rgb: 46, 16, 101; --color-bg-card-rgb: 76, 29, 149; --color-accent-rgb: 167, 139, 250;
@@ -66,7 +54,6 @@ html {
   --color-text-main: #2e1065; --color-text-muted: #5b21b6; --color-border: rgba(46, 16, 101, 0.1);
 }
 
-/* PALETTE 5 : ARDOISE & OR */
 [data-palette="5"] {
   --color-bg: #18181b; --color-bg-card: #27272a; --color-accent: #fbbf24;
   --color-bg-rgb: 24, 24, 27; --color-bg-card-rgb: 39, 39, 42; --color-accent-rgb: 251, 191, 36;
@@ -78,7 +65,6 @@ html {
   --color-text-main: #18181b; --color-text-muted: #52525b; --color-border: rgba(24, 24, 27, 0.1);
 }
 
-/* PALETTE 6 : CANDY PASTEL */
 [data-palette="6"] {
   --color-bg: #2D132C; --color-bg-card: #4D1B3B; --color-accent: #D66BA0;
   --color-bg-rgb: 45, 19, 44; --color-bg-card-rgb: 77, 27, 59; --color-accent-rgb: 214, 107, 160;
@@ -90,7 +76,6 @@ html {
   --color-text-main: #AF4D98; --color-text-muted: #D66BA0; --color-border: rgba(175, 77, 152, 0.1);
 }
 
-/* PALETTE 7 : AUBE DORÉE */
 [data-palette="7"] {
   --color-bg: #310D20; --color-bg-card: #4A1530; --color-accent: #F2D06B;
   --color-bg-rgb: 49, 13, 32; --color-bg-card-rgb: 74, 21, 48; --color-accent-rgb: 242, 208, 107;
@@ -102,7 +87,6 @@ html {
   --color-text-main: #310D20; --color-text-muted: #B55D91; --color-border: rgba(49, 13, 32, 0.1);
 }
 
-/* PALETTE 8 : OHANA (Stitch) */
 [data-palette="8"] {
   --color-bg: #1a2a6c; --color-bg-card: #2a408e; --color-accent: #00d2ff;
   --color-bg-rgb: 26, 42, 108; --color-bg-card-rgb: 42, 64, 142; --color-accent-rgb: 0, 210, 255;
@@ -114,7 +98,6 @@ html {
   --color-text-main: #1e3a8a; --color-text-muted: #0369a1; --color-border: rgba(26, 42, 108, 0.1);
 }
 
-/* PALETTE 9 : ASTÉROÏDE B612 (Petit Prince) */
 [data-palette="9"] {
   --color-bg: #0f172a; --color-bg-card: #1e293b; --color-accent: #facc15;
   --color-bg-rgb: 15, 23, 42; --color-bg-card-rgb: 30, 41, 59; --color-accent-rgb: 250, 204, 21;
@@ -126,21 +109,18 @@ html {
   --color-text-main: #1e293b; --color-text-muted: #854d0e; --color-border: rgba(15, 23, 42, 0.1);
 }
 
-/* --- 3. STYLES DE BASE & ANIMATIONS --- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   min-height: 100vh;
   color: var(--color-text-main);
   background-color: var(--color-bg);
-  /* Transition optimisée (uniquement couleurs) pour éviter les saccades sur mobile */
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   line-height: 1.6;
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Aide le processeur mobile à anticiper les flous de la navigation */
 .glass-nav, .glass-card {
   will-change: backdrop-filter, transform;
 }

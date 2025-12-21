@@ -47,9 +47,8 @@ import i18n from '../../i18n'
 import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
-import { Monitor } from 'lucide-vue-next' // Ajout de l'icône Monitor
+import { Monitor } from 'lucide-vue-next'
 
-// --- DÉFINITION DES TYPES ---
 interface Project {
   id: number; category: string; image: string; link: string;
   fr: any; en: any; es: any; nl: any;
@@ -85,10 +84,9 @@ interface AboutData {
   selected_palette: number;
 }
 
-// --- ÉTATS RÉACTIFS ---
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
-const isMobile = ref(false); // État pour la détection mobile
+const isMobile = ref(false);
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -112,17 +110,14 @@ const localAbout = reactive<AboutData>({
 });
 const localProjects = ref<Project[]>([]);
 
-// --- DÉTECTION APPAREIL ---
 const checkDevice = () => {
   isMobile.value = window.innerWidth < 1024;
 };
 
-// --- APERÇU DES COULEURS EN TEMPS RÉEL ---
 watch(() => localAbout.selected_palette, (newVal) => {
   document.documentElement.setAttribute('data-palette', newVal.toString());
 });
 
-// --- GESTION DE LA SESSION (LocalStorage) ---
 const checkSession = async () => {
   const savedKey = localStorage.getItem('laurine_portfolio_token');
   if (savedKey) {
@@ -150,7 +145,6 @@ const handleLogout = () => {
   triggerToast('Session terminée');
 };
 
-// --- CHARGEMENT DES DONNÉES ---
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
@@ -216,7 +210,6 @@ onMounted(async () => {
   isMounted.value = true;
 });
 
-// --- ACTIONS CLÉS ---
 const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg; toast.type = type; toast.show = true;
   setTimeout(() => { toast.show = false }, 4000);
@@ -257,7 +250,6 @@ const handleChangePassword = async (newPwd: string) => {
 
 const closePortal = () => emit('close');
 
-// --- GESTION DES ITEMS ---
 const addNewProject = () => {
   localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
 }
@@ -281,7 +273,6 @@ const addCertItem = () => {
 }
 const deleteCertItem = (idx: number) => { if (confirm("Supprimer ce certificat ?")) localAbout.certifications.splice(idx, 1); }
 
-// --- SAUVEGARDE FINALE ---
 const saveAll = async () => {
   isSaving.value = true
   try {
@@ -334,7 +325,6 @@ const saveAll = async () => {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* STYLE DU MESSAGE BLOQUANT MOBILE */
 .mobile-blocker {
   width: 90%;
   max-width: 450px;
@@ -353,6 +343,4 @@ const saveAll = async () => {
 .mb-20 { margin-bottom: 20px; }
 .mt-24 { margin-top: 24px; }
 
-.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
 </style>

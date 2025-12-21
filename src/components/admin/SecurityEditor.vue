@@ -66,7 +66,6 @@ const handleSubmit = () => {
   }
   errorMsg.value = ""
   emit('update-password', newPassword.value)
-  // Reset fields after attempt
   newPassword.value = ''
   confirmPassword.value = ''
 }
