@@ -115,7 +115,7 @@
 
         <div class="input-box mt-16">
           <label>Phrase des langues</label>
-          <input v-model="aboutData[lang].fluent_phrase" placeholder="Je parle couramment {en}, {es} et {fr}." />
+          <input v-model="aboutData[lang].fluent_sentence" placeholder="Je parle couramment {en}, {es} et {fr}." />
           <span class="hint">Gardez {en}, {es}, {fr} pour afficher les drapeaux.</span>
         </div>
       </div>
