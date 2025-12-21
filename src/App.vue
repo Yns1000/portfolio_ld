@@ -28,13 +28,21 @@ const isAdminOpen = ref(false)
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
 
+// --- LOGIQUE DE NAVIGATION PRÉCISE ---
+// Force la section active au clic pour éviter le bug visuel du double trait
+const scrollToSection = (sectionId) => {
+  activeSection.value = sectionId;
+  isLangMenuOpen.value = false;
+};
+
 // --- LOGIQUE DES PALETTES DYNAMIQUES ---
+// Applique l'ID de la palette (1 à 9) au document HTML
 watchEffect(() => {
   const paletteId = tm('theme_palette') || 1;
   document.documentElement.setAttribute('data-palette', paletteId);
 });
 
-// Surveillance de l'ouverture de l'admin
+// Surveillance de l'ouverture de l'admin pour rétablir la souris système
 watch(isAdminOpen, (open) => {
   if (open) {
     document.documentElement.classList.add('admin-mode')
@@ -67,12 +75,20 @@ const toggleTheme = () => {
 }
 
 onMounted(() => {
+  // Initialisation du thème clair/sombre
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
 
+  // Initialisation du curseur personnalisé
   if (window.matchMedia('(pointer: fine)').matches) {
     window.addEventListener('mousemove', updateCursor)
+  }
+
+  // DÉTECTION DE LA SECTION ACTIVE (Observateur précis)
+  const observerOptions = {
+    rootMargin: '-40% 0px -40% 0px', // Zone de détection restreinte au milieu de l'écran
+    threshold: 0
   }
 
   const observer = new IntersectionObserver((entries) => {
@@ -81,7 +97,7 @@ onMounted(() => {
         activeSection.value = entry.target.id
       }
     })
-  }, { threshold: 0.3 })
+  }, observerOptions)
 
   document.querySelectorAll('section[id]').forEach(section => {
     observer.observe(section)
@@ -99,19 +115,23 @@ onUnmounted(() => {
   <header class="site-header glass-nav">
     <nav class="navbar">
       <div class="nav-links">
-        <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+        <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }"
+           @click="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Home :size="20" />
           <span class="nav-text">Home</span>
         </a>
-        <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+        <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }"
+           @click="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Briefcase :size="20" />
           <span class="nav-text">Projets</span>
         </a>
-        <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+        <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }"
+           @click="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <User :size="20" />
           <span class="nav-text">À propos</span>
         </a>
-        <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+        <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }"
+           @click="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
           <Mail :size="20" />
           <span class="nav-text">Contact</span>
         </a>
@@ -160,6 +180,7 @@ onUnmounted(() => {
 </template>
 
 <style>
+/* --- STYLES GLOBAUX --- */
 html, body {
   margin: 0; padding: 0; width: 100%;
   background-color: var(--color-bg);
@@ -185,6 +206,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   background-color: var(--color-accent); border-radius: 50%;
   pointer-events: none; z-index: 9999; mix-blend-mode: difference;
   transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
+  will-change: transform;
 }
 
 /* --- HEADER ET NAVIGATION --- */
@@ -195,14 +217,14 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
 }
 
 .glass-nav {
-  /* On utilise le RGB du fond de la palette avec une opacité maîtrisée */
   background: rgba(var(--color-bg-rgb), 0.7);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
 }
 
-/* Correction spécifique Light Mode : On ajoute une légère teinte de l'accent pour "colorer" le blanc */
+/* Optimisation Mode Clair */
 :root[data-theme="light"] .glass-nav {
   background: rgba(var(--color-bg-rgb), 0.85);
   border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.2);
@@ -213,16 +235,13 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   display: flex; justify-content: space-between; align-items: center;
 }
 
-/* --- CONTENEUR DES LIENS (La Pillule centrale) --- */
+/* Conteneur des liens */
 .nav-links {
   display: flex; gap: 2rem;
-  /* On utilise la couleur de carte du thème pour le fond */
   background: rgba(var(--color-bg-card-rgb), 0.6);
   padding: 8px 24px; border-radius: 50px;
-  /* ICI : On force la couleur principale (accent) en bordure pour donner du caractère en Light Mode */
   border: 1.5px solid rgba(var(--color-accent-rgb), 0.3);
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 :root[data-theme="light"] .nav-links {
@@ -237,9 +256,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   transition: all 0.3s ease; position: relative;
 }
 
-.nav-item:hover, .nav-item.active {
-  color: var(--color-accent);
-}
+.nav-item:hover, .nav-item.active { color: var(--color-accent); }
 
 .nav-item.active::after {
   content: ''; position: absolute; bottom: -6px; left: 20%; width: 60%;
@@ -247,7 +264,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   border-radius: 2px; box-shadow: 0 0 10px var(--color-accent);
 }
 
-/* --- OUTILS (ADMIN, LANG, THEME) --- */
+/* Réglages (Admin, Langues, Thème) */
 .nav-settings { display: flex; align-items: center; gap: 0.8rem; }
 
 .icon-btn {
@@ -268,7 +285,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
 
 .current-lang { font-size: 0.75rem; font-weight: 800; }
 
-/* MENU LANGUES */
+/* Menu Langues */
 .lang-dropdown-wrapper { position: relative; }
 .lang-menu {
   position: absolute; top: 125%; right: 0;
@@ -278,25 +295,28 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   backdrop-filter: blur(10px);
 }
 
+.lang-menu span {
+  padding: 10px 14px; border-radius: 10px; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+}
+.lang-menu span:hover { background: rgba(var(--color-accent-rgb), 0.15); color: var(--color-accent); }
+.lang-menu span.active { background: var(--color-accent); color: var(--color-accent-text); }
+
 /* =============================================
-   RESPONSIVE (On garde tes corrections)
+   RESPONSIVE
    ============================================= */
 
 @media (max-width: 900px) {
   .site-header { padding: 1rem; }
   .nav-links { gap: 1.5rem; padding: 8px 16px; }
-  .nav-text { display: none; } /* On ne garde que les icônes sur tablette/mobile */
+  .nav-text { display: none; } /* Cache le texte sur mobile */
 }
 
 @media (max-width: 600px) {
-  .site-header {
-    padding: 0.8rem;
-    background: rgba(var(--color-bg-rgb), 0.9); /* Plus opaque sur mobile */
-  }
+  .site-header { padding: 0.8rem; background: rgba(var(--color-bg-rgb), 0.9); }
   .navbar { flex-direction: row; justify-content: space-between; gap: 0.5rem; }
   .nav-links { gap: 1.2rem; padding: 8px 12px; }
   .nav-settings { gap: 0.5rem; }
-  .icon-btn { padding: 8px; border-radius: 10px; }
 }
 
 /* Couleurs icônes thèmes */
