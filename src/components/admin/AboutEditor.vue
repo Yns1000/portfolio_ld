@@ -237,7 +237,7 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 .file-name-hint { font-size: 0.8rem; color: #818cf8; font-weight: 700; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* THEMES */
-.theme-selector-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
+.theme-selector-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; padding-right: 4px; -webkit-overflow-scrolling: touch;  }
 .theme-row-btn { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-align: left; }
 .theme-row-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
 .theme-row-btn.active { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }

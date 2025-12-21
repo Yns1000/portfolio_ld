@@ -181,7 +181,26 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .lang-tab.active { background: white; color: black; }
 .btn-close-app { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: transparent; color: #64748b; display: grid; place-items: center; cursor: pointer; transition: 0.3s; }
 
-.stage-content { padding: 40px; overflow-y: auto; flex: 1; min-height: 0; scrollbar-gutter: stable;-webkit-overflow-scrolling: touch;}
+.stage-content {
+  padding: 40px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  /* Empêche le scroll de se propager au portfolio quand on arrive en haut/bas */
+  overscroll-behavior: contain;
+
+  /* Pour la fluidité sur mobile/tablette */
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-gutter: stable;
+}
+
+/* Force le dashboard à prendre toute la place et capturer les gestes */
+.dashboard-layout {
+  pointer-events: auto;
+  touch-action: auto; /* Permet le scroll naturel au doigt/trackpad */
+}
 .editor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; max-width: 1300px; margin: 0 auto; }
 
 .content-card { background: #0e0e11; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; overflow: hidden; }

@@ -76,26 +76,27 @@ watchEffect(() => {
   }
 });
 
-// FIX SCROLL : Arrêter Lenis et verrouiller le body quand l'admin est ouvert
 watch(isAdminOpen, (open) => {
-  document.documentElement.classList.toggle('admin-mode', open);
+  document.documentElement.classList.toggle('admin-mode', open)
+
   if (open) {
-    lenisInstance.value?.stop(); // Arrête le scroll fluide du portfolio
+    lenisInstance.value?.destroy()
+    lenisInstance.value = null
   } else {
-    lenisInstance.value?.start(); // Relance le scroll
+    lenisInstance.value = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    })
+
+    function raf(time) {
+      lenisInstance.value?.raf(time)
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
   }
 })
 
-const updateCursor = (e) => {
-  const size = isHovering.value ? 40 : 20
-  const x = Math.round(e.clientX - size / 2);
-  const y = Math.round(e.clientY - size / 2);
-  cursorStyle.value = {
-    transform: `translate(${x}px, ${y}px)`,
-    width: `${size}px`,
-    height: `${size}px`
-  }
-}
 
 const changeLanguage = (lang) => {
   locale.value = lang
@@ -258,6 +259,8 @@ body { overflow-x: hidden; }
 .admin-mode {
   overflow: hidden !important;
   height: 100vh !important;
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 
 .admin-mode, .admin-mode * { cursor: auto !important; }
