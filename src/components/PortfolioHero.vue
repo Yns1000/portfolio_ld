@@ -124,6 +124,7 @@ const handleMouseLeave = () => {
   overflow: visible;
   overflow-x: clip;
   padding: 100px 0 60px 0;
+  cursor: none !important;
 }
 
 .hero-container {
@@ -367,11 +368,10 @@ const handleMouseLeave = () => {
     grid-template-columns: repeat(5, 1fr);
     gap: 11px;
     pointer-events: auto;
-    cursor: default;
   }
   .dot {
-    width: 4px; /* Un poil plus gros */
-    height: 4px;
+    width: 5px;
+    height: 5px;
     background-color: var(--color-text-muted);
     border-radius: 50%;
     opacity: 0.15;
@@ -391,7 +391,7 @@ const handleMouseLeave = () => {
     box-shadow:
         0 0 10px var(--color-accent),
         0 0 20px rgba(var(--color-accent-rgb), 0.5);
-    animation: dotPulse 1.5s infinite;
+    animation: dotPulse 0s infinite;
   }
 
   @keyframes dotPulse {
@@ -436,19 +436,16 @@ const handleMouseLeave = () => {
   filter: blur(60px);
 }
 
-/* Espacement sous le bloc de boutons principaux */
 .cta-group {
-  margin-bottom: 2.5rem; /* Crée l'espace nécessaire avant le CV */
+  margin-bottom: 2.5rem;
 }
 
-/* Le conteneur du bouton CV */
 .cv-inline-wrapper {
   display: flex;
   width: 100%;
-  justify-content: center; /* Centré par défaut (mobile) */
+  justify-content: center;
 }
 
-/* Aligné à gauche sur Desktop pour suivre le texte de Laurine */
 @media (min-width: 1024px) {
   .cv-inline-wrapper {
     justify-content: flex-start;

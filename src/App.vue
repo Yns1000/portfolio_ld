@@ -33,13 +33,15 @@ const cursorStyle = ref({
 })
 
 const updateCursor = (e) => {
-  const size = isHovering.value ? 40 : 20
-  const x = Math.round(e.clientX - size / 2);
-  const y = Math.round(e.clientY - size / 2);
+  const size = isHovering.value ? 70 : 35
+  const x = e.clientX;
+  const y = e.clientY;
+
   cursorStyle.value = {
-    transform: `translate(${x}px, ${y}px)`,
+    transform: `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`,
     width: `${size}px`,
-    height: `${size}px`
+    height: `${size}px`,
+    opacity: isHovering.value ? 1 : 0.6
   }
 }
 
@@ -117,7 +119,6 @@ const toggleTheme = () => {
 }
 
 onMounted(async () => {
-  // 1. CHARGEMENT REDIS
   try {
     const res = await fetch('/api/manage-content');
     if (res.ok) {
@@ -128,7 +129,6 @@ onMounted(async () => {
     }
   } catch (e) { console.error("Mode local activé"); }
 
-  // 2. INITIALISATION SCROLL & CURSEUR
   initLenis()
   window.addEventListener('scroll', handleScroll)
   if (!isDark.value) { document.documentElement.setAttribute('data-theme', 'light') }
@@ -155,7 +155,10 @@ onUnmounted(() => {
   <div v-cloak>
     <div class="scroll-progress-bar" :style="{ width: scrollProgress + '%' }"></div>
 
-    <div v-if="!isAdminOpen" class="custom-cursor" :style="cursorStyle"></div>
+    <div v-if="!isAdminOpen" class="cursor-wrapper" :style="cursorStyle">
+      <div class="cursor-dot"></div>
+      <div class="cursor-ring"></div>
+    </div>
 
     <header class="site-header glass-nav">
       <nav class="navbar">
@@ -251,17 +254,42 @@ body { overflow-x: hidden; }
 </style>
 
 <style scoped>
-/* Conserve tes styles originaux ... */
-.custom-cursor {
+.cursor-wrapper {
   position: fixed;
-  top: 0; left: 0;
-  background-color: var(--color-accent);
-  border-radius: 50%;
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 9999;
-  mix-blend-mode: difference;
-  transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+  height 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+  opacity 0.3s ease;
   will-change: transform;
+}
+
+.cursor-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-accent);
+  border-radius: 50%;
+}
+
+.cursor-ring {
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  backdrop-filter: invert(0.1) grayscale(0.2);
+}
+
+.cursor-wrapper[style*="70px"] .cursor-ring {
+  background: rgba(var(--color-accent-rgb), 0.1);
+  border-width: 1px;
+  backdrop-filter: blur(2px) invert(0.1);
 }
 
 .site-header {
