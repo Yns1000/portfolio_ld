@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
+import Lenis from '@studio-freight/lenis'
 
 import {
   Home,
@@ -26,27 +27,49 @@ const activeSection = ref('home')
 const isHovering = ref(false)
 const isAdminOpen = ref(false)
 const isInitialLoad = ref(true)
+const scrollProgress = ref(0)
 
-const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
+const cursorStyle = ref({
+  transform: 'translate(-100px, -100px)',
+  width: '20px',
+  height: '20px'
+})
 
 const scrollToSection = (sectionId) => {
   activeSection.value = sectionId;
   isLangMenuOpen.value = false;
+
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const offset = 100;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
+};
+
+const handleScroll = () => {
+  const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+  if (totalScroll > 0) {
+    scrollProgress.value = (window.scrollY / totalScroll) * 100;
+  }
 };
 
 watchEffect(() => {
   const paletteId = tm('theme_palette') || 1;
-
   if (isInitialLoad.value) {
     document.documentElement.classList.add('no-transition');
-    document.documentElement.setAttribute('data-palette', paletteId);
-
+    document.documentElement.setAttribute('data-palette', paletteId.toString());
     setTimeout(() => {
       document.documentElement.classList.remove('no-transition');
       isInitialLoad.value = false;
     }, 50);
   } else {
-    document.documentElement.setAttribute('data-palette', paletteId);
+    document.documentElement.setAttribute('data-palette', paletteId.toString());
   }
 });
 
@@ -56,8 +79,10 @@ watch(isAdminOpen, (open) => {
 
 const updateCursor = (e) => {
   const size = isHovering.value ? 40 : 20
+  const x = Math.round(e.clientX - size / 2);
+  const y = Math.round(e.clientY - size / 2);
   cursorStyle.value = {
-    transform: `translate(${e.clientX - size / 2}px, ${e.clientY - size / 2}px)`,
+    transform: `translate(${x}px, ${y}px)`,
     width: `${size}px`,
     height: `${size}px`
   }
@@ -70,20 +95,31 @@ const changeLanguage = (lang) => {
 
 const toggleTheme = () => {
   document.documentElement.classList.add('no-transition');
-
   isDark.value = !isDark.value;
   if (isDark.value) {
     document.documentElement.removeAttribute('data-theme');
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
   }
-
   setTimeout(() => {
     document.documentElement.classList.remove('no-transition');
   }, 50);
 }
 
 onMounted(() => {
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true
+  })
+
+  function raf(time) {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+  }
+  requestAnimationFrame(raf)
+
+  window.addEventListener('scroll', handleScroll)
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
@@ -112,33 +148,36 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('mousemove', updateCursor)
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
 <template>
   <div v-cloak>
+    <div class="scroll-progress-bar" :style="{ width: scrollProgress + '%' }"></div>
+
     <div v-if="!isAdminOpen" class="custom-cursor" :style="cursorStyle"></div>
 
     <header class="site-header glass-nav">
       <nav class="navbar">
         <div class="nav-links">
           <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }"
-             @click="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+             @click.prevent="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Home :size="20" />
             <span class="nav-text">{{ t('nav_home') }}</span>
           </a>
           <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }"
-             @click="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+             @click.prevent="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Briefcase :size="20" />
             <span class="nav-text">{{ t('nav_projects') }}</span>
           </a>
           <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }"
-             @click="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+             @click.prevent="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <User :size="20" />
             <span class="nav-text">{{ t('nav_about') }}</span>
           </a>
           <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }"
-             @click="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+             @click.prevent="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Mail :size="20" />
             <span class="nav-text">{{ t('nav_contact') }}</span>
           </a>
@@ -190,22 +229,32 @@ html, body {
 }
 body { overflow-x: hidden; }
 
+.admin-mode, .admin-mode * { cursor: auto !important; }
+
 @media (min-width: 1024px) {
   html:not(.admin-mode), html:not(.admin-mode) body, html:not(.admin-mode) a,
   html:not(.admin-mode) button, html:not(.admin-mode) input, html:not(.admin-mode) textarea {
     cursor: none !important;
   }
 }
-.admin-mode, .admin-mode * { cursor: auto !important; }
+
 #app { width: 100%; max-width: 100%; padding: 0 !important; }
 [v-cloak] { display: none; }
+
+.scroll-progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 4px;
+  background: var(--color-accent);
+  z-index: 2000;
+  transition: width 0.1s ease-out;
+}
 </style>
 
 <style scoped>
 .custom-cursor {
   position: fixed;
   top: 0; left: 0;
-  width: 20px; height: 20px;
   background-color: var(--color-accent);
   border-radius: 50%;
   pointer-events: none;
@@ -394,5 +443,9 @@ body { overflow-x: hidden; }
 
 .no-transition * {
   transition: none !important;
+}
+
+section[id] {
+  scroll-margin-top: 100px;
 }
 </style>
