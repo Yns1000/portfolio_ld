@@ -174,7 +174,7 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 
 .sidebar-footer { padding: 24px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 12px; }
 .btn-save-main { background: #6366f1; color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: 0.3s; }
-.logout-link { background: transparent; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.logout-link { padding: 1rem; background: transparent; border: none; color: #64748b; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
 .main-stage { flex: 1; display: flex; flex-direction: column; background: #080809; }
 .stage-header { padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }

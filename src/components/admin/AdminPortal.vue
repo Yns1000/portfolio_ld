@@ -71,6 +71,7 @@ interface AboutContent {
   btn_abt: string;
   intro: string;
   text: string;
+  languages_text: string;
   hobbies: string[];
 }
 
@@ -97,7 +98,7 @@ const toast = reactive({ show: false, message: '', type: 'success' as 'success' 
 
 const createEmptyAboutContent = (): AboutContent => ({
   intro_hero: '', name_hero: '', bio_hero: '', btn_prj: '', btn_abt: '',
-  intro: '', text: '', hobbies: []
+  intro: '', text: '', languages_text: '', hobbies: []
 })
 
 const localAbout = reactive<AboutData>({
@@ -167,6 +168,7 @@ const initData = () => {
         localAbout[l].btn_abt = msg.btn_about || '';
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
+        localAbout[l].languages_text = msg.languages || '';
         localAbout[l].hobbies = Array.isArray(msg.hobbies) ? [...msg.hobbies] : [];
       }
     });
@@ -299,6 +301,7 @@ const saveAll = async () => {
       full.btn_about = localAbout[l].btn_abt;
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
+      full.languages = localAbout[l].languages_text;
       full.hobbies = localAbout[l].hobbies;
       full.timeline_list = localAbout.timeline.map(item => ({
         period: item.period, type: item.type, title: item[l].title, desc: item[l].desc

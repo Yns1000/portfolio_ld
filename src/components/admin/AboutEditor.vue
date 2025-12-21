@@ -106,13 +106,15 @@
         </div>
       </div>
 
-      <div class="content-card mt-24">
-        <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
-        <div class="card-body">
-          <div class="input-box">
-            <label>Slogan (Intro)</label>
-            <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
-          </div>
+      <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
+      <div class="card-body">
+        <div class="input-box">
+          <label>Slogan (Intro)</label>
+          <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
+        </div>
+        <div class="input-box mt-16">
+          <label>Langues maîtrisées</label>
+          <input v-model="aboutData[lang].languages_text" placeholder="Ex: Je parle couramment Anglais..." />
         </div>
       </div>
 
