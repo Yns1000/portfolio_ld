@@ -8,7 +8,7 @@
           <Monitor :size="48" class="icon-accent mb-20" />
           <h2>Console réservée aux ordinateurs</h2>
           <p>L'administration du portfolio est optimisée pour les écrans larges.</p>
-          <p class="hint">Veuillez vous connecter depuis un PC ou un Mac pour gérer votre contenu.</p>
+          <p class="hint">Veuillez vous connecter depuis un PC ou un Mac :) pour gérer votre contenu.</p>
           <button @click="closePortal" class="btn-close-mobile mt-24">Retour au site</button>
         </div>
       </div>

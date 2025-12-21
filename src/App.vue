@@ -25,30 +25,37 @@ const isLangMenuOpen = ref(false)
 const activeSection = ref('home')
 const isHovering = ref(false)
 const isAdminOpen = ref(false)
+const isInitialLoad = ref(true) // Empêche le flash de couleur au chargement
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
 
 // --- LOGIQUE DE NAVIGATION PRÉCISE ---
-// Force la section active au clic pour éviter le bug visuel du double trait
 const scrollToSection = (sectionId) => {
   activeSection.value = sectionId;
   isLangMenuOpen.value = false;
 };
 
-// --- LOGIQUE DES PALETTES DYNAMIQUES ---
-// Applique l'ID de la palette (1 à 9) au document HTML
+// --- LOGIQUE DES PALETTES AVEC ANTI-FLASH ---
 watchEffect(() => {
   const paletteId = tm('theme_palette') || 1;
-  document.documentElement.setAttribute('data-palette', paletteId);
+
+  if (isInitialLoad.value) {
+    // On bloque les transitions pour appliquer la palette immédiatement
+    document.documentElement.classList.add('no-transition');
+    document.documentElement.setAttribute('data-palette', paletteId);
+
+    setTimeout(() => {
+      document.documentElement.classList.remove('no-transition');
+      isInitialLoad.value = false;
+    }, 50);
+  } else {
+    document.documentElement.setAttribute('data-palette', paletteId);
+  }
 });
 
-// Surveillance de l'ouverture de l'admin pour rétablir la souris système
+// Surveillance de l'ouverture de l'admin
 watch(isAdminOpen, (open) => {
-  if (open) {
-    document.documentElement.classList.add('admin-mode')
-  } else {
-    document.documentElement.classList.remove('admin-mode')
-  }
+  document.documentElement.classList.toggle('admin-mode', open);
 })
 
 const updateCursor = (e) => {
@@ -67,27 +74,21 @@ const changeLanguage = (lang) => {
 
 const toggleTheme = () => {
   isDark.value = !isDark.value
-  if (isDark.value) {
-    document.documentElement.removeAttribute('data-theme')
-  } else {
-    document.documentElement.setAttribute('data-theme', 'light')
-  }
+  document.documentElement.setAttribute('data-theme', isDark.value ? '' : 'light');
 }
 
 onMounted(() => {
-  // Initialisation du thème clair/sombre
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
 
-  // Initialisation du curseur personnalisé
   if (window.matchMedia('(pointer: fine)').matches) {
     window.addEventListener('mousemove', updateCursor)
   }
 
-  // DÉTECTION DE LA SECTION ACTIVE (Observateur précis)
+  // OBSERVATEUR PRÉCIS (Détecte uniquement la section au centre de l'écran)
   const observerOptions = {
-    rootMargin: '-40% 0px -40% 0px', // Zone de détection restreinte au milieu de l'écran
+    rootMargin: '-40% 0px -40% 0px',
     threshold: 0
   }
 
@@ -110,73 +111,69 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="!isAdminOpen" class="custom-cursor" :style="cursorStyle"></div>
+  <div v-cloak>
+    <div v-if="!isAdminOpen" class="custom-cursor" :style="cursorStyle"></div>
 
-  <header class="site-header glass-nav">
-    <nav class="navbar">
-      <div class="nav-links">
-        <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }"
-           @click="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-          <Home :size="20" />
-          <span class="nav-text">Home</span>
-        </a>
-        <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }"
-           @click="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-          <Briefcase :size="20" />
-          <span class="nav-text">Projets</span>
-        </a>
-        <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }"
-           @click="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-          <User :size="20" />
-          <span class="nav-text">À propos</span>
-        </a>
-        <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }"
-           @click="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-          <Mail :size="20" />
-          <span class="nav-text">Contact</span>
-        </a>
-      </div>
-
-      <div class="nav-settings">
-        <button
-            class="icon-btn admin-btn"
-            @click="isAdminOpen = true"
-            @mouseenter="isHovering = true"
-            @mouseleave="isHovering = false"
-            title="Administration"
-        >
-          <Lock :size="18" />
-        </button>
-
-        <div class="lang-dropdown-wrapper">
-          <button class="icon-btn lang-btn" @click="isLangMenuOpen = !isLangMenuOpen" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-            <Languages :size="18" />
-            <span class="current-lang">{{ locale.toUpperCase() }}</span>
-          </button>
-          <div class="lang-menu glass-panel" v-if="isLangMenuOpen">
-            <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">🇬🇧 EN</span>
-            <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">🇫🇷 FR</span>
-            <span @click="changeLanguage('nl')" :class="{ active: locale === 'nl' }">🇳🇱 NL</span>
-            <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">🇪🇸 ES</span>
-          </div>
+    <header class="site-header glass-nav">
+      <nav class="navbar">
+        <div class="nav-links">
+          <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }"
+             @click="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+            <Home :size="20" />
+            <span class="nav-text">Home</span>
+          </a>
+          <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }"
+             @click="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+            <Briefcase :size="20" />
+            <span class="nav-text">Projets</span>
+          </a>
+          <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }"
+             @click="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+            <User :size="20" />
+            <span class="nav-text">À propos</span>
+          </a>
+          <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }"
+             @click="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+            <Mail :size="20" />
+            <span class="nav-text">Contact</span>
+          </a>
         </div>
 
-        <button class="theme-toggle icon-btn" @click="toggleTheme" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-          <Sun v-if="!isDark" :size="18" class="icon-sun" />
-          <Moon v-else :size="18" class="icon-moon" />
-        </button>
-      </div>
-    </nav>
-  </header>
+        <div class="nav-settings">
+          <button class="icon-btn admin-btn" @click="isAdminOpen = true" title="Administration">
+            <Lock :size="18" />
+          </button>
 
-  <main>
-    <PortfolioHero />
-    <ProjectsSection />
-    <AboutSection />
-    <ContactSection />
-  </main>
+          <div class="lang-dropdown-wrapper">
+            <button class="icon-btn lang-btn" @click="isLangMenuOpen = !isLangMenuOpen">
+              <Languages :size="18" />
+              <span class="current-lang">{{ locale.toUpperCase() }}</span>
+            </button>
+            <div class="lang-menu glass-panel" v-if="isLangMenuOpen">
+              <span @click="changeLanguage('en')" :class="{ active: locale === 'en' }">🇬🇧 EN</span>
+              <span @click="changeLanguage('fr')" :class="{ active: locale === 'fr' }">🇫🇷 FR</span>
+              <span @click="changeLanguage('nl')" :class="{ active: locale === 'nl' }">🇳🇱 NL</span>
+              <span @click="changeLanguage('es')" :class="{ active: locale === 'es' }">🇪🇸 ES</span>
+            </div>
+          </div>
 
-  <AdminPortal v-if="isAdminOpen" @close="isAdminOpen = false" />
+          <button class="theme-toggle icon-btn" @click="toggleTheme">
+            <Sun v-if="!isDark" :size="18" class="icon-sun" />
+            <Moon v-else :size="18" class="icon-moon" />
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <PortfolioHero />
+      <ProjectsSection />
+      <AboutSection />
+      <ContactSection />
+    </main>
+
+    <AdminPortal v-if="isAdminOpen" @close="isAdminOpen = false" />
+  </div>
 </template>
 
 <style>
@@ -187,7 +184,7 @@ html, body {
   color: var(--color-text-main);
   min-height: 100%;
 }
-body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ease; }
+body { overflow-x: hidden; }
 
 @media (min-width: 1024px) {
   html:not(.admin-mode), html:not(.admin-mode) body, html:not(.admin-mode) a,
@@ -197,6 +194,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
 }
 .admin-mode, .admin-mode * { cursor: auto !important; }
 #app { width: 100%; max-width: 100%; padding: 0 !important; }
+[v-cloak] { display: none; }
 </style>
 
 <style scoped>
@@ -221,10 +219,9 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.3s ease;
 }
 
-/* Optimisation Mode Clair */
+/* Correction spécifique Light Mode */
 :root[data-theme="light"] .glass-nav {
   background: rgba(var(--color-bg-rgb), 0.85);
   border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.2);
@@ -317,6 +314,7 @@ body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ea
   .navbar { flex-direction: row; justify-content: space-between; gap: 0.5rem; }
   .nav-links { gap: 1.2rem; padding: 8px 12px; }
   .nav-settings { gap: 0.5rem; }
+  .icon-btn { padding: 8px; border-radius: 10px; }
 }
 
 /* Couleurs icônes thèmes */
