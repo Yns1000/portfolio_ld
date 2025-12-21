@@ -15,6 +15,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "@tailwindcss/vite": "^4.1.18",
     "@upstash/redis": "^1.35.8",
+    "multer": "^2.0.2",
     "vue": "^3.5.25",
     "vue-i18n": "^11.2.2",
     "vue-router": "^4.6.4"

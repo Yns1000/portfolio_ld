@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { password, content, action, newPassword } = req.body
+        const { password, content, action, newPassword, fileData, lang } = req.body
 
         if (password !== currentStoredPassword) {
             return res.status(401).json({ error: 'Mot de passe incorrect' })
@@ -22,6 +22,12 @@ export default async function handler(req, res) {
 
         if (action === 'login') {
             return res.status(200).json({ success: true })
+        }
+
+        if (action === 'upload-cv') {
+            if (!fileData || !lang) return res.status(400).json({ error: 'Données manquantes' })
+            await redis.set(`cv_file_${lang}`, fileData)
+            return res.status(200).json({ filePath: `/api/get-cv?lang=${lang}` })
         }
 
         if (action === 'change-password') {

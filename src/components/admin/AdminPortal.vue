@@ -123,32 +123,36 @@ watch(() => localAbout.selected_palette, (newVal) => {
 
 const handleCVUpload = async ({ file, lang }: { file: File, lang: string }) => {
   isSaving.value = true;
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('lang', lang);
-  formData.append('password', passwordValue.value);
 
-  try {
-    const res = await fetch('/api/upload-cv', {
-      method: 'POST',
-      body: formData
-    });
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    const base64 = reader.result;
 
-    if (res.ok) {
-      const data = await res.json();
-      (localAbout as any)[lang].cv_link = data.filePath;
+    try {
+      const res = await fetch('/api/manage-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: passwordValue.value,
+          action: 'upload-cv',
+          lang: lang,
+          fileData: base64
+        })
+      });
 
-      triggerToast(`CV ${lang.toUpperCase()} mis à jour sur le site !`);
-    } else {
-      triggerToast("Erreur lors de l'envoi du fichier", "error");
+      if (res.ok) {
+        const data = await res.json();
+        (localAbout as any)[lang].cv_link = data.filePath;
+        triggerToast(`CV ${lang.toUpperCase()} enregistré dans la base !`);
+      }
+    } catch (e) {
+      triggerToast("Erreur lors de l'upload", "error");
+    } finally {
+      isSaving.value = false;
     }
-  } catch (e) {
-    triggerToast("Problème de connexion au serveur d'upload", "error");
-  } finally {
-    isSaving.value = false;
-  }
+  };
 };
-
 const checkSession = async () => {
   const savedKey = localStorage.getItem('laurine_portfolio_token');
   if (savedKey) {
