@@ -54,7 +54,7 @@ const handleMouseLeave = () => {
           :style="cardStyle"
       >
         <div class="blob-aura"></div>
-        <img src="/ld.png" alt="Laurine Dhilly" class="hero-logo" />
+        <img src="/ld.png" alt="aurine Dhilly - Portfolio Management International" class="hero-logo" />
       </div>
 
       <div class="text-side">

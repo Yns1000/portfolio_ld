@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# On empêche Google de perdre du temps sur ton API ou les fichiers système
+Disallow: /api/
+Disallow: /admin/
+
+# L'adresse de ton site
+Sitemap: https://laurine-dhilly.com/sitemap.xml
