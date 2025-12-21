@@ -19,13 +19,14 @@ import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AdminPortal from './components/admin/AdminPortal.vue'
 
-const { locale, tm } = useI18n()
+// Extraction de 't' pour les traductions simples
+const { t, locale, tm } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
 const activeSection = ref('home')
 const isHovering = ref(false)
 const isAdminOpen = ref(false)
-const isInitialLoad = ref(true) // Empêche le flash de couleur au chargement
+const isInitialLoad = ref(true)
 
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
 
@@ -40,7 +41,6 @@ watchEffect(() => {
   const paletteId = tm('theme_palette') || 1;
 
   if (isInitialLoad.value) {
-    // On bloque les transitions pour appliquer la palette immédiatement
     document.documentElement.classList.add('no-transition');
     document.documentElement.setAttribute('data-palette', paletteId);
 
@@ -53,7 +53,6 @@ watchEffect(() => {
   }
 });
 
-// Surveillance de l'ouverture de l'admin
 watch(isAdminOpen, (open) => {
   document.documentElement.classList.toggle('admin-mode', open);
 })
@@ -82,7 +81,6 @@ const toggleTheme = () => {
     document.documentElement.setAttribute('data-theme', 'light');
   }
 
-  // On restaure les transitions après un micro-délai
   setTimeout(() => {
     document.documentElement.classList.remove('no-transition');
   }, 50);
@@ -97,7 +95,6 @@ onMounted(() => {
     window.addEventListener('mousemove', updateCursor)
   }
 
-  // OBSERVATEUR PRÉCIS (Détecte uniquement la section au centre de l'écran)
   const observerOptions = {
     rootMargin: '-40% 0px -40% 0px',
     threshold: 0
@@ -131,27 +128,27 @@ onUnmounted(() => {
           <a href="#home" class="nav-item" :class="{ active: activeSection === 'home' }"
              @click="scrollToSection('home')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Home :size="20" />
-            <span class="nav-text">Home</span>
+            <span class="nav-text">{{ t('nav_home') }}</span>
           </a>
           <a href="#projects" class="nav-item" :class="{ active: activeSection === 'projects' }"
              @click="scrollToSection('projects')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Briefcase :size="20" />
-            <span class="nav-text">Projets</span>
+            <span class="nav-text">{{ t('nav_projects') }}</span>
           </a>
           <a href="#about" class="nav-item" :class="{ active: activeSection === 'about' }"
              @click="scrollToSection('about')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <User :size="20" />
-            <span class="nav-text">À propos</span>
+            <span class="nav-text">{{ t('nav_about') }}</span>
           </a>
           <a href="#contact" class="nav-item" :class="{ active: activeSection === 'contact' }"
              @click="scrollToSection('contact')" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
             <Mail :size="20" />
-            <span class="nav-text">Contact</span>
+            <span class="nav-text">{{ t('nav_contact') }}</span>
           </a>
         </div>
 
         <div class="nav-settings">
-          <button class="icon-btn admin-btn" @click="isAdminOpen = true" title="Administration">
+          <button class="icon-btn admin-btn" @click="isAdminOpen = true" :title="t('nav_admin')">
             <Lock :size="18" />
           </button>
 
@@ -221,7 +218,6 @@ body { overflow-x: hidden; }
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
-  /* On ne transitionne que le transform pour la fluidité */
   transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
   will-change: transform;
 }
@@ -235,7 +231,6 @@ body { overflow-x: hidden; }
   width: 100%;
   z-index: 1000;
   padding: 1.2rem 2rem;
-  /* Transition ciblée pour éviter la latence mobile */
   transition: padding 0.3s ease, background-color 0.3s ease;
 }
 
@@ -246,7 +241,6 @@ body { overflow-x: hidden; }
   border-bottom: 1px solid var(--color-border);
 }
 
-/* --- Correction LISIBILITÉ Mode Clair --- */
 :root[data-theme="light"] .glass-nav {
   background: rgba(var(--color-bg-rgb), 0.85);
   border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.2);
@@ -269,7 +263,6 @@ body { overflow-x: hidden; }
   background: rgba(var(--color-bg-card-rgb), 0.6);
   padding: 8px 24px;
   border-radius: 50px;
-  /* Bordure colorée pour rappeler le thème même en light mode */
   border: 1.5px solid rgba(var(--color-accent-rgb), 0.3);
   transition: gap 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -281,7 +274,6 @@ body { overflow-x: hidden; }
 }
 
 .nav-item {
-  /* On utilise le texte principal pour un contraste maximal (Lisibilité) */
   color: var(--color-text-main);
   text-decoration: none;
   display: flex;
@@ -293,12 +285,10 @@ body { overflow-x: hidden; }
   position: relative;
 }
 
-/* Force le contraste en mode clair (Évite le bleu/cyan illisible) */
 :root[data-theme="light"] .nav-item {
   color: var(--color-text-main) !important;
 }
 
-/* L'accent n'apparaît qu'au survol ou sur l'onglet actif */
 .nav-item:hover,
 .nav-item.active {
   color: var(--color-accent) !important;
@@ -355,7 +345,6 @@ body { overflow-x: hidden; }
   font-weight: 800;
 }
 
-/* --- Dropdown Langues --- */
 .lang-dropdown-wrapper { position: relative; }
 
 .lang-menu {
@@ -400,7 +389,7 @@ body { overflow-x: hidden; }
 @media (max-width: 900px) {
   .site-header { padding: 1rem; }
   .nav-links { gap: 1.5rem; padding: 8px 16px; }
-  .nav-text { display: none; } /* On ne garde que les icônes */
+  .nav-text { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -409,7 +398,6 @@ body { overflow-x: hidden; }
     background: rgba(var(--color-bg-rgb), 0.9);
   }
 
-  /* On réduit le flou sur mobile pour supprimer la latence au changement de thème */
   .glass-nav {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -421,11 +409,9 @@ body { overflow-x: hidden; }
   .icon-btn { padding: 8px; border-radius: 10px; }
 }
 
-/* Animations Icônes Thème */
 .icon-sun { color: #facc15; }
 .icon-moon { color: #a8a29e; }
 
-/* Supprime toute animation lors du changement de thème (Force la fluidité) */
 .no-transition * {
   transition: none !important;
 }

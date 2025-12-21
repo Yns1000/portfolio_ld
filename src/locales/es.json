@@ -1,4 +1,10 @@
 {
+  "nav_home": "Inicio",
+  "nav_projects": "Proyectos",
+  "nav_about": "Sobre mí",
+  "nav_contact": "Contacto",
+  "nav_admin": "Consola Admin",
+
   "greeting": "Portfolio.",
   "intro": "Laurine Dhilly",
   "bio": "Soy estudiante de <strong>Máster en LMI</strong> (Lenguas y Gestión Internacional) en la <span class='highlight'>Université d'Artois</span>.",

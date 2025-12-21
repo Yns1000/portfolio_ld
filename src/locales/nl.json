@@ -1,4 +1,10 @@
 {
+  "nav_home": "Home",
+  "nav_projects": "Projecten",
+  "nav_about": "Over mij",
+  "nav_contact": "Contact",
+  "nav_admin": "Admin Console",
+
   "greeting": "Portfolio.",
   "intro": "Laurine Dhilly",
   "bio": "Ik ben masterstudent <strong>LMI</strong> (Talen & Internationaal Management) aan de <span class='highlight'>Université d'Artois</span>.",

@@ -1,4 +1,10 @@
 {
+  "nav_home": "Accueil",
+  "nav_projects": "Projets",
+  "nav_about": "À propos",
+  "nav_contact": "Contact",
+  "nav_admin": "Console Admin",
+
   "greeting": "Portfolio.",
   "intro": "Laurine Dhilly",
   "bio": "Je suis étudiante en <strong>Master LMI</strong> (Langues & Management International) à l'<span class='highlight'>Université d'Artois</span>.",
@@ -111,5 +117,5 @@
   "contact_email_btn": "M'envoyer un email",
   "contact_linkedin_btn": "LinkedIn",
   "footer_rights": "Tous droits réservés.",
-  "footer_made": "Sny"
+  "footer_made": "Sny",
 }
