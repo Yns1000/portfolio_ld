@@ -29,6 +29,9 @@ const isAdminOpen = ref(false)
 const isInitialLoad = ref(true)
 const scrollProgress = ref(0)
 
+// Instance de Lenis pour le contrôle du scroll
+const lenisInstance = ref(null)
+
 const cursorStyle = ref({
   transform: 'translate(-100px, -100px)',
   width: '20px',
@@ -73,8 +76,14 @@ watchEffect(() => {
   }
 });
 
+// FIX SCROLL : Arrêter Lenis et verrouiller le body quand l'admin est ouvert
 watch(isAdminOpen, (open) => {
   document.documentElement.classList.toggle('admin-mode', open);
+  if (open) {
+    lenisInstance.value?.stop(); // Arrête le scroll fluide du portfolio
+  } else {
+    lenisInstance.value?.start(); // Relance le scroll
+  }
 })
 
 const updateCursor = (e) => {
@@ -106,15 +115,30 @@ const toggleTheme = () => {
   }, 50);
 }
 
-onMounted(() => {
-  const lenis = new Lenis({
+onMounted(async () => {
+  // 1. CHARGEMENT DES DONNÉES DYNAMIQUES (REDIS)
+  try {
+    const res = await fetch('/api/manage-content');
+    if (res.ok) {
+      const remoteTranslations = await res.json();
+      // On injecte les données de Redis dans i18n
+      Object.keys(remoteTranslations).forEach(lang => {
+        i18n.global.setLocaleMessage(lang, remoteTranslations[lang]);
+      });
+    }
+  } catch (e) {
+    console.error("Mode local activé (Redis indisponible)");
+  }
+
+  // 2. INITIALISATION LENIS
+  lenisInstance.value = new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true
   })
 
   function raf(time) {
-    lenis.raf(time)
+    lenisInstance.value?.raf(time)
     requestAnimationFrame(raf)
   }
   requestAnimationFrame(raf)
@@ -149,6 +173,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('mousemove', updateCursor)
   window.removeEventListener('scroll', handleScroll)
+  lenisInstance.value?.destroy()
 })
 </script>
 
@@ -229,6 +254,12 @@ html, body {
 }
 body { overflow-x: hidden; }
 
+/* EMPÊCHER LE SCROLL DU PORTFOLIO EN MODE ADMIN */
+.admin-mode {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
 .admin-mode, .admin-mode * { cursor: auto !important; }
 
 @media (min-width: 1024px) {
@@ -252,6 +283,7 @@ body { overflow-x: hidden; }
 </style>
 
 <style scoped>
+/* Conserve tes styles originaux ... */
 .custom-cursor {
   position: fixed;
   top: 0; left: 0;

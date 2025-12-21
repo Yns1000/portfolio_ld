@@ -72,6 +72,17 @@ const handleMouseLeave = () => {
         </p>
 
         <div class="languages-display fade-in" style="animation-delay: 0.3s">
+          <i18n-t keypath="fluent_sentence" tag="p" class="fluent-sentence">
+            <template #en>
+              <span class="lang-pill"><img src="https://flagcdn.com/w40/gb.png" alt="EN" /> {{ $t('lang_en') }}</span>
+            </template>
+            <template #es>
+              <span class="lang-pill"><img src="https://flagcdn.com/w40/es.png" alt="ES" /> {{ $t('lang_es') }}</span>
+            </template>
+            <template #fr>
+              <span class="lang-pill"><img src="https://flagcdn.com/w40/fr.png" alt="FR" /> {{ $t('lang_fr') }}</span>
+            </template>
+          </i18n-t>
         </div>
 
         <div class="cta-group fade-in" style="animation-delay: 0.4s">
