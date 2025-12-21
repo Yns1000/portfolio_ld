@@ -73,8 +73,19 @@ const changeLanguage = (lang) => {
 }
 
 const toggleTheme = () => {
-  isDark.value = !isDark.value
-  document.documentElement.setAttribute('data-theme', isDark.value ? '' : 'light');
+  document.documentElement.classList.add('no-transition');
+
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+
+  // On restaure les transitions après un micro-délai
+  setTimeout(() => {
+    document.documentElement.classList.remove('no-transition');
+  }, 50);
 }
 
 onMounted(() => {
@@ -198,20 +209,34 @@ body { overflow-x: hidden; }
 </style>
 
 <style scoped>
-/* --- CURSEUR --- */
+/* =============================================
+   1. CURSEUR PERSONNALISÉ (Désactivé en Admin)
+   ============================================= */
 .custom-cursor {
-  position: fixed; top: 0; left: 0; width: 20px; height: 20px;
-  background-color: var(--color-accent); border-radius: 50%;
-  pointer-events: none; z-index: 9999; mix-blend-mode: difference;
+  position: fixed;
+  top: 0; left: 0;
+  width: 20px; height: 20px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  /* On ne transitionne que le transform pour la fluidité */
   transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
   will-change: transform;
 }
 
-/* --- HEADER ET NAVIGATION --- */
+/* =============================================
+   2. HEADER & NAVIGATION (Glassmorphism)
+   ============================================= */
 .site-header {
-  position: fixed; top: 0; left: 0; width: 100%;
-  z-index: 1000; padding: 1.2rem 2rem;
-  transition: all 0.3s ease;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 1.2rem 2rem;
+  /* Transition ciblée pour éviter la latence mobile */
+  transition: padding 0.3s ease, background-color 0.3s ease;
 }
 
 .glass-nav {
@@ -221,24 +246,33 @@ body { overflow-x: hidden; }
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Correction spécifique Light Mode */
+/* --- Correction LISIBILITÉ Mode Clair --- */
 :root[data-theme="light"] .glass-nav {
   background: rgba(var(--color-bg-rgb), 0.85);
   border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.2);
 }
 
 .navbar {
-  max-width: 1200px; margin: 0 auto;
-  display: flex; justify-content: space-between; align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Conteneur des liens */
+/* =============================================
+   3. LIENS DE NAVIGATION (La Pillule)
+   ============================================= */
 .nav-links {
-  display: flex; gap: 2rem;
+  display: flex;
+  gap: 2rem;
   background: rgba(var(--color-bg-card-rgb), 0.6);
-  padding: 8px 24px; border-radius: 50px;
+  padding: 8px 24px;
+  border-radius: 50px;
+  /* Bordure colorée pour rappeler le thème même en light mode */
   border: 1.5px solid rgba(var(--color-accent-rgb), 0.3);
-  transition: all 0.3s ease;
+  transition: gap 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 :root[data-theme="light"] .nav-links {
@@ -247,30 +281,66 @@ body { overflow-x: hidden; }
 }
 
 .nav-item {
-  color: var(--color-text-muted); text-decoration: none;
-  display: flex; align-items: center; gap: 10px;
-  font-size: 0.9rem; font-weight: 700;
-  transition: all 0.3s ease; position: relative;
+  /* On utilise le texte principal pour un contraste maximal (Lisibilité) */
+  color: var(--color-text-main);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: color 0.3s ease;
+  position: relative;
 }
 
-.nav-item:hover, .nav-item.active { color: var(--color-accent); }
+/* Force le contraste en mode clair (Évite le bleu/cyan illisible) */
+:root[data-theme="light"] .nav-item {
+  color: var(--color-text-main) !important;
+}
+
+/* L'accent n'apparaît qu'au survol ou sur l'onglet actif */
+.nav-item:hover,
+.nav-item.active {
+  color: var(--color-accent) !important;
+}
 
 .nav-item.active::after {
-  content: ''; position: absolute; bottom: -6px; left: 20%; width: 60%;
-  height: 2px; background: var(--color-accent);
-  border-radius: 2px; box-shadow: 0 0 10px var(--color-accent);
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--color-accent);
 }
 
-/* Réglages (Admin, Langues, Thème) */
-.nav-settings { display: flex; align-items: center; gap: 0.8rem; }
+/* =============================================
+   4. RÉGLAGES (Admin, Langues, Thème)
+   ============================================= */
+.nav-settings {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
 
 .icon-btn {
   background: rgba(var(--color-bg-card-rgb), 0.6);
   border: 1.5px solid rgba(var(--color-accent-rgb), 0.2);
   color: var(--color-text-main);
-  display: flex; align-items: center; gap: 6px;
-  padding: 10px; border-radius: 12px;
-  cursor: pointer; transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+:root[data-theme="light"] .icon-btn {
+  color: var(--color-text-main) !important;
+  border-color: rgba(var(--color-accent-rgb), 0.3);
 }
 
 .icon-btn:hover {
@@ -280,44 +350,83 @@ body { overflow-x: hidden; }
   transform: translateY(-2px);
 }
 
-.current-lang { font-size: 0.75rem; font-weight: 800; }
+.current-lang {
+  font-size: 0.75rem;
+  font-weight: 800;
+}
 
-/* Menu Langues */
+/* --- Dropdown Langues --- */
 .lang-dropdown-wrapper { position: relative; }
+
 .lang-menu {
-  position: absolute; top: 125%; right: 0;
-  background: var(--color-bg-card); border: 1px solid var(--color-border);
-  border-radius: 16px; padding: 8px; display: flex; flex-direction: column;
-  gap: 4px; min-width: 150px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  position: absolute;
+  top: 125%;
+  right: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   backdrop-filter: blur(10px);
 }
 
 .lang-menu span {
-  padding: 10px 14px; border-radius: 10px; cursor: pointer;
-  font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: 0.2s;
 }
-.lang-menu span:hover { background: rgba(var(--color-accent-rgb), 0.15); color: var(--color-accent); }
-.lang-menu span.active { background: var(--color-accent); color: var(--color-accent-text); }
+
+.lang-menu span:hover {
+  background: rgba(var(--color-accent-rgb), 0.15);
+  color: var(--color-accent);
+}
+
+.lang-menu span.active {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
 
 /* =============================================
-   RESPONSIVE
+   5. RESPONSIVE & OPTIMISATION MOBILE
    ============================================= */
 
 @media (max-width: 900px) {
   .site-header { padding: 1rem; }
   .nav-links { gap: 1.5rem; padding: 8px 16px; }
-  .nav-text { display: none; } /* Cache le texte sur mobile */
+  .nav-text { display: none; } /* On ne garde que les icônes */
 }
 
 @media (max-width: 600px) {
-  .site-header { padding: 0.8rem; background: rgba(var(--color-bg-rgb), 0.9); }
+  .site-header {
+    padding: 0.8rem;
+    background: rgba(var(--color-bg-rgb), 0.9);
+  }
+
+  /* On réduit le flou sur mobile pour supprimer la latence au changement de thème */
+  .glass-nav {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
   .navbar { flex-direction: row; justify-content: space-between; gap: 0.5rem; }
   .nav-links { gap: 1.2rem; padding: 8px 12px; }
   .nav-settings { gap: 0.5rem; }
   .icon-btn { padding: 8px; border-radius: 10px; }
 }
 
-/* Couleurs icônes thèmes */
+/* Animations Icônes Thème */
 .icon-sun { color: #facc15; }
 .icon-moon { color: #a8a29e; }
+
+/* Supprime toute animation lors du changement de thème (Force la fluidité) */
+.no-transition * {
+  transition: none !important;
+}
 </style>

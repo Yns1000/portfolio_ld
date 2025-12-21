@@ -5,24 +5,24 @@
 /* Empêche l'affichage du texte brut avant le chargement de Vue */
 [v-cloak] { display: none; }
 
-/* Classe temporaire pour supprimer le "flash" de couleur au démarrage */
+/* Classe pour supprimer le "flash" de couleur au démarrage (utilisée dans App.vue) */
 .no-transition * {
   transition: none !important;
 }
 
-/* Optimisation globale des transitions de fond */
+/* Transition globale pour un changement de thème fluide */
 html {
   transition: background-color 0.3s ease-in-out;
 }
 
-/* --- 2. CONFIGURATION DES PALETTES (SOMBRE & CLAIR) --- */
+/* --- 2. CONFIGURATION DES 9 PALETTES (SOMBRE & CLAIR) --- */
 
 /* PALETTE 1 : TERRE (DÉFAUT) */
 :root, [data-palette="1"] {
   --color-bg: #55423d; --color-bg-card: #271c19; --color-accent: #ffc0ad;
   --color-bg-rgb: 85, 66, 61; --color-bg-card-rgb: 39, 28, 25; --color-accent-rgb: 255, 192, 173;
   --color-text-main: #fffffe; --color-text-muted: #fff3ec; --color-accent-text: #271c19;
-  --color-border: rgba(255, 255, 255, 0.2); --font-main: 'Inter', sans-serif;
+  --color-accent-hover: #e78fb3; --color-border: rgba(255, 255, 255, 0.2); --font-main: 'Inter', sans-serif;
 }
 [data-palette="1"][data-theme="light"] {
   --color-bg: #fff3ec; --color-bg-card: #ffffff;
@@ -133,14 +133,14 @@ body {
   min-height: 100vh;
   color: var(--color-text-main);
   background-color: var(--color-bg);
-  /* Transition optimisée pour éviter les saccades sur mobile */
+  /* Transition optimisée (uniquement couleurs) pour éviter les saccades sur mobile */
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   line-height: 1.6;
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Accélération matérielle pour les éléments avec flou */
+/* Aide le processeur mobile à anticiper les flous de la navigation */
 .glass-nav, .glass-card {
   will-change: backdrop-filter, transform;
 }
