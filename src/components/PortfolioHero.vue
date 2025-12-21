@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { ArrowRight, User, Globe } from 'lucide-vue-next'
+import { ArrowRight, User, Globe, Download } from 'lucide-vue-next'
 
 const cardRef = ref(null)
 const cardStyle = ref({})
@@ -72,17 +72,6 @@ const handleMouseLeave = () => {
         </p>
 
         <div class="languages-display fade-in" style="animation-delay: 0.3s">
-          <i18n-t keypath="fluent_sentence" tag="p" class="fluent-sentence">
-            <template #en>
-              <span class="lang-pill"><img src="https://flagcdn.com/w40/gb.png" alt="EN" /> {{ $t('lang_en') }}</span>
-            </template>
-            <template #es>
-              <span class="lang-pill"><img src="https://flagcdn.com/w40/es.png" alt="ES" /> {{ $t('lang_es') }}</span>
-            </template>
-            <template #fr>
-              <span class="lang-pill"><img src="https://flagcdn.com/w40/fr.png" alt="FR" /> {{ $t('lang_fr') }}</span>
-            </template>
-          </i18n-t>
         </div>
 
         <div class="cta-group fade-in" style="animation-delay: 0.4s">
@@ -93,8 +82,15 @@ const handleMouseLeave = () => {
             {{ $t('btn_about') }} <User :size="18" />
           </a>
         </div>
-      </div>
 
+        <div class="cv-inline-wrapper fade-in" style="animation-delay: 0.5s">
+          <a :href="$t('cv_link')" download class="cv-premium-pill">
+            <div class="glow-effect"></div>
+            <Download :size="18" />
+            <span>{{ $t('btn_cv') }}</span>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -402,5 +398,65 @@ const handleMouseLeave = () => {
 :root[data-theme="light"] .blob-aura {
   opacity: 0.25;
   filter: blur(60px);
+}
+
+/* Espacement sous le bloc de boutons principaux */
+.cta-group {
+  margin-bottom: 2.5rem; /* Crée l'espace nécessaire avant le CV */
+}
+
+/* Le conteneur du bouton CV */
+.cv-inline-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center; /* Centré par défaut (mobile) */
+}
+
+/* Aligné à gauche sur Desktop pour suivre le texte de Laurine */
+@media (min-width: 1024px) {
+  .cv-inline-wrapper {
+    justify-content: flex-start;
+  }
+}
+
+.cv-premium-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  background: rgba(var(--color-bg-card-rgb), 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.3);
+  border-radius: 50px;
+  color: var(--color-text-main);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.cv-premium-pill:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+  background: rgba(var(--color-accent-rgb), 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  color: var(--color-accent);
+}
+
+.glow-effect {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--color-accent) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.cv-premium-pill:hover .glow-effect {
+  opacity: 0.15;
 }
 </style>

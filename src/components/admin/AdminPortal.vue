@@ -36,7 +36,7 @@
           @logout="handleLogout"
           @close="closePortal"
           @change-password="handleChangePassword"
-      />
+          @cv-uploaded="handleCVUpload"  />
     </div>
   </Transition>
 </template>
@@ -68,6 +68,8 @@ interface AboutContent {
   bio_hero: string;
   btn_prj: string;
   btn_abt: string;
+  btn_cv: string;
+  cv_link: string;
   intro: string;
   text: string;
   fluent_sentence: string;
@@ -96,6 +98,7 @@ const toast = reactive({ show: false, message: '', type: 'success' as 'success' 
 
 const createEmptyAboutContent = (): AboutContent => ({
   intro_hero: '', name_hero: '', bio_hero: '', btn_prj: '', btn_abt: '',
+  btn_cv: '', cv_link: '',
   intro: '', text: '', fluent_sentence: '', hobbies: []
 })
 
@@ -117,6 +120,34 @@ const checkDevice = () => {
 watch(() => localAbout.selected_palette, (newVal) => {
   document.documentElement.setAttribute('data-palette', newVal.toString());
 });
+
+const handleCVUpload = async ({ file, lang }: { file: File, lang: string }) => {
+  isSaving.value = true;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('lang', lang);
+  formData.append('password', passwordValue.value);
+
+  try {
+    const res = await fetch('/api/upload-cv', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      (localAbout as any)[lang].cv_link = data.filePath;
+
+      triggerToast(`CV ${lang.toUpperCase()} mis à jour sur le site !`);
+    } else {
+      triggerToast("Erreur lors de l'envoi du fichier", "error");
+    }
+  } catch (e) {
+    triggerToast("Problème de connexion au serveur d'upload", "error");
+  } finally {
+    isSaving.value = false;
+  }
+};
 
 const checkSession = async () => {
   const savedKey = localStorage.getItem('laurine_portfolio_token');
@@ -160,6 +191,8 @@ const initData = () => {
         localAbout[l].bio_hero = msg.bio || '';
         localAbout[l].btn_prj = msg.btn_projects || '';
         localAbout[l].btn_abt = msg.btn_about || '';
+        localAbout[l].btn_cv = msg.btn_cv || '';
+        localAbout[l].cv_link = msg.cv_link || '';
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
         localAbout[l].fluent_sentence = msg.fluent_sentence || '';
@@ -290,6 +323,8 @@ const saveAll = async () => {
       full.bio = localAbout[l].bio_hero;
       full.btn_projects = localAbout[l].btn_prj;
       full.btn_about = localAbout[l].btn_abt;
+      full.btn_cv = localAbout[l].btn_cv;
+      full.cv_link = localAbout[l].cv_link;
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.languages = localAbout[l].fluent_sentence;

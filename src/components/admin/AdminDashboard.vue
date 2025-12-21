@@ -72,6 +72,7 @@
             v-else-if="viewMode === 'about'"
             :aboutData="aboutData"
             :lang="editLang"
+            @cv-uploaded="(payload) => $emit('cv-uploaded', payload)"
             @add-timeline="$emit('add-timeline')"
             @delete-timeline="(i) => $emit('delete-timeline', i)"
             @add-cert="$emit('add-cert')"
@@ -103,7 +104,7 @@ import AboutEditor from './AboutEditor.vue'
 import SecurityEditor from './SecurityEditor.vue'
 
 const props = defineProps<{ projects: any[], aboutData: any, isSaving: boolean }>();
-const emit = defineEmits(['add', 'delete', 'save', 'logout', 'close', 'add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'change-password']);
+const emit = defineEmits(['add', 'delete', 'save', 'logout', 'close', 'add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'change-password', 'cv-uploaded']);
 
 const viewMode = ref<'projects' | 'about' | 'security'>('projects')
 const currentIdx = ref<number | null>(null)

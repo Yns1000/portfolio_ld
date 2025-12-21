@@ -5,6 +5,9 @@
   "nav_contact": "Contact",
   "nav_admin": "Console Admin",
 
+  "btn_cv": "Télécharger mon CV",
+  "cv_link": "/Laurine_CV_EN.pdf",
+
   "greeting": "Portfolio.",
   "intro": "Laurine Dhilly",
   "bio": "Je suis étudiante en <strong>Master LMI</strong> (Langues & Management International) à l'<span class='highlight'>Université d'Artois</span>.",

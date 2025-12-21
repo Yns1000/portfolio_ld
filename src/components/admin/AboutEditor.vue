@@ -22,6 +22,51 @@
 
       <div class="content-card mt-24">
         <div class="card-head">
+          <FileText :size="18" class="icon-accent" />
+          <h3>Gestion du CV ({{ lang.toUpperCase() }})</h3>
+        </div>
+        <div class="card-body">
+          <div class="input-row">
+            <div class="input-box">
+              <label>Texte du bouton</label>
+              <input v-model="aboutData[lang].btn_cv" placeholder="Ex: Download CV" />
+            </div>
+            <div class="input-box">
+              <label>Uploader le fichier PDF</label>
+              <div class="upload-container">
+                <input
+                    type="file"
+                    ref="fileInput"
+                    @change="handleFileSelect"
+                    accept=".pdf"
+                    style="display: none"
+                />
+                <button @click="$refs.fileInput.click()" class="btn-upload-trigger">
+                  <Upload :size="16" />
+                  <span>{{ selectedFile ? 'Changer le fichier' : 'Choisir le PDF' }}</span>
+                </button>
+                <span v-if="selectedFile" class="file-name-hint">{{ selectedFile.name }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+              v-if="selectedFile"
+              @click="uploadCV"
+              class="btn-save-main mt-12"
+              :disabled="isUploading"
+              style="width: fit-content; padding: 10px 20px;"
+          >
+            <Loader2 v-if="isUploading" class="spin" :size="16" />
+            <CloudUpload v-else :size="16" />
+            <span>{{ isUploading ? 'Envoi...' : 'Mettre en ligne ce CV' }}</span>
+          </button>
+          <p class="hint mt-8">Actuellement : {{ aboutData[lang].cv_link || 'Aucun fichier' }}</p>
+        </div>
+      </div>
+
+      <div class="content-card mt-24">
+        <div class="card-head">
           <User :size="18" class="icon-accent" />
           <h3>Biographie détaillée ({{ lang.toUpperCase() }})</h3>
         </div>
@@ -63,10 +108,10 @@
       <div class="content-card mt-24">
         <div class="card-head">
           <Trophy :size="18" class="icon-accent" />
-            <h3>Certifications & Badges</h3>
-            <button @click="$emit('add-cert')" class="btn-add-modern ml-auto">
-              <Plus :size="16" /> <span>Ajouter un certificat</span>
-            </button>
+          <h3>Certifications & Badges</h3>
+          <button @click="$emit('add-cert')" class="btn-add-modern ml-auto">
+            <Plus :size="16" /> <span>Ajouter un certificat</span>
+          </button>
         </div>
         <div class="card-body">
           <div v-for="(cert, idx) in aboutData.certifications" :key="idx" class="list-item-card">
@@ -90,7 +135,7 @@
           <h3>Ambiance du site</h3>
         </div>
         <div class="card-body">
-          <p class="field-hint" style="margin-bottom: 12px;">Choisis un thème (y'a stitch ds l'un d'eux mdr):</p>
+          <p class="field-hint" style="margin-bottom: 12px;">Choisis un thème :</p>
           <div class="theme-selector-list custom-scrollbar">
             <button
                 v-for="theme in themes" :key="theme.id"
@@ -147,11 +192,12 @@
 import { ref } from 'vue'
 import {
   Home, History, Trophy, User, Languages,
-  Heart, Plus, Trash2, X, Palette, Check
+  Heart, Plus, Trash2, X, Palette, Check, FileText, Upload, CloudUpload, Loader2
 } from 'lucide-vue-next'
 
 const props = defineProps<{ aboutData: any, lang: string }>()
-defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert']);
+const emit = defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'cv-uploaded']);
+
 const themes = [
   { id: 1, name: 'Terre (Original)' },
   { id: 2, name: 'Océan Profond' },
@@ -163,6 +209,28 @@ const themes = [
   { id: 8, name: 'Ohana (Stitch)' },
   { id: 9, name: 'B612 (Petit Prince)' }
 ]
+
+const selectedFile = ref<File | null>(null)
+const isUploading = ref(false)
+
+const handleFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    selectedFile.value = target.files[0];
+  }
+}
+
+const uploadCV = async () => {
+  if (!selectedFile.value) return;
+  isUploading.value = true;
+
+  emit('cv-uploaded', { file: selectedFile.value, lang: props.lang });
+
+  setTimeout(() => {
+    selectedFile.value = null;
+    isUploading.value = false;
+  }, 1500);
+}
 
 const newHobby = ref('')
 const addHobby = () => {
@@ -176,94 +244,35 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 </script>
 
 <style scoped>
-.theme-selector-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 4px;
+.upload-container { display: flex; align-items: center; gap: 12px; }
+.btn-upload-trigger {
+  background: #1e1e24; border: 1px dashed rgba(255,255,255,0.2); color: #94a3b8;
+  padding: 8px 16px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  font-weight: 600; font-size: 0.85rem; transition: 0.2s;
 }
+.btn-upload-trigger:hover { border-color: #6366f1; color: white; background: rgba(99, 102, 241, 0.05); }
+.file-name-hint { font-size: 0.8rem; color: #818cf8; font-weight: 700; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.theme-row-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
+.theme-selector-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
+.theme-row-btn { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-align: left; }
 .theme-row-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
-.theme-row-btn:active { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
-
-.theme-swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.theme-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #94a3b8;
-  transition: color 0.2s;
-}
+.theme-row-btn.active { background: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+.theme-swatch { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: grid; place-items: center; color: white; border: 1px solid rgba(255, 255, 255, 0.1); }
+.theme-label { font-size: 0.85rem; font-weight: 600; color: #94a3b8; transition: color 0.2s; }
 .theme-row-btn.active .theme-label { color: white; }
-.pal-1 { background: #55423d; color: #ffc0ad; } /* Terre */
-.pal-2 { background: #0f172a; color: #38bdf8; } /* Océan */
-.pal-3 { background: #064e3b; color: #34d399; } /* Forêt */
-.pal-4 { background: #2e1065; color: #a78bfa; } /* Lavande */
-.pal-5 { background: #18181b; color: #fbbf24; } /* Ardoise/Or */
-.pal-6 { background: #AF4D98; color: #9DF7E5; } /* Candy */
-.pal-7 { background: #310D20; color: #F2D06B; } /* Aube Dorée */
-.pal-8 { background: #1a2a6c; color: #00d2ff; } /* Stitch */
-.pal-9 { background: #0f172a; color: #facc15; } /* Petit Prince */
-
+.pal-1 { background: #55423d; } .pal-2 { background: #0f172a; } .pal-3 { background: #064e3b; }
+.pal-4 { background: #2e1065; } .pal-5 { background: #18181b; } .pal-6 { background: #AF4D98; }
+.pal-7 { background: #310D20; } .pal-8 { background: #1a2a6c; } .pal-9 { background: #0f172a; }
 .field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
 .hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }
-.mt-24 { margin-top: 24px; }
-.ml-auto {
-  margin-left: auto;
-}
-.add-tag-box {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-
-.add-tag-box .input-box {
-  flex: 1;
-}
-
-.btn-add-tag-inline {
-  width: 45px;
-  height: 45px;
-  background: #6366f1;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-.btn-add-tag-inline:hover {
-  background: #818cf8;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-}
+.mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-24 { margin-top: 24px; }
+.ml-auto { margin-left: auto; }
+.add-tag-box { display: flex; gap: 8px; align-items: flex-end; }
+.add-tag-box .input-box { flex: 1; }
+.btn-add-tag-inline { width: 45px; height: 45px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: all 0.3s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
+.btn-add-tag-inline:hover { background: #818cf8; transform: translateY(-2px); }
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
