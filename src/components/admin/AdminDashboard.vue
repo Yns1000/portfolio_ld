@@ -16,7 +16,7 @@
           <User :size="18" /> <span>À propos</span>
         </button>
         <button @click="viewMode = 'security'" :class="['nav-tab-btn', { active: viewMode === 'security' }]">
-          <ShieldCheck :size="18" /> <span>Sécurité</span>
+          <Lock :size="18" /> <span>Sécurité</span>
         </button>
       </div>
 
@@ -78,6 +78,12 @@
             @delete-cert="(i) => $emit('delete-cert', i)"
         />
 
+        <SecurityEditor
+            v-else-if="viewMode === 'security'"
+            :isUpdating="isSaving"
+            @update-password="(pwd) => $emit('change-password', pwd)"
+        />
+
         <div v-else class="empty-state">
           <div class="empty-glow"></div>
           <div class="empty-icon"><MousePointerClick :size="40" /></div>
@@ -94,9 +100,10 @@ import { ref } from 'vue'
 import { LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Briefcase, User, MousePointerClick } from 'lucide-vue-next'
 import ProjectEditor from './ProjectEditor.vue'
 import AboutEditor from './AboutEditor.vue'
+import SecurityEditor from './SecurityEditor.vue'
 
 const props = defineProps<{ projects: any[], aboutData: any, isSaving: boolean }>();
-const emit = defineEmits(['add', 'delete', 'save', 'logout', 'close', 'add-timeline', 'delete-timeline', 'add-cert', 'delete-cert'])
+const emit = defineEmits(['add', 'delete', 'save', 'logout', 'close', 'add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'change-password']);
 
 const viewMode = ref<'projects' | 'about' | 'security'>('projects')
 const currentIdx = ref<number | null>(null)
