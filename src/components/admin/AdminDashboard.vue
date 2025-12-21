@@ -87,8 +87,8 @@
         <div v-else class="empty-state">
           <div class="empty-glow"></div>
           <div class="empty-icon"><MousePointerClick :size="40" /></div>
-          <h2>Console Laurine</h2>
-          <p>Choisissez une section à gauche pour commencer.</p>
+          <h2>Salam aleykoum Laurine</h2>
+          <p>Choisis une section à gauche pour commencer.</p>
         </div>
       </div>
     </main>

@@ -90,7 +90,7 @@
           <h3>Ambiance du site</h3>
         </div>
         <div class="card-body">
-          <p class="field-hint" style="margin-bottom: 12px;">Choisissez un thème :</p>
+          <p class="field-hint" style="margin-bottom: 12px;">Choisis un thème (y'a stitch ds l'un d'eux mdr):</p>
           <div class="theme-selector-list custom-scrollbar">
             <button
                 v-for="theme in themes" :key="theme.id"
