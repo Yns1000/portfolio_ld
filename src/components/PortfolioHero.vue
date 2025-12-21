@@ -360,19 +360,36 @@ const handleMouseLeave = () => {
     left: 4%;
     grid-template-columns: repeat(5, 1fr);
     gap: 11px;
+    pointer-events: auto;
   }
   .dot {
-    width: 3px; height: 3px;
+    width: 4px; /* Un poil plus gros */
+    height: 4px;
     background-color: var(--color-text-muted);
     border-radius: 50%;
-    opacity: 0.2;
-    transition: all 0.3s ease;
+    opacity: 0.15;
+    transition:
+        transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        background-color 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.3s ease;
+    will-change: transform, box-shadow;
   }
+
   .dot:hover {
-    background-color: var(--color-accent);
     opacity: 1;
-    transform: scale(3);
-    box-shadow: 0 0 15px var(--color-accent);
+    background-color: var(--color-accent);
+    transform: scale(3.5);
+    box-shadow:
+        0 0 10px var(--color-accent),
+        0 0 20px rgba(var(--color-accent-rgb), 0.5);
+    animation: dotPulse 1.5s infinite;
+  }
+
+  @keyframes dotPulse {
+    0% { box-shadow: 0 0 10px var(--color-accent); }
+    50% { box-shadow: 0 0 25px var(--color-accent), 0 0 40px rgba(var(--color-accent-rgb), 0.2); }
+    100% { box-shadow: 0 0 10px var(--color-accent); }
   }
 
   .geo-square { width: 100px; height: 100px; bottom: 15%; right: 40%; }
