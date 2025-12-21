@@ -356,7 +356,7 @@ const handleMouseLeave = () => {
   .dots-magnetic-grid {
     display: grid;
     position: absolute;
-    top: 15%;
+    top: 12%;
     left: 4%;
     grid-template-columns: repeat(5, 1fr);
     gap: 11px;

@@ -149,7 +149,7 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .btn-add-modern:hover { background: #818cf8; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
 .btn-add-modern.sm { padding: 4px 8px; }
 
-.project-list { flex: 1; padding: 0 16px 20px; overflow-y: auto; }
+.project-list { flex: 1; padding: 0 16px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .list-header { padding: 0 12px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
 
 .project-item {
@@ -181,7 +181,7 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .lang-tab.active { background: white; color: black; }
 .btn-close-app { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); background: transparent; color: #64748b; display: grid; place-items: center; cursor: pointer; transition: 0.3s; }
 
-.stage-content { padding: 40px; overflow-y: auto; flex: 1; min-height: 0; scrollbar-gutter: stable;}
+.stage-content { padding: 40px; overflow-y: auto; flex: 1; min-height: 0; scrollbar-gutter: stable;-webkit-overflow-scrolling: touch;}
 .editor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; max-width: 1300px; margin: 0 auto; }
 
 .content-card { background: #0e0e11; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 24px; overflow: hidden; }
