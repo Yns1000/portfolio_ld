@@ -32,7 +32,7 @@
           @delete-timeline="deleteTimelineItem"
           @add-cert="addCertItem"
           @delete-cert="deleteCertItem"
-          @save="saveAll"
+          @save="confirmAndSave"
           @logout="handleLogout"
           @close="closePortal"
           @change-password="handleChangePassword"
@@ -61,29 +61,14 @@ interface CertItem {
   id: string; link: string;
   fr: any; en: any; es: any; nl: any;
 }
-
 interface AboutContent {
-  intro_hero: string;
-  name_hero: string;
-  bio_hero: string;
-  btn_prj: string;
-  btn_abt: string;
-  btn_cv: string;
-  cv_link: string;
-  intro: string;
-  text: string;
-  fluent_sentence: string;
-  hobbies: string[];
+  intro_hero: string; name_hero: string; bio_hero: string;
+  btn_prj: string; btn_abt: string; btn_cv: string; cv_link: string;
+  intro: string; text: string; fluent_sentence: string; hobbies: string[];
 }
-
 interface AboutData {
-  fr: AboutContent;
-  en: AboutContent;
-  es: AboutContent;
-  nl: AboutContent;
-  timeline: TimelineItem[];
-  certifications: CertItem[];
-  selected_palette: number;
+  fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent;
+  timeline: TimelineItem[]; certifications: CertItem[]; selected_palette: number;
 }
 
 const emit = defineEmits(['close']);
@@ -96,88 +81,45 @@ const loginError = ref('')
 const passwordValue = ref('')
 const toast = reactive({ show: false, message: '', type: 'success' as 'success' | 'error' })
 
+const initialSnapshot = ref('');
+
 const createEmptyAboutContent = (): AboutContent => ({
   intro_hero: '', name_hero: '', bio_hero: '', btn_prj: '', btn_abt: '',
-  btn_cv: '', cv_link: '',
-  intro: '', text: '', fluent_sentence: '', hobbies: []
+  btn_cv: '', cv_link: '', intro: '', text: '', fluent_sentence: '', hobbies: []
 })
 
 const localAbout = reactive<AboutData>({
-  fr: createEmptyAboutContent(),
-  en: createEmptyAboutContent(),
-  es: createEmptyAboutContent(),
-  nl: createEmptyAboutContent(),
-  timeline: [],
-  certifications: [],
-  selected_palette: 1
+  fr: createEmptyAboutContent(), en: createEmptyAboutContent(), es: createEmptyAboutContent(), nl: createEmptyAboutContent(),
+  timeline: [], certifications: [], selected_palette: 1
 });
 const localProjects = ref<Project[]>([]);
 
-const checkDevice = () => {
-  isMobile.value = window.innerWidth < 1024;
+const updateSnapshot = () => {
+  initialSnapshot.value = JSON.stringify({
+    about: localAbout,
+    projects: localProjects.value
+  });
 };
 
-watch(() => localAbout.selected_palette, (newVal) => {
-  document.documentElement.setAttribute('data-palette', newVal.toString());
-});
+const getChangesList = () => {
+  const current = JSON.stringify({ about: localAbout, projects: localProjects.value });
+  if (current === initialSnapshot.value) return [];
 
-const handleCVUpload = async ({ file, lang }: { file: File, lang: string }) => {
-  isSaving.value = true;
+  const old = JSON.parse(initialSnapshot.value);
+  const changes: string[] = [];
 
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = async () => {
-    const base64 = reader.result;
+  if (JSON.stringify(old.projects) !== JSON.stringify(localProjects.value)) changes.push("Projets (titres, images ou liens)");
+  if (old.about.selected_palette !== localAbout.selected_palette) changes.push("Ambiance / Thème du site");
+  if (JSON.stringify(old.about.timeline) !== JSON.stringify(localAbout.timeline)) changes.push("Parcours (Timeline)");
+  if (JSON.stringify(old.about.certifications) !== JSON.stringify(localAbout.certifications)) changes.push("Certifications & Badges");
 
-    try {
-      const res = await fetch('/api/manage-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          password: passwordValue.value,
-          action: 'upload-cv',
-          lang: lang,
-          fileData: base64
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        (localAbout as any)[lang].cv_link = data.filePath;
-        triggerToast(`CV ${lang.toUpperCase()} enregistré dans la base !`);
-      }
-    } catch (e) {
-      triggerToast("Erreur lors de l'upload", "error");
-    } finally {
-      isSaving.value = false;
+  ['fr', 'en', 'es', 'nl'].forEach(l => {
+    if (JSON.stringify(old.about[l]) !== JSON.stringify((localAbout as any)[l])) {
+      changes.push(`Contenu textuel (${l.toUpperCase()})`);
     }
-  };
-};
-const checkSession = async () => {
-  const savedKey = localStorage.getItem('laurine_portfolio_token');
-  if (savedKey) {
-    try {
-      const res = await fetch('/api/manage-content', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: savedKey, action: 'login' })
-      });
-      if (res.ok) {
-        passwordValue.value = savedKey;
-        isAuthenticated.value = true;
-      } else {
-        localStorage.removeItem('laurine_portfolio_token');
-      }
-    } catch (e) {
-      console.error("Erreur de session persistante");
-    }
-  }
-};
+  });
 
-const handleLogout = () => {
-  isAuthenticated.value = false;
-  passwordValue.value = '';
-  localStorage.removeItem('laurine_portfolio_token');
-  triggerToast('Session terminée');
+  return changes;
 };
 
 const initData = () => {
@@ -236,8 +178,57 @@ const initData = () => {
       nl: { title: getProj('nl')[i]?.title || '', desc: getProj('nl')[i]?.desc || '' }
     }));
 
+    setTimeout(updateSnapshot, 500);
+
   } catch (err) { console.error("Erreur d'initialisation :", err); }
 };
+
+const confirmAndSave = () => {
+  const changes = getChangesList();
+  if (changes.length === 0) {
+    triggerToast("Aucune modification à enregistrer", "error");
+    return;
+  }
+
+  const message = "Voulez-vous publier les changements suivants ?\n\n- " + changes.join("\n- ");
+  if (confirm(message)) {
+    saveAll();
+  }
+};
+
+const closePortal = () => {
+  const changes = getChangesList();
+  if (changes.length > 0) {
+    if (confirm("⚠️ Tu as des modifications non enregistrées qui seront perdues.\n\nQuitter quand même ?")) {
+      emit('close');
+    }
+  } else {
+    emit('close');
+  }
+};
+
+const handleCVUpload = async ({ file, lang }: { file: File, lang: string }) => {
+  isSaving.value = true;
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    try {
+      const res = await fetch('/api/manage-content', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordValue.value, action: 'upload-cv', lang, fileData: reader.result })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        (localAbout as any)[lang].cv_link = data.filePath;
+        triggerToast(`CV ${lang.toUpperCase()} mis en attente d'enregistrement.`);
+      }
+    } catch (e) { triggerToast("Erreur d'upload", "error"); }
+    finally { isSaving.value = false; }
+  };
+};
+
+const checkDevice = () => { isMobile.value = window.innerWidth < 1024; };
+watch(() => localAbout.selected_palette, (newVal) => { document.documentElement.setAttribute('data-palette', newVal.toString()); });
 
 onMounted(async () => {
   checkDevice();
@@ -259,55 +250,40 @@ const handleLogin = async (pwd: string) => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: pwd, action: 'login' })
     });
-    if (res.ok) {
-      passwordValue.value = pwd;
-      isAuthenticated.value = true;
-      localStorage.setItem('laurine_portfolio_token', pwd);
-      triggerToast('Bienvenue Laurine !');
-    } else { loginError.value = "Clé incorrecte"; }
+    if (res.ok) { passwordValue.value = pwd; isAuthenticated.value = true; localStorage.setItem('laurine_portfolio_token', pwd); triggerToast('Bienvenue Laurine !'); }
+    else { loginError.value = "Clé incorrecte"; }
   } catch (e) { loginError.value = "Erreur de connexion"; }
   finally { isLoggingIn.value = false; }
 };
 
+const checkSession = async () => {
+  const savedKey = localStorage.getItem('laurine_portfolio_token');
+  if (savedKey) {
+    try {
+      const res = await fetch('/api/manage-content', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: savedKey, action: 'login' }) });
+      if (res.ok) { passwordValue.value = savedKey; isAuthenticated.value = true; }
+      else { localStorage.removeItem('laurine_portfolio_token'); }
+    } catch (e) {}
+  }
+};
+
+const handleLogout = () => { isAuthenticated.value = false; passwordValue.value = ''; localStorage.removeItem('laurine_portfolio_token'); triggerToast('Session terminée'); };
+
 const handleChangePassword = async (newPwd: string) => {
   isSaving.value = true;
   try {
-    const res = await fetch('/api/manage-content', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: passwordValue.value, action: 'change-password', newPassword: newPwd })
-    });
-    if (res.ok) {
-      passwordValue.value = newPwd;
-      localStorage.setItem('laurine_portfolio_token', newPwd);
-      triggerToast('Clé d\'accès modifiée');
-    } else { triggerToast('Échec du changement', 'error'); }
+    const res = await fetch('/api/manage-content', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: passwordValue.value, action: 'change-password', newPassword: newPwd }) });
+    if (res.ok) { passwordValue.value = newPwd; localStorage.setItem('laurine_portfolio_token', newPwd); triggerToast('Clé d\'accès modifiée'); }
+    else { triggerToast('Échec du changement', 'error'); }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
   finally { isSaving.value = false; }
 };
 
-const closePortal = () => emit('close');
-
-const addNewProject = () => {
-  localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
-}
+const addNewProject = () => { localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} }); }
 const deleteProject = (idx: number) => { if (confirm("Supprimer ce projet ?")) localProjects.value.splice(idx, 1); }
-
-const addTimelineItem = () => {
-  localAbout.timeline.unshift({
-    id: Date.now().toString(), period: '', type: 'edu',
-    fr: { title: '', desc: '' }, en: { title: '', desc: '' },
-    es: { title: '', desc: '' }, nl: { title: '', desc: '' }
-  });
-}
+const addTimelineItem = () => { localAbout.timeline.unshift({ id: Date.now().toString(), period: '', type: 'edu', fr: { title: '', desc: '' }, en: { title: '', desc: '' }, es: { title: '', desc: '' }, nl: { title: '', desc: '' } }); }
 const deleteTimelineItem = (idx: number) => { if (confirm("Supprimer cette étape ?")) localAbout.timeline.splice(idx, 1); }
-
-const addCertItem = () => {
-  localAbout.certifications.unshift({
-    id: Date.now().toString(), link: '',
-    fr: { name: '', school: '' }, en: { name: '', school: '' },
-    es: { name: '', school: '' }, nl: { name: '', school: '' }
-  });
-}
+const addCertItem = () => { localAbout.certifications.unshift({ id: Date.now().toString(), link: '', fr: { name: '', school: '' }, en: { name: '', school: '' }, es: { name: '', school: '' }, nl: { name: '', school: '' } }); }
 const deleteCertItem = (idx: number) => { if (confirm("Supprimer ce certificat ?")) localAbout.certifications.splice(idx, 1); }
 
 const saveAll = async () => {
@@ -315,13 +291,10 @@ const saveAll = async () => {
   try {
     const payloads: any = {}
     const langs = ['fr', 'en', 'es', 'nl'] as const;
-
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
       full.theme_palette = localAbout.selected_palette;
-      full.projects_list = localProjects.value.map(p => ({
-        id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
-      }));
+      full.projects_list = localProjects.value.map(p => ({ id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc }));
       full.greeting = localAbout[l].intro_hero;
       full.intro = localAbout[l].name_hero;
       full.bio = localAbout[l].bio_hero;
@@ -331,14 +304,10 @@ const saveAll = async () => {
       full.cv_link = localAbout[l].cv_link;
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
-      full.languages = localAbout[l].fluent_sentence;
+      full.fluent_sentence = localAbout[l].fluent_sentence;
       full.hobbies = localAbout[l].hobbies;
-      full.timeline_list = localAbout.timeline.map(item => ({
-        period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
-      }));
-      full.cert_list = localAbout.certifications.map(cert => ({
-        name: cert[l].name, school: cert[l].school, link: cert.link
-      }));
+      full.timeline_list = localAbout.timeline.map(item => ({ period: item.period, type: item.type, title: item[l].title, desc: item[l].desc }));
+      full.cert_list = localAbout.certifications.map(cert => ({ name: cert[l].name, school: cert[l].school, link: cert.link }));
       payloads[l] = full;
     });
 
@@ -349,6 +318,7 @@ const saveAll = async () => {
 
     if (res.ok) {
       triggerToast('Site mis à jour !');
+      updateSnapshot();
       setTimeout(() => window.location.reload(), 1000);
     } else { triggerToast('Erreur de sauvegarde', 'error'); }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
@@ -363,23 +333,12 @@ const saveAll = async () => {
   backdrop-filter: blur(25px);
   display: flex; align-items: center; justify-content: center;
 }
-
-.mobile-blocker {
-  width: 90%;
-  max-width: 450px;
-  text-align: center;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-}
+.mobile-blocker { width: 90%; max-width: 450px; text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
 .mobile-blocker h2 { font-size: 1.5rem; margin-bottom: 16px; color: #fff; }
 .mobile-blocker p { color: #94a3b8; line-height: 1.6; }
 .mobile-blocker .hint { margin-top: 12px; font-size: 0.9rem; color: #6366f1; font-weight: 600; }
 .btn-close-mobile { background: #6366f1; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-
 .icon-accent { color: #6366f1; }
 .mb-20 { margin-bottom: 20px; }
 .mt-24 { margin-top: 24px; }
-
 </style>
