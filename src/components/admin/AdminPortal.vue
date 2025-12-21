@@ -168,7 +168,7 @@ const initData = () => {
         localAbout[l].btn_abt = msg.btn_about || '';
         localAbout[l].intro = msg.about_intro || '';
         localAbout[l].text = msg.about_text || '';
-        localAbout[l].fluent_sentence = msg.languages || '';
+        localAbout[l].fluent_sentence = msg.fluent_sentence || '';
         localAbout[l].hobbies = Array.isArray(msg.hobbies) ? [...msg.hobbies] : [];
       }
     });
