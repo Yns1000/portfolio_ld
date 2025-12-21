@@ -43,7 +43,53 @@
         </button>
         <button @click="$emit('logout')" class="logout-link"><LogOut :size="14" /> Déconnexion</button>
       </div>
-    </aside>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="app-brand">
+            <div class="brand-square"><LayoutDashboard :size="18" /></div>
+            <span>Console Admin</span>
+          </div>
+        </div>
+
+        <div class="sidebar-nav-tabs">
+          <button @click="viewMode = 'projects'" :class="['nav-tab-btn', { active: viewMode === 'projects' }]">
+            <Briefcase :size="18" /> <span>Projets</span>
+          </button>
+          <button @click="viewMode = 'about'" :class="['nav-tab-btn', { active: viewMode === 'about' }]">
+            <User :size="18" /> <span>À propos</span>
+          </button>
+          <button @click="viewMode = 'security'" :class="['nav-tab-btn', { active: viewMode === 'security' }]">
+            <ShieldCheck :size="18" /> <span>Sécurité</span>
+          </button>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <nav v-if="viewMode === 'projects'" class="project-list custom-scrollbar">
+          <div class="list-header">
+            <span>Mes Réalisations</span>
+            <button @click="$emit('add')" class="btn-add-modern sm"><Plus :size="14" /></button>
+          </div>
+          <div v-for="(proj, index) in projects" :key="proj.id"
+               class="project-item" :class="{ active: currentIdx === index }" @click="currentIdx = index">
+            <div class="project-indicator"></div>
+            <div class="project-details">
+              <span class="project-title">{{ proj.fr.title || 'Nouveau projet' }}</span>
+              <span class="project-cat">{{ proj.category || 'Portfolio' }}</span>
+            </div>
+            <button @click.stop="confirmDelete(index)" class="btn-delete-item"><Trash2 :size="14" /></button>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button @click="$emit('save')" :disabled="isSaving" class="btn-save-main">
+            <CloudUpload v-if="!isSaving" :size="18" />
+            <Loader2 v-else class="spin" :size="18" />
+            <span>{{ isSaving ? 'Publication...' : 'Enregistrer' }}</span>
+          </button>
+          <button @click="$emit('logout')" class="logout-link"><LogOut :size="14" /> Déconnexion</button>
+        </div>
+      </aside>
 
     <main class="main-stage">
       <header class="stage-header">

@@ -25,6 +25,7 @@
           @save="saveAll"
           @logout="handleLogout"
           @close="closePortal"
+          @change-password="handleChangePassword"
       />
     </div>
   </Transition>
@@ -37,24 +38,44 @@ import AdminAuth from './AdminAuth.vue'
 import AdminDashboard from './AdminDashboard.vue'
 import AdminToast from './AdminToast.vue'
 
-// --- TYPES ---
-interface Project { id: number; category: string; image: string; link: string; fr: any; en: any; es: any; nl: any; }
-interface TimelineItem { id: string; period: string; type: string; fr: any; en: any; es: any; nl: any; }
-interface CertItem { id: string; link: string; fr: any; en: any; es: any; nl: any; }
+// --- DÉFINITION DES TYPES ---
+interface Project {
+  id: number; category: string; image: string; link: string;
+  fr: any; en: any; es: any; nl: any;
+}
+interface TimelineItem {
+  id: string; period: string; type: string;
+  fr: any; en: any; es: any; nl: any;
+}
+interface CertItem {
+  id: string; link: string;
+  fr: any; en: any; es: any; nl: any;
+}
 
 interface AboutContent {
-  intro_hero: string; name_hero: string; bio_hero: string; btn_prj: string; btn_abt: string;
-  intro: string; text: string; hobbies: string[];
+  intro_hero: string; // greeting
+  name_hero: string;  // intro
+  bio_hero: string;   // bio
+  btn_prj: string;    // btn_projects
+  btn_abt: string;    // btn_about
+  intro: string;      // about_intro
+  text: string;       // about_text
+  hobbies: string[];
 }
 
 interface AboutData {
-  fr: AboutContent; en: AboutContent; es: AboutContent; nl: AboutContent;
-  timeline: TimelineItem[]; certifications: CertItem[]; selected_palette: number;
+  fr: AboutContent;
+  en: AboutContent;
+  es: AboutContent;
+  nl: AboutContent;
+  timeline: TimelineItem[];
+  certifications: CertItem[];
+  selected_palette: number;
 }
 
+// --- ÉTATS RÉACTIFS ---
 const emit = defineEmits(['close']);
 const isMounted = ref(false);
-
 const isAuthenticated = ref(false)
 const isLoggingIn = ref(false)
 const isSaving = ref(false)
@@ -78,12 +99,12 @@ const localAbout = reactive<AboutData>({
 });
 const localProjects = ref<Project[]>([]);
 
-// --- APERÇU EN TEMPS RÉEL ---
+// --- APERÇU DES COULEURS EN TEMPS RÉEL ---
 watch(() => localAbout.selected_palette, (newVal) => {
   document.documentElement.setAttribute('data-palette', newVal.toString());
 });
 
-// --- LOGIQUE DE SESSION (NOUVEAU) ---
+// --- GESTION DE LA SESSION (LocalStorage) ---
 const checkSession = async () => {
   const savedKey = localStorage.getItem('laurine_portfolio_token');
   if (savedKey) {
@@ -99,7 +120,7 @@ const checkSession = async () => {
         localStorage.removeItem('laurine_portfolio_token');
       }
     } catch (e) {
-      console.error("Échec de la vérification de session");
+      console.error("Erreur de session persistante");
     }
   }
 };
@@ -111,14 +132,16 @@ const handleLogout = () => {
   triggerToast('Session terminée');
 };
 
-// --- LOGIQUE DE CHARGEMENT ---
+// --- CHARGEMENT DES DONNÉES DEPUIS LES JSON ---
 const initData = () => {
   try {
     const langs = ['fr', 'en', 'es', 'nl'] as const;
     const frMsg = i18n.global.getLocaleMessage('fr') as any;
 
+    // Charger la palette
     localAbout.selected_palette = frMsg.theme_palette || 1;
 
+    // Textes fixes par langue
     langs.forEach(l => {
       const msg = i18n.global.getLocaleMessage(l) as any;
       if (msg) {
@@ -133,28 +156,29 @@ const initData = () => {
       }
     });
 
+    // Timeline
     const frTimeline = frMsg.timeline_list || [];
     localAbout.timeline = frTimeline.map((item: any, i: number) => {
       const obj: any = { id: 'time-' + i, period: item.period || '', type: item.type || 'edu' };
       langs.forEach(l => {
-        const langMsg = i18n.global.getLocaleMessage(l) as any;
-        const langItem = langMsg.timeline_list?.[i] || {};
+        const langItem = (i18n.global.getLocaleMessage(l) as any).timeline_list?.[i] || {};
         obj[l] = { title: langItem.title || '', desc: langItem.desc || '' };
       });
       return obj;
     });
 
+    // Certifs
     const frCerts = frMsg.cert_list || [];
     localAbout.certifications = frCerts.map((cert: any, i: number) => {
       const obj: any = { id: 'cert-' + i, link: cert.link || '' };
       langs.forEach(l => {
-        const langMsg = i18n.global.getLocaleMessage(l) as any;
-        const langCert = langMsg.cert_list?.[i] || {};
+        const langCert = (i18n.global.getLocaleMessage(l) as any).cert_list?.[i] || {};
         obj[l] = { name: langCert.name || '', school: langCert.school || '' };
       });
       return obj;
     });
 
+    // Projets
     const getProj = (lang: string) => (i18n.global.getLocaleMessage(lang) as any)?.projects_list || [];
     localProjects.value = getProj('fr').map((p: any, i: number) => ({
       id: p.id || Date.now() + i,
@@ -167,16 +191,16 @@ const initData = () => {
       nl: { title: getProj('nl')[i]?.title || '', desc: getProj('nl')[i]?.desc || '' }
     }));
 
-  } catch (err) { console.error("Init Error:", err); }
+  } catch (err) { console.error("Erreur d'initialisation :", err); }
 };
 
 onMounted(async () => {
   initData();
-  await checkSession(); // On vérifie si Laurine est déjà authentifiée
+  await checkSession();
   isMounted.value = true;
 });
 
-// --- ACTIONS ---
+// --- ACTIONS CLÉS ---
 const triggerToast = (msg: string, type: 'success' | 'error' = 'success') => {
   toast.message = msg; toast.type = type; toast.show = true;
   setTimeout(() => { toast.show = false }, 4000);
@@ -192,17 +216,32 @@ const handleLogin = async (pwd: string) => {
     if (res.ok) {
       passwordValue.value = pwd;
       isAuthenticated.value = true;
-      localStorage.setItem('laurine_portfolio_token', pwd); // Sauvegarde session
-      triggerToast('Accès autorisé');
-    }
-    else { loginError.value = "Clé invalide"; }
-  } catch (e) { loginError.value = "Erreur réseau"; }
+      localStorage.setItem('laurine_portfolio_token', pwd);
+      triggerToast('Bienvenue Laurine !');
+    } else { loginError.value = "Clé incorrecte"; }
+  } catch (e) { loginError.value = "Erreur de connexion"; }
   finally { isLoggingIn.value = false; }
-}
+};
+
+const handleChangePassword = async (newPwd: string) => {
+  isSaving.value = true;
+  try {
+    const res = await fetch('/api/manage-content', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: passwordValue.value, action: 'change-password', newPassword: newPwd })
+    });
+    if (res.ok) {
+      passwordValue.value = newPwd;
+      localStorage.setItem('laurine_portfolio_token', newPwd);
+      triggerToast('Clé d\'accès modifiée');
+    } else { triggerToast('Échec du changement', 'error'); }
+  } catch (e) { triggerToast('Erreur réseau', 'error'); }
+  finally { isSaving.value = false; }
+};
 
 const closePortal = () => emit('close');
 
-// --- GESTION DES ITEMS ---
+// --- GESTION DES LISTES DYNAMIQUES ---
 const addNewProject = () => {
   localProjects.value.push({ id: Date.now(), category: 'manage', image: '', link: '', fr: {title:'', desc:''}, en: {title:'', desc:''}, es: {title:'', desc:''}, nl: {title:'', desc:''} });
 }
@@ -215,7 +254,7 @@ const addTimelineItem = () => {
     es: { title: '', desc: '' }, nl: { title: '', desc: '' }
   });
 }
-const deleteTimelineItem = (idx: number) => { if (confirm("Supprimer cet événement ?")) localAbout.timeline.splice(idx, 1); }
+const deleteTimelineItem = (idx: number) => { if (confirm("Supprimer cette étape ?")) localAbout.timeline.splice(idx, 1); }
 
 const addCertItem = () => {
   localAbout.certifications.unshift({
@@ -224,9 +263,9 @@ const addCertItem = () => {
     es: { name: '', school: '' }, nl: { name: '', school: '' }
   });
 }
-const deleteCertItem = (idx: number) => { if (confirm("Supprimer cette certification ?")) localAbout.certifications.splice(idx, 1); }
+const deleteCertItem = (idx: number) => { if (confirm("Supprimer ce certificat ?")) localAbout.certifications.splice(idx, 1); }
 
-// --- SAUVEGARDE FINALE ---
+// --- SAUVEGARDE GLOBALE ---
 const saveAll = async () => {
   isSaving.value = true
   try {
@@ -235,24 +274,37 @@ const saveAll = async () => {
 
     langs.forEach(l => {
       const full = JSON.parse(JSON.stringify(i18n.global.getLocaleMessage(l)));
+
+      // Sync thèmes
       full.theme_palette = localAbout.selected_palette;
+
+      // Sync Projets
       full.projects_list = localProjects.value.map(p => ({
         id: p.id, category: p.category, image: p.image, link: p.link, title: p[l].title, desc: p[l].desc
       }));
+
+      // Sync Hero
       full.greeting = localAbout[l].intro_hero;
       full.intro = localAbout[l].name_hero;
       full.bio = localAbout[l].bio_hero;
       full.btn_projects = localAbout[l].btn_prj;
       full.btn_about = localAbout[l].btn_abt;
+
+      // Sync À Propos
       full.about_intro = localAbout[l].intro;
       full.about_text = localAbout[l].text;
       full.hobbies = localAbout[l].hobbies;
+
+      // Sync Timeline
       full.timeline_list = localAbout.timeline.map(item => ({
         period: item.period, type: item.type, title: item[l].title, desc: item[l].desc
       }));
+
+      // Sync Certifications
       full.cert_list = localAbout.certifications.map(cert => ({
         name: cert[l].name, school: cert[l].school, link: cert.link
       }));
+
       payloads[l] = full;
     });
 
@@ -260,9 +312,12 @@ const saveAll = async () => {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: passwordValue.value, content: payloads })
     });
+
     if (res.ok) {
-      triggerToast('Publication réussie !');
+      triggerToast('Site mis à jour avec succès !');
       setTimeout(() => window.location.reload(), 1000);
+    } else {
+      triggerToast('Erreur de sauvegarde', 'error');
     }
   } catch (e) { triggerToast('Erreur réseau', 'error'); }
   finally { isSaving.value = false; }
@@ -272,10 +327,15 @@ const saveAll = async () => {
 <style scoped>
 .admin-portal-wrapper {
   position: fixed; inset: 0; z-index: 99999;
-  background: rgba(4, 4, 5, 0.95);
-  backdrop-filter: blur(20px);
+  background: rgba(4, 4, 5, 0.98);
+  backdrop-filter: blur(25px);
   display: flex; align-items: center; justify-content: center;
 }
-.portal-fade-enter-active, .portal-fade-leave-active { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.portal-fade-enter-from, .portal-fade-leave-to { opacity: 0; transform: scale(1.05); }
+
+.portal-fade-enter-active, .portal-fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.portal-fade-enter-from, .portal-fade-leave-to {
+  opacity: 0; transform: scale(1.05);
+}
 </style>
