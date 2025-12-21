@@ -19,7 +19,7 @@ import AboutSection from './components/AboutSection.vue'
 import ContactSection from './components/ContactSection.vue'
 import AdminPortal from './components/admin/AdminPortal.vue'
 
-const { locale, tm } = useI18n() // Ajout de tm pour récupérer les données brutes du JSON
+const { locale, tm } = useI18n()
 const isDark = ref(true)
 const isLangMenuOpen = ref(false)
 const activeSection = ref('home')
@@ -29,13 +29,12 @@ const isAdminOpen = ref(false)
 const cursorStyle = ref({ transform: 'translate(-100px, -100px)' })
 
 // --- LOGIQUE DES PALETTES DYNAMIQUES ---
-// Cette fonction surveille le changement de palette dans le JSON et l'applique au HTML
 watchEffect(() => {
-  const paletteId = tm('theme_palette') || 1; // Récupère l'ID (1 à 5)
+  const paletteId = tm('theme_palette') || 1;
   document.documentElement.setAttribute('data-palette', paletteId);
 });
 
-// Surveillance de l'ouverture de l'admin pour rétablir la souris système
+// Surveillance de l'ouverture de l'admin
 watch(isAdminOpen, (open) => {
   if (open) {
     document.documentElement.classList.add('admin-mode')
@@ -68,17 +67,14 @@ const toggleTheme = () => {
 }
 
 onMounted(() => {
-  // Initialisation du thème clair/sombre
   if (!isDark.value) {
     document.documentElement.setAttribute('data-theme', 'light')
   }
 
-  // Initialisation du curseur personnalisé
   if (window.matchMedia('(pointer: fine)').matches) {
     window.addEventListener('mousemove', updateCursor)
   }
 
-  // Détection de la section active pour la navigation
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -129,12 +125,12 @@ onUnmounted(() => {
             @mouseleave="isHovering = false"
             title="Administration"
         >
-          <Lock :size="20" />
+          <Lock :size="18" />
         </button>
 
         <div class="lang-dropdown-wrapper">
-          <button class="icon-btn" @click="isLangMenuOpen = !isLangMenuOpen" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
-            <Languages :size="20" />
+          <button class="icon-btn lang-btn" @click="isLangMenuOpen = !isLangMenuOpen" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+            <Languages :size="18" />
             <span class="current-lang">{{ locale.toUpperCase() }}</span>
           </button>
           <div class="lang-menu glass-panel" v-if="isLangMenuOpen">
@@ -145,9 +141,9 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <button class="theme-toggle icon-btn" @click="toggleTheme" @mouseenter="isHovering = true" @mouseleave="isHovering = false" :aria-label="isDark ? 'Mode clair' : 'Mode sombre'">
-          <Sun v-if="!isDark" :size="20" class="icon-sun" />
-          <Moon v-else :size="20" class="icon-moon" />
+        <button class="theme-toggle icon-btn" @click="toggleTheme" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+          <Sun v-if="!isDark" :size="18" class="icon-sun" />
+          <Moon v-else :size="18" class="icon-moon" />
         </button>
       </div>
     </nav>
@@ -164,104 +160,81 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* --- Styles globaux indispensables pour les palettes --- */
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+  margin: 0; padding: 0; width: 100%;
   background-color: var(--color-bg);
   color: var(--color-text-main);
   min-height: 100%;
 }
-
-body {
-  overflow-x: hidden;
-  /* Transition fluide lors du changement de palette ou de thème */
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
+body { overflow-x: hidden; transition: background-color 0.5s ease, color 0.5s ease; }
 
 @media (min-width: 1024px) {
-  html:not(.admin-mode),
-  html:not(.admin-mode) body,
-  html:not(.admin-mode) a,
-  html:not(.admin-mode) button,
-  html:not(.admin-mode) input,
-  html:not(.admin-mode) textarea {
+  html:not(.admin-mode), html:not(.admin-mode) body, html:not(.admin-mode) a,
+  html:not(.admin-mode) button, html:not(.admin-mode) input, html:not(.admin-mode) textarea {
     cursor: none !important;
   }
 }
-
-.admin-mode, .admin-mode * {
-  cursor: auto !important;
-}
-
-#app {
-  width: 100%;
-  max-width: 100%;
-  padding: 0 !important;
-}
+.admin-mode, .admin-mode * { cursor: auto !important; }
+#app { width: 100%; max-width: 100%; padding: 0 !important; }
 </style>
 
 <style scoped>
-/* --- Styles du curseur et du header --- */
+/* --- CURSEUR --- */
 .custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 20px;
-  height: 20px;
-  background-color: var(--color-accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
+  position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+  background-color: var(--color-accent); border-radius: 50%;
+  pointer-events: none; z-index: 9999; mix-blend-mode: difference;
   transition: transform 0.05s linear, width 0.3s ease, height 0.3s ease;
-  will-change: transform;
 }
 
+/* --- HEADER ET NAVIGATION --- */
 .site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  padding: 1rem 2rem;
+  position: fixed; top: 0; left: 0; width: 100%;
+  z-index: 1000; padding: 1.2rem 2rem;
+  transition: all 0.3s ease;
 }
 
 .glass-nav {
+  /* On utilise le RGB du fond de la palette avec une opacité maîtrisée */
   background: rgba(var(--color-bg-rgb), 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid var(--color-border);
 }
 
-.navbar {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Correction spécifique Light Mode : On ajoute une légère teinte de l'accent pour "colorer" le blanc */
+:root[data-theme="light"] .glass-nav {
+  background: rgba(var(--color-bg-rgb), 0.85);
+  border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.2);
 }
 
+.navbar {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* --- CONTENEUR DES LIENS (La Pillule centrale) --- */
 .nav-links {
-  display: flex;
-  gap: 2rem;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 8px 20px;
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; gap: 2rem;
+  /* On utilise la couleur de carte du thème pour le fond */
+  background: rgba(var(--color-bg-card-rgb), 0.6);
+  padding: 8px 24px; border-radius: 50px;
+  /* ICI : On force la couleur principale (accent) en bordure pour donner du caractère en Light Mode */
+  border: 1.5px solid rgba(var(--color-accent-rgb), 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="light"] .nav-links {
+  background: rgba(var(--color-bg-card-rgb), 0.8);
+  border-color: rgba(var(--color-accent-rgb), 0.4);
 }
 
 .nav-item {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  position: relative;
+  color: var(--color-text-muted); text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.9rem; font-weight: 700;
+  transition: all 0.3s ease; position: relative;
 }
 
 .nav-item:hover, .nav-item.active {
@@ -269,87 +242,64 @@ body {
 }
 
 .nav-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-accent);
-  border-radius: 2px;
-  box-shadow: 0 0 10px var(--color-accent);
+  content: ''; position: absolute; bottom: -6px; left: 20%; width: 60%;
+  height: 2px; background: var(--color-accent);
+  border-radius: 2px; box-shadow: 0 0 10px var(--color-accent);
 }
 
-.nav-settings {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+/* --- OUTILS (ADMIN, LANG, THEME) --- */
+.nav-settings { display: flex; align-items: center; gap: 0.8rem; }
 
 .icon-btn {
-  background: transparent;
-  border: none;
+  background: rgba(var(--color-bg-card-rgb), 0.6);
+  border: 1.5px solid rgba(var(--color-accent-rgb), 0.2);
   color: var(--color-text-main);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px; border-radius: 12px;
+  cursor: pointer; transition: 0.2s;
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-accent-text) !important;
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
 }
 
-.lang-dropdown-wrapper { position: relative; }
+.current-lang { font-size: 0.75rem; font-weight: 800; }
 
+/* MENU LANGUES */
+.lang-dropdown-wrapper { position: relative; }
 .lang-menu {
-  position: absolute;
-  top: 120%;
-  right: 0;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 140px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: absolute; top: 125%; right: 0;
+  background: var(--color-bg-card); border: 1px solid var(--color-border);
+  border-radius: 16px; padding: 8px; display: flex; flex-direction: column;
+  gap: 4px; min-width: 150px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
   backdrop-filter: blur(10px);
 }
 
-.lang-menu span {
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: 0.2s;
+/* =============================================
+   RESPONSIVE (On garde tes corrections)
+   ============================================= */
+
+@media (max-width: 900px) {
+  .site-header { padding: 1rem; }
+  .nav-links { gap: 1.5rem; padding: 8px 16px; }
+  .nav-text { display: none; } /* On ne garde que les icônes sur tablette/mobile */
 }
 
-.lang-menu span:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-accent);
+@media (max-width: 600px) {
+  .site-header {
+    padding: 0.8rem;
+    background: rgba(var(--color-bg-rgb), 0.9); /* Plus opaque sur mobile */
+  }
+  .navbar { flex-direction: row; justify-content: space-between; gap: 0.5rem; }
+  .nav-links { gap: 1.2rem; padding: 8px 12px; }
+  .nav-settings { gap: 0.5rem; }
+  .icon-btn { padding: 8px; border-radius: 10px; }
 }
 
-.lang-menu span.active {
-  background: var(--color-accent);
-  color: var(--color-accent-text);
-}
-
-.theme-toggle {
-  width: 40px;
-  height: 40px;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-}
-
-.icon-sun { color: #facc15; animation: spin 0.5s ease-out; }
-.icon-moon { color: #a8a29e; animation: fade 0.5s ease-out; }
-
-@keyframes spin { from { transform: rotate(-90deg) scale(0.5); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
-@keyframes fade { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+/* Couleurs icônes thèmes */
+.icon-sun { color: #facc15; }
+.icon-moon { color: #a8a29e; }
 </style>
