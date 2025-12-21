@@ -85,42 +85,41 @@
             @update-password="(pwd) => $emit('change-password', pwd)"
         />
 
-        <div v-else class="empty-state">
+        <div class="empty-state">
           <div class="empty-glow"></div>
-          <div class="tulip-wrapper premium-tulip">
-            <svg viewBox="0 0 120 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          <div class="tulip-container-final">
+            <svg viewBox="0 0 120 180" fill="none" xmlns="http://www.w3.org/2000/svg" class="tulip-svg-final">
               <defs>
-                <linearGradient id="stem-grad" x1="60" y1="180" x2="60" y2="80" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#059669"/>
-                  <stop offset="100%" stop-color="#34D399"/>
+                <linearGradient id="petal-main-grad" x1="60" y1="120" x2="60" y2="20" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#be185d" /> <stop offset="50%" stop-color="#db2777" /> <stop offset="100%" stop-color="#f472b6" /> </linearGradient>
+                <linearGradient id="petal-back-grad" x1="60" y1="120" x2="60" y2="30" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#831843" /> <stop offset="100%" stop-color="#bc1e63" />
                 </linearGradient>
-                <linearGradient id="leaf-grad" x1="0" y1="180" x2="120" y2="100" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#047857"/>
-                  <stop offset="100%" stop-color="#10B981"/>
-                </linearGradient>
-                <linearGradient id="petal-dark" x1="60" y1="100" x2="60" y2="0" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#BE185D"/>
-                  <stop offset="100%" stop-color="#DB2777"/>
-                </linearGradient>
-                <linearGradient id="petal-light" x1="60" y1="90" x2="60" y2="10" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#DB2777"/>
-                  <stop offset="100%" stop-color="#F472B6"/>
+                <linearGradient id="stem-grad" x1="60" y1="180" x2="60" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#065f46" />
+                  <stop offset="100%" stop-color="#10b981" />
                 </linearGradient>
               </defs>
 
-              <g class="tulip-stem-group">
-                <path d="M58 180C58 180 62 130 60 85" stroke="url(#stem-grad)" stroke-width="4" stroke-linecap="round"/>
-                <path d="M60 160C60 160 90 140 100 110C100 110 80 130 60 145" fill="url(#leaf-grad)" opacity="0.8"/>
-                <path d="M60 170C60 170 30 150 20 120C20 120 40 140 60 155" fill="url(#leaf-grad)" opacity="0.8"/>
+              <g class="stem-group" opacity="0.9">
+                <path d="M60 180 C 60 160, 58 130, 60 110" stroke="url(#stem-grad)" stroke-width="5" stroke-linecap="round" />
+                <path d="M60 175 C 60 175, 20 150, 15 110 C 15 110, 30 130, 60 150" fill="#059669" opacity="0.7" />
+                <path d="M60 165 C 60 165, 95 140, 105 100 C 105 100, 85 130, 60 145" fill="#059669" opacity="0.7" />
               </g>
 
-              <g class="tulip-head-group">
-                <path d="M30 85 C 30 35, 90 35, 90 85 C 90 110, 60 120, 60 120 C 60 120, 30 110, 30 85 Z" fill="url(#petal-dark)"/>
-                <path d="M40 90 C 40 50, 80 50, 80 90 C 80 110, 60 115, 60 115 C 60 115, 40 110, 40 90 Z" fill="url(#petal-light)"/>
-                <path d="M55 85 C 55 70, 65 70, 65 85 C 65 95, 60 100, 60 100 C 60 100, 55 95, 55 85 Z" fill="#FBCFE8"/>
+              <g class="flower-head">
+                <path d="M45 115 C 25 100, 25 50, 45 35 C 55 28, 60 50, 60 118" fill="url(#petal-back-grad)"/>
+                <path d="M75 115 C 95 100, 95 50, 75 35 C 65 28, 60 50, 60 118" fill="url(#petal-back-grad)"/>
+
+                <path d="M60 120 C 35 115, 30 60, 50 30 C 55 22, 60 40, 60 120 Z" fill="url(#petal-main-grad)" stroke="#fbcfe8" stroke-width="0.5"/>
+                <path d="M60 120 C 85 115, 90 60, 70 30 C 65 22, 60 40, 60 120 Z" fill="url(#petal-main-grad)" stroke="#fbcfe8" stroke-width="0.5" />
+
+                <path d="M60 118 C 50 100, 52 50, 60 25 C 68 50, 70 100, 60 118 Z" fill="#fce7f3" stroke="#f472b6" stroke-width="1"/>
               </g>
             </svg>
           </div>
+
           <h2>Salam aleykoum Laurine</h2>
           <p>Choisis une section à gauche pour commencer.</p>
         </div>
@@ -284,43 +283,43 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .empty-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%); filter: blur(40px); }
 .empty-icon { width: 80px; height: 80px; background: #16161a; border-radius: 24px; display: grid; place-items: center; color: #6366f1; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); }
 
-/* REMPLACE PAR CES NOUVEAUX STYLES : */
-.premium-tulip {
+/* --- STYLES TULIPE FINALE --- */
+.tulip-container-final {
   width: 140px;
-  height: 200px;
-  margin-bottom: 10px;
-  /* Ombre portée rose/magenta intense pour l'effet néon */
-  filter: drop-shadow(0 0 30px rgba(219, 39, 119, 0.5));
-  z-index: 5;
-  /* Animation de flottement global */
-  animation: tulip-float 6s ease-in-out infinite;
+  height: 210px;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 10;
+  /* Ombre portée néon intense */
+  filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.6));
 }
 
-.tulip-stem-group {
-  /* La tige ondule doucement depuis le bas */
+.tulip-svg-final {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Animation de la tige (ondulation lente à la base) */
+.stem-group {
   transform-origin: bottom center;
-  animation: stem-sway 7s ease-in-out infinite alternate;
+  animation: stem-sway-final 6s ease-in-out infinite alternate;
 }
 
-.tulip-head-group {
-  /* La tête bouge légèrement indépendamment de la tige */
-  transform-origin: center 80%;
-  animation: head-breath 5s ease-in-out infinite alternate-reverse;
+/* Animation de la tête (léger mouvement indépendant + "respiration") */
+.flower-head {
+  transform-origin: center 110px; /* Pivote depuis la base de la fleur */
+  animation: head-float-final 4s ease-in-out infinite alternate-reverse;
 }
 
-@keyframes tulip-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+@keyframes stem-sway-final {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
 }
 
-@keyframes stem-sway {
-  0% { transform: rotate(-3deg); }
-  100% { transform: rotate(3deg); }
-}
-
-@keyframes head-breath {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.05) rotate(2deg); }
+@keyframes head-float-final {
+  0% { transform: rotate(3deg) scale(1) translateY(0); }
+  100% { transform: rotate(-2deg) scale(1.03) translateY(-3px); }
 }
 
 .custom-scrollbar::-webkit-scrollbar { width: 8px; }
