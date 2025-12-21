@@ -194,6 +194,8 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
   -webkit-overflow-scrolling: touch;
 
   scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Force le dashboard à prendre toute la place et capturer les gestes */
@@ -247,7 +249,15 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .add-tag-box { display: flex; gap: 8px; }
 .btn-add-tag-inline { width: 42px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; }
 
-.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 400px;
+}
 .empty-glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%); filter: blur(40px); }
 .empty-icon { width: 80px; height: 80px; background: #16161a; border-radius: 24px; display: grid; place-items: center; color: #6366f1; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.05); }
 
