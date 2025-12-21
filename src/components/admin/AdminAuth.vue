@@ -11,7 +11,7 @@
             </div>
           </div>
           <h1>Console Admin</h1>
-          <p>Identifiez-vous pour gérer vos projets.</p>
+          <p>Identifiez-vous pour gérer le portfolio.</p>
         </header>
 
         <div class="auth-form">

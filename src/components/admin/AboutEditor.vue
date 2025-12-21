@@ -28,7 +28,7 @@
         <div class="card-body">
           <div class="input-box">
             <label>Texte À propos</label>
-            <textarea v-model="aboutData[lang].text" rows="10" placeholder="Racontez votre parcours..."></textarea>
+            <textarea v-model="aboutData[lang].text" rows="10" placeholder="Raconte ton parcours..."></textarea>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@
         <div class="input-box mt-16">
           <label>Phrase des langues</label>
           <input v-model="aboutData[lang].fluent_sentence" placeholder="Je parle couramment {en}, {es} et {fr}." />
-          <span class="hint">Gardez {en}, {es}, {fr} pour afficher les drapeaux.</span>
+          <span class="hint">Garde {en}, {es}, {fr} pour afficher les drapeaux.</span>
         </div>
       </div>
 

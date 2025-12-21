@@ -14,7 +14,7 @@
             <input
                 type="password"
                 v-model="newPassword"
-                placeholder="Entrez le nouveau mot de passe"
+                placeholder="Entre le nouveau mot de passe"
             />
           </div>
 
@@ -23,7 +23,7 @@
             <input
                 type="password"
                 v-model="confirmPassword"
-                placeholder="Confirmez le nouveau mot de passe"
+                placeholder="Confirme le nouveau mot de passe"
             />
           </div>
 

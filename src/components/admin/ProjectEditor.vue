@@ -13,7 +13,7 @@
           </div>
           <div class="input-box">
             <label>Description détaillée</label>
-            <textarea v-model="project[lang].desc" rows="12" placeholder="Expliquez votre projet..."></textarea>
+            <textarea v-model="project[lang].desc" rows="12" placeholder="Explique ton projet..."></textarea>
           </div>
         </div>
       </div>
