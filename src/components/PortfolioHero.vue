@@ -37,7 +37,13 @@ const handleMouseLeave = () => {
 
     <div class="decorations-layer">
       <div class="dots-magnetic-grid">
-        <span v-for="n in 25" :key="n" class="dot"></span>
+        <span
+            v-for="n in 25"
+              :key="n"
+              class="dot"
+              @mouseenter="isHovering = true"
+              @mouseleave="isHovering = false"
+        ></span>
       </div>
 
       <div class="geo-shape geo-square glass-item"></div>
@@ -375,6 +381,7 @@ const handleMouseLeave = () => {
         box-shadow 0.3s ease,
         opacity 0.3s ease;
     will-change: transform, box-shadow;
+    pointer-events: auto;
   }
 
   .dot:hover {
