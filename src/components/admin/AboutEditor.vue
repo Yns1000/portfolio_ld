@@ -34,13 +34,7 @@
             <div class="input-box">
               <label>Uploader le fichier PDF</label>
               <div class="upload-container">
-                <input
-                    type="file"
-                    ref="fileInput"
-                    @change="handleFileSelect"
-                    accept=".pdf"
-                    style="display: none"
-                />
+                <input type="file" ref="fileInput" @change="handleFileSelect" accept=".pdf" style="display: none" />
                 <button @click="$refs.fileInput.click()" class="btn-upload-trigger">
                   <Upload :size="16" />
                   <span>{{ selectedFile ? 'Changer le fichier' : 'Choisir le PDF' }}</span>
@@ -49,19 +43,12 @@
               </div>
             </div>
           </div>
-
-          <button
-              v-if="selectedFile"
-              @click="uploadCV"
-              class="btn-save-main mt-12"
-              :disabled="isUploading"
-              style="width: fit-content; padding: 10px 20px;"
-          >
+          <button v-if="selectedFile" @click="uploadCV" class="btn-save-main mt-12" :disabled="isUploading" style="width: fit-content; padding: 10px 20px;">
             <Loader2 v-if="isUploading" class="spin" :size="16" />
             <CloudUpload v-else :size="16" />
             <span>{{ isUploading ? 'Envoi...' : 'Mettre en ligne ce CV' }}</span>
           </button>
-          <p class="hint mt-8">Actuellement : {{ aboutData[lang].cv_link || 'Aucun fichier' }}</p>
+          <p class="hint mt-8">Lien actuel : {{ aboutData[lang].cv_link || 'Aucun fichier' }}</p>
         </div>
       </div>
 
@@ -135,16 +122,10 @@
           <h3>Ambiance du site</h3>
         </div>
         <div class="card-body">
-          <p class="field-hint" style="margin-bottom: 12px;">Choisis un thème :</p>
+          <p class="field-hint" style="margin-bottom: 12px;">Choisis un thème (y'a stitch ds l'un d'eux mdr):</p>
           <div class="theme-selector-list custom-scrollbar">
-            <button
-                v-for="theme in themes" :key="theme.id"
-                @click="aboutData.selected_palette = theme.id"
-                :class="['theme-row-btn', { active: aboutData.selected_palette == theme.id }]"
-            >
-              <div :class="['theme-swatch', 'pal-' + theme.id]">
-                <Check v-if="aboutData.selected_palette == theme.id" :size="12" />
-              </div>
+            <button v-for="theme in themes" :key="theme.id" @click="aboutData.selected_palette = theme.id" :class="['theme-row-btn', { active: aboutData.selected_palette == theme.id }]">
+              <div :class="['theme-swatch', 'pal-' + theme.id]"><Check v-if="aboutData.selected_palette == theme.id" :size="12" /></div>
               <span class="theme-label">{{ theme.name }}</span>
             </button>
           </div>
@@ -158,8 +139,7 @@
             <label>Slogan (Intro)</label>
             <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
           </div>
-
-          <div class="input-box">
+          <div class="input-box mt-16">
             <label>Phrase des langues</label>
             <input v-model="aboutData[lang].fluent_sentence" placeholder="Je parle couramment {en}, {es} et {fr}." />
             <span class="hint">Garde {en}, {es}, {fr} pour afficher les drapeaux.</span>
@@ -171,13 +151,13 @@
         <div class="card-head"><Heart :size="18" class="icon-accent" /> <h3>Passions</h3></div>
         <div class="card-body">
           <div class="tags-container">
-            <span v-for="(hobby, idx) in aboutData[lang].hobbies" :key="hobby" class="hobby-tag-pill">
+            <span v-for="(hobby, idx) in aboutData[lang].hobbies" :key="idx" class="hobby-tag-pill">
               {{ hobby }}
               <button @click="removeHobby(idx)" class="btn-remove-tag"><X :size="12" /></button>
             </span>
           </div>
           <div class="add-tag-box">
-            <div class="input-box">
+            <div class="input-box" style="flex: 1;">
               <input v-model="newHobby" placeholder="Ajouter une passion..." @keyup.enter="addHobby" />
             </div>
             <button @click="addHobby" class="btn-add-tag-inline"><Plus :size="16" /></button>
@@ -191,25 +171,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import {
-  Home, History, Trophy, User, Languages,
-  Heart, Plus, Trash2, X, Palette, Check, FileText, Upload, CloudUpload, Loader2
+  Home, History, Trophy, User, Languages, Heart, Plus,
+  Trash2, X, Palette, Check, FileText, Upload, CloudUpload, Loader2
 } from 'lucide-vue-next'
 
 const props = defineProps<{ aboutData: any, lang: string }>()
 const emit = defineEmits(['add-timeline', 'delete-timeline', 'add-cert', 'delete-cert', 'cv-uploaded']);
 
 const themes = [
-  { id: 1, name: 'Terre (Original)' },
-  { id: 2, name: 'Océan Profond' },
-  { id: 3, name: 'Forêt Émeraude' },
-  { id: 4, name: 'Lavande Royale' },
-  { id: 5, name: 'Ardoise & Or' },
-  { id: 6, name: 'Candy Pastel' },
-  { id: 7, name: 'Aube Dorée' },
-  { id: 8, name: 'Ohana (Stitch)' },
-  { id: 9, name: 'B612 (Petit Prince)' }
+  { id: 1, name: 'Terre (Original)' }, { id: 2, name: 'Océan Profond' }, { id: 3, name: 'Forêt Émeraude' },
+  { id: 4, name: 'Lavande Royale' }, { id: 5, name: 'Ardoise & Or' }, { id: 6, name: 'Candy Pastel' },
+  { id: 7, name: 'Aube Dorée' }, { id: 8, name: 'Ohana (Stitch)' }, { id: 9, name: 'B612 (Petit Prince)' }
 ]
 
+// LOGIQUE CV
 const selectedFile = ref<File | null>(null)
 const isUploading = ref(false)
 
@@ -223,15 +198,14 @@ const handleFileSelect = (event: Event) => {
 const uploadCV = async () => {
   if (!selectedFile.value) return;
   isUploading.value = true;
-
   emit('cv-uploaded', { file: selectedFile.value, lang: props.lang });
-
   setTimeout(() => {
     selectedFile.value = null;
     isUploading.value = false;
   }, 1500);
 }
 
+// LOGIQUE HOBBIES
 const newHobby = ref('')
 const addHobby = () => {
   const h = newHobby.value.trim()
@@ -244,6 +218,15 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 </script>
 
 <style scoped>
+/* MISE EN PAGE */
+.editor-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; max-width: 1300px; margin: 0 auto; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mt-8 { margin-top: 8px; }
+.ml-auto { margin-left: auto; }
+
+/* UPLOAD */
 .upload-container { display: flex; align-items: center; gap: 12px; }
 .btn-upload-trigger {
   background: #1e1e24; border: 1px dashed rgba(255,255,255,0.2); color: #94a3b8;
@@ -253,6 +236,7 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 .btn-upload-trigger:hover { border-color: #6366f1; color: white; background: rgba(99, 102, 241, 0.05); }
 .file-name-hint { font-size: 0.8rem; color: #818cf8; font-weight: 700; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* THEMES */
 .theme-selector-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
 .theme-row-btn { display: flex; align-items: center; gap: 12px; padding: 10px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; text-align: left; }
 .theme-row-btn:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); }
@@ -260,16 +244,11 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 .theme-swatch { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: grid; place-items: center; color: white; border: 1px solid rgba(255, 255, 255, 0.1); }
 .theme-label { font-size: 0.85rem; font-weight: 600; color: #94a3b8; transition: color 0.2s; }
 .theme-row-btn.active .theme-label { color: white; }
-.pal-1 { background: #55423d; } .pal-2 { background: #0f172a; } .pal-3 { background: #064e3b; }
-.pal-4 { background: #2e1065; } .pal-5 { background: #18181b; } .pal-6 { background: #AF4D98; }
-.pal-7 { background: #310D20; } .pal-8 { background: #1a2a6c; } .pal-9 { background: #0f172a; }
-.field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
-.hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }
-.mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-24 { margin-top: 24px; }
-.ml-auto { margin-left: auto; }
+.pal-1 { background: #55423d; } .pal-2 { background: #0f172a; } .pal-3 { background: #064e3b; } .pal-4 { background: #2e1065; } .pal-5 { background: #18181b; } .pal-6 { background: #AF4D98; } .pal-7 { background: #310D20; } .pal-8 { background: #1a2a6c; } .pal-9 { background: #0f172a; }
+
+/* PASSIONS & UI */
 .add-tag-box { display: flex; gap: 8px; align-items: flex-end; }
-.add-tag-box .input-box { flex: 1; }
-.btn-add-tag-inline { width: 45px; height: 45px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: all 0.3s; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); }
+.btn-add-tag-inline { width: 45px; height: 45px; background: #6366f1; border: none; border-radius: 10px; color: white; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; transition: 0.3s; }
 .btn-add-tag-inline:hover { background: #818cf8; transform: translateY(-2px); }
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
