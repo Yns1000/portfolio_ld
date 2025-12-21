@@ -7,7 +7,7 @@
           <h3>Sécurité du compte</h3>
         </div>
         <div class="card-body">
-          <p class="field-hint mb-20">Utilisez ce formulaire pour modifier votre clé d'accès à la console.</p>
+          <p class="field-hint mb-20">Utilise ce formulaire pour modifier ta clé d'accès à la console gros bg.</p>
 
           <div class="input-box">
             <label>Nouveau mot de passe</label>
@@ -50,8 +50,7 @@ import { ref, computed } from 'vue'
 import { Lock, ShieldCheck, Loader2 } from 'lucide-vue-next'
 
 const emit = defineEmits(['update-password'])
-const props = defineProps<{ isUpdating: boolean }>()
-
+defineProps<{ isUpdating: boolean }>();
 const newPassword = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')

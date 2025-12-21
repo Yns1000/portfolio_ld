@@ -2,14 +2,14 @@
   <div class="editor-grid">
     <div class="editor-main">
       <div class="content-card">
-        <div class="card-head"><Home :size="18" class="icon-accent" /> <h3>Section Accueil (Hero)</h3></div>
+        <div class="card-head"><Home :size="18" class="icon-accent" /> <h3>Section Accueil cheffe</h3></div>
         <div class="card-body">
           <div class="input-row">
             <div class="input-box"><label>Badge Greeting</label><input v-model="aboutData[lang].intro_hero" placeholder="Ex: Portfolio." /></div>
             <div class="input-box"><label>Nom / Titre</label><input v-model="aboutData[lang].name_hero" /></div>
           </div>
           <div class="input-box">
-            <label>Texte de Bio Hero</label>
+            <label>Texte de Bio</label>
             <textarea v-model="aboutData[lang].bio_hero" rows="3"></textarea>
             <span class="hint">Supporte l'HTML (ex: &lt;strong&gt;)</span>
           </div>
@@ -36,12 +36,10 @@
       <div class="content-card mt-24">
         <div class="card-head">
           <History :size="18" class="icon-accent" />
-          <div class="flex-between">
-            <h3>Parcours d'événements</h3>
-            <button @click="$emit('add-timeline')" class="btn-add-modern">
-              <Plus :size="16" /> <span>Ajouter une étape</span>
-            </button>
-          </div>
+          <h3>Parcours d'événements</h3>
+          <button @click="$emit('add-timeline')" class="btn-add-modern ml-auto">
+            <Plus :size="16" /> <span>Ajouter une étape</span>
+          </button>
         </div>
         <div class="card-body">
           <div v-for="(item, idx) in aboutData.timeline" :key="idx" class="list-item-card">
@@ -65,12 +63,10 @@
       <div class="content-card mt-24">
         <div class="card-head">
           <Trophy :size="18" class="icon-accent" />
-          <div class="flex-between">
             <h3>Certifications & Badges</h3>
-            <button @click="$emit('add-cert')" class="btn-add-modern">
+            <button @click="$emit('add-cert')" class="btn-add-modern ml-auto">
               <Plus :size="16" /> <span>Ajouter un certificat</span>
             </button>
-          </div>
         </div>
         <div class="card-body">
           <div v-for="(cert, idx) in aboutData.certifications" :key="idx" class="list-item-card">
@@ -129,7 +125,9 @@
             </span>
           </div>
           <div class="add-tag-box">
-            <input v-model="newHobby" placeholder="Ajouter..." @keyup.enter="addHobby" />
+            <div class="input-box" style="flex: 1;">
+              <input v-model="newHobby" placeholder="Ajouter une passion..." @keyup.enter="addHobby" />
+            </div>
             <button @click="addHobby" class="btn-add-tag-inline"><Plus :size="16" /></button>
           </div>
         </div>
@@ -188,4 +186,13 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
 .field-hint { font-size: 0.75rem; color: #64748b; font-style: italic; }
 .hint { font-size: 0.7rem; color: #818cf8; margin-top: 4px; display: block; }
 .mt-24 { margin-top: 24px; }
+.ml-auto {
+  margin-left: auto;
+}
+.add-tag-box {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
 </style>
