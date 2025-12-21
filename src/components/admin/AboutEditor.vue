@@ -112,9 +112,11 @@
           <label>Slogan (Intro)</label>
           <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
         </div>
+
         <div class="input-box mt-16">
-          <label>Langues maîtrisées</label>
-          <input v-model="aboutData[lang].languages_text" placeholder="Ex: Je parle couramment Anglais..." />
+          <label>Phrase des langues</label>
+          <input v-model="aboutData[lang].fluent_phrase" placeholder="Je parle couramment {en}, {es} et {fr}." />
+          <span class="hint">Gardez {en}, {es}, {fr} pour afficher les drapeaux.</span>
         </div>
       </div>
 
