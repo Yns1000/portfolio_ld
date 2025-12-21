@@ -106,17 +106,19 @@
         </div>
       </div>
 
-      <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
-      <div class="card-body">
-        <div class="input-box">
-          <label>Slogan (Intro)</label>
-          <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
-        </div>
+      <div class="content-card mt-24">
+        <div class="card-head"><Languages :size="18" class="icon-accent" /> <h3>Introduction</h3></div>
+        <div class="card-body">
+          <div class="input-box">
+            <label>Slogan (Intro)</label>
+            <textarea v-model="aboutData[lang].intro" rows="3" placeholder="Phrase d'accroche..."></textarea>
+          </div>
 
-        <div class="input-box mt-16">
-          <label>Phrase des langues</label>
-          <input v-model="aboutData[lang].fluent_sentence" placeholder="Je parle couramment {en}, {es} et {fr}." />
-          <span class="hint">Garde {en}, {es}, {fr} pour afficher les drapeaux.</span>
+          <div class="input-box">
+            <label>Phrase des langues</label>
+            <input v-model="aboutData[lang].fluent_sentence" placeholder="Je parle couramment {en}, {es} et {fr}." />
+            <span class="hint">Garde {en}, {es}, {fr} pour afficher les drapeaux.</span>
+          </div>
         </div>
       </div>
 
@@ -130,7 +132,7 @@
             </span>
           </div>
           <div class="add-tag-box">
-            <div class="input-box" style="flex: 1;">
+            <div class="input-box">
               <input v-model="newHobby" placeholder="Ajouter une passion..." @keyup.enter="addHobby" />
             </div>
             <button @click="addHobby" class="btn-add-tag-inline"><Plus :size="16" /></button>
@@ -239,6 +241,10 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
   align-items: flex-end;
 }
 
+.add-tag-box .input-box {
+  flex: 1;
+}
+
 .btn-add-tag-inline {
   width: 45px;
   height: 45px;
@@ -250,6 +256,13 @@ const removeHobby = (idx: number) => { props.aboutData[props.lang].hobbies.splic
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+.btn-add-tag-inline:hover {
+  background: #818cf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 }
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }

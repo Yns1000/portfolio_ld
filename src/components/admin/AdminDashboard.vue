@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Briefcase, User, MousePointerClick } from 'lucide-vue-next'
+import { LayoutDashboard, Plus, Trash2, CloudUpload, Loader2, LogOut, X, Briefcase, User, MousePointerClick, Lock } from 'lucide-vue-next'
 import ProjectEditor from './ProjectEditor.vue'
 import AboutEditor from './AboutEditor.vue'
 import SecurityEditor from './SecurityEditor.vue'
@@ -238,9 +238,9 @@ const confirmDelete = (idx: number) => { if(confirm("Supprimer définitivement ?
 .input-box select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
+  background-position: right 16px center;
   background-size: 14px;
-  padding-right: 40px;
+  padding-right: 48px;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
