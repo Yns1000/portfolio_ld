@@ -361,6 +361,7 @@ const handleMouseLeave = () => {
     grid-template-columns: repeat(5, 1fr);
     gap: 11px;
     pointer-events: auto;
+    cursor: default;
   }
   .dot {
     width: 4px; /* Un poil plus gros */
